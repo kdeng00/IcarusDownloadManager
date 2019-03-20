@@ -23,7 +23,8 @@ namespace Syncers
 			Managers::FileManager fMgr;
 			Models::Song song;
 			std::string apiUrl{"http://192.168.1.24"};
-			std::string apiEndPoint{"/api/song"};
+			std::string apiEndPoint{"/api/song/data"};
+			std::string songPath;
 			int port{9349};
 
 			void configureSong();

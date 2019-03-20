@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 
+#include<cpr/cpr.h>
 #include<nlohmann/json.hpp>
 
 #include"Upload.h"
@@ -11,12 +12,15 @@ using std::string;
 
 using json = nlohmann::json;
 
+using namespace cpr;
+
 namespace Syncers
 {
 	Upload::Upload() { }
 	Upload::Upload(string filePath)
 	{
-		this->fMgr = Managers::FileManager{filePath};
+		this->songPath = filePath;
+		this->fMgr = Managers::FileManager(songPath);
 	}
 
 
@@ -25,6 +29,13 @@ namespace Syncers
 		configureSong();
 		json jObj = serializeObject();
 		printJsonData(jObj);
+
+		std::string url = apiUrl + apiEndPoint;
+
+		auto r = cpr::Post(cpr::Url{url},
+                   cpr::Multipart{{"key", "file"},
+                                  {"value", cpr::File{songPath}}});
+		cout << r.text << std::endl;
 
 	}
 

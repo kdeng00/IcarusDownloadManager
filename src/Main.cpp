@@ -35,11 +35,12 @@ int main(int argc, char** argv)
 	}
 
 	cout<<"Song path: "<<songPath<<endl;
+	FileManager fm{songPath};
+	fm.saveFile(newSongPath);
+
 	Upload upS{songPath};
 	upS.uploadSong();
 
-	FileManager fm{songPath};
-	fm.saveFile(newSongPath);
 
 
 	return 0;
