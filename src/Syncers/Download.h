@@ -10,7 +10,7 @@ namespace Syncers
 	public:
 		Download();
 	private:
-	}
+	};
 }
 
 #endif

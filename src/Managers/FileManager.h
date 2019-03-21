@@ -15,6 +15,7 @@ namespace Managers
 		void modifyFilePath(std::string);
 
 		char* retrieveFileBuffer() const;
+		int retrieveFileBufferLength() const;
 	private:
 		void readFile();
 

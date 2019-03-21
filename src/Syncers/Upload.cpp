@@ -26,20 +26,28 @@ namespace Syncers
 
 	void Upload::uploadSong()
 	{
-		configureSong();
-		json jObj = serializeObject();
-		printJsonData(jObj);
+		configureSongDemo();
 
-		std::string url = apiUrl + apiEndPoint;
+		string url = apiUrl + ":" + std::to_string(port) + apiEndPoint;
 
-		auto r = cpr::Post(cpr::Url{url},
-                   cpr::Multipart{{"key", "file"},
-                                  {"value", cpr::File{songPath}}});
-		cout << r.text << std::endl;
+		try
+		{
+			auto r = cpr::Post(cpr::Url{url},
+                   cpr::Multipart{{"key", "small value"},
+                                  {"file", cpr::File{songPath}}});
+			cout << r.text << std::endl;
+
+			cout<<"Success"<<endl;
+		}
+		catch(std::exception& e)
+		{
+			cout<<e.what()<<endl;
+		}
+		cout<<"Finished"<<endl;
 
 	}
 
-	void Upload::configureSong()
+	void Upload::configureSongDemo()
 	{
 		int id = 0;
 		string title = "What of it?";
@@ -59,7 +67,6 @@ namespace Syncers
 		this->song.duration = duration;
 		this->song.songData = fMgr.retrieveFileBuffer();
 		cout<<*song.songData<<endl;
-		printSongDetails();
 	}
 	void Upload::printSongDetails()
 	{

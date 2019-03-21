@@ -41,7 +41,6 @@ namespace Managers
     		fileBuffer = new char [fileBufferLength];
 
     		cout<< "Reading "<<fileBufferLength<<" characters... "<<endl;;
-    		// read data as a block:
     		is.read (fileBuffer,fileBufferLength);
 
     		if (is)
@@ -62,4 +61,6 @@ namespace Managers
 	{
 		return fileBuffer;
 	}
+
+	int FileManager::retrieveFileBufferLength() const { return fileBufferLength; }
 }

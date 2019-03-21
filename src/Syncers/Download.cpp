@@ -1,3 +1,6 @@
 #include"Download.h"
 
-Download::Download() { }
+namespace Syncers
+{
+	Download::Download() { }
+}

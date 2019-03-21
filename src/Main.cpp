@@ -1,6 +1,7 @@
 #include<iostream>
 #include<string>
 
+#include"Syncers/Download.h"
 #include"Syncers/Upload.h"
 #include"Managers/FileManager.h"
 
@@ -10,6 +11,7 @@ using std::endl;
 using std::string;
 
 using Managers::FileManager;
+using Syncers::Download;
 using Syncers::Upload;
 
 string songPath;
