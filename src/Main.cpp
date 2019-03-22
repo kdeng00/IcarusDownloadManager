@@ -37,11 +37,16 @@ int main(int argc, char** argv)
 	}
 
 	cout<<"Song path: "<<songPath<<endl;
+	/**
 	FileManager fm{songPath};
 	fm.saveFile(newSongPath);
 
 	Upload upS{songPath};
 	upS.uploadSong();
+	*/
+
+	Download df{newSongPath};
+	df.downloadSong(1);
 
 
 

@@ -2,6 +2,7 @@
 #define DOWNLOAD_H_
 
 #include<iostream>
+#include<string>
 
 namespace Syncers
 {
@@ -9,7 +10,11 @@ namespace Syncers
 	{
 	public:
 		Download();
+		Download(std::string);
+
+		void downloadSong(int);
 	private:
+		std::string downloadFilePath;
 	};
 }
 
