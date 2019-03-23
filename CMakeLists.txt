@@ -29,9 +29,35 @@ else()
     endif()
 endif()
 
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed
+set(CMAKE_AUTOMOC ON)
+# Create code from a list of Qt designer ui files
+set(CMAKE_AUTOUIC ON)
+		
+
+find_package(Qt5Widgets CONFIG REQUIRED)
+
 add_subdirectory(cpr)
 
-add_executable(icd src/Main.cpp src/Managers/FileManager.h src/Managers/FileManager.cpp src/Syncers/Upload.h src/Syncers/Upload.cpp
-			   src/Syncers/Download.h src/Syncers/Download.cpp src/Models/Song.h)
-target_link_libraries(icd ${CPR_LIBRARIES})
+set(SOURCES
+	src/Main.cpp
+	src/Managers/FileManager.cpp
+	src/Syncers/Download.cpp
+	src/Syncers/Upload.cpp
+	src/UI/MainWindow.cpp	
+)
+set(HEADERS
+	src/Managers/FileManager.h
+	src/Models/Song.h
+	src/Syncers/Download.h
+	src/Syncers/Upload.h
+	src/UI/CommonWindow.h
+	src/UI/MainWindow.h
+)
+
+add_executable(icd ${SOURCES} ${HEADERS})
+			   
+target_link_libraries(icd ${CPR_LIBRARIES} Qt5::Widgets)
 include_directories(${CPR_INCLUDE_DIRS} ${JSON_INCLUDE_DIRS} src/)
