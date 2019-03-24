@@ -11,6 +11,7 @@
 #include<QMenu>
 #include<QMenuBar>
 #include<QMainWindow>
+#include<QPushButton>
 #include<QTextEdit>
 #include<QWidget>
 
@@ -33,13 +34,14 @@ namespace UI
 		void createMenus();
 		void setupMainWindow();
 
-		std::unique_ptr<QVBoxLayout> buttonLayoutQt;
 
-		std::unique_ptr<QWidget> buttonWidgetQt;
+		std::unique_ptr<QWidget> mainWidgetQt;
 
-		std::unique_ptr<QDockWidget> buttonDockWidgetQt;
-		std::unique_ptr<QDockWidget> cryptionAreaQt;
+		std::unique_ptr<QDockWidget> MainDockWidgetQt;
 
+		std::unique_ptr<QPushButton> uploadSongQt;
+
+		std::unique_ptr<QTextEdit> urlQt;
 		std::unique_ptr<QTextEdit> sourceFilePathQt;
 
 		std::unique_ptr<QMenu> fileMenuQt;
@@ -47,6 +49,7 @@ namespace UI
 		std::unique_ptr<QAction> closeApplicationQt;
 	signals:
 	private slots:
+		void uploadSong();
 	};
 }
 

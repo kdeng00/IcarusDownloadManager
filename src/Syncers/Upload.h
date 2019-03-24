@@ -7,6 +7,7 @@
 
 #include"Managers/FileManager.h"
 #include"Models/Song.h"
+#include"Models/UploadForm.h"
 
 
 namespace Syncers
@@ -16,6 +17,7 @@ namespace Syncers
 		public:
 			Upload();
 			Upload(std::string);
+			Upload(Models::UploadForm);
 
 			void uploadSong();
 
@@ -25,6 +27,7 @@ namespace Syncers
 			std::string apiUrl{"http://192.168.1.3"};
 			std::string apiEndPoint{"/api/song/data"};
 			std::string songPath;
+			std::string url;
 			int port{9349};
 
 			void configureSongDemo();

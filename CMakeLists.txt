@@ -51,6 +51,7 @@ set(SOURCES
 set(HEADERS
 	src/Managers/FileManager.h
 	src/Models/Song.h
+	src/Models/UploadForm.h
 	src/Syncers/Download.h
 	src/Syncers/Upload.h
 	src/UI/CommonWindow.h

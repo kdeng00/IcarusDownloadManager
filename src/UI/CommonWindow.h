@@ -20,8 +20,8 @@ protected:
 	std::unique_ptr<QComboBox> selectionBoxQt;
 	std::unique_ptr<QPushButton> actionButtonQt;
 	std::unique_ptr<QVBoxLayout> mainLayoutQt;
-	std::unique_ptr<QHBoxLayout> subLayoutOneQt;
-	std::unique_ptr<QHBoxLayout> subLayoutTwoQt;
+	std::unique_ptr<QVBoxLayout> subLayoutOneQt;
+	std::unique_ptr<QVBoxLayout> subLayoutTwoQt;
 	int windowHeight, windowWidth;
 };
 #endif

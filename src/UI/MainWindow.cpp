@@ -1,6 +1,18 @@
 #include"MainWindow.h"
 
+#include<iostream>
+#include<string>
+
+#include"Models/UploadForm.h"
+#include"Syncers/Upload.h"
+
+using std::cout;
+using std::endl;
+using std::string;
 using std::unique_ptr;
+
+using Models::UploadForm;
+using Syncers::Upload;
 
 namespace UI
 {
@@ -16,11 +28,20 @@ namespace UI
 	}
 	void MainWindow::configureUploadSection()
 	{
+		uploadSongQt = unique_ptr<QPushButton>{new QPushButton(tr("Upload"))};
+		urlQt = unique_ptr<QTextEdit>{new QTextEdit()};
+		sourceFilePathQt = unique_ptr<QTextEdit>{new QTextEdit()};
+
+		subLayoutOneQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
+		subLayoutOneQt.get()->addWidget(urlQt.get());
+		subLayoutOneQt.get()->addWidget(sourceFilePathQt.get());
+		subLayoutOneQt.get()->addWidget(uploadSongQt.get());
+		mainLayoutQt.get()->addLayout(subLayoutOneQt.get());
 	}
 	void MainWindow::configureWindowDimensions()
 	{
-		windowWidth = 600;
-		windowHeight = 600;
+		windowWidth = 400;
+		windowHeight = 400;
 	}
 	void MainWindow::configureWindowProperties()
 	{
@@ -30,7 +51,7 @@ namespace UI
 	}
 	void MainWindow::connections()
 	{
-	
+		QObject::connect(uploadSongQt.get(), SIGNAL(clicked()), this, SLOT(uploadSong()));
 	}
 	void MainWindow::createMenus()
 	{
@@ -41,11 +62,6 @@ namespace UI
 		closeApplicationQt.get()->setText("Exit Application");
 
 		/**
-		keyEdit = unique_ptr<QAction>{new QAction(new QObject(nullptr))};
-		keyEdit.get()->setText("Key Management");
-		passwordManage = unique_ptr<QAction>{new QAction{new QObject{nullptr}}};
-		passwordManage.get()->setText("PasswordManagement");
-
 		fileMenu.get()->addAction(closeApplication.get());
 		editMenu.get()->addAction(keyEdit.get());
 		editMenu.get()->addAction(passwordManage.get());
@@ -55,30 +71,40 @@ namespace UI
 	void MainWindow::setupMainWindow()
 	{
 		configureWindowDimensions();
-		actionButtonQt = unique_ptr<QPushButton>{new QPushButton(tr("upload"))};
-		selectionBoxQt = unique_ptr<QComboBox>{new QComboBox{}};
+		mainLayoutQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
 
-		buttonLayoutQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
-		buttonWidgetQt = unique_ptr<QWidget>{new QWidget};
-		buttonDockWidgetQt = unique_ptr<QDockWidget>{new QDockWidget};
-		buttonDockWidgetQt.get()->setWindowTitle(tr("Music Manager"));
-		buttonLayoutQt.get()->addWidget(selectionBoxQt.get());
-		buttonLayoutQt.get()->addWidget(actionButtonQt.get());
-		buttonWidgetQt.get()->setLayout(buttonLayoutQt.get());
-		buttonDockWidgetQt.get()->setWidget(buttonWidgetQt.get());
-		buttonDockWidgetQt.get()->setFeatures(QDockWidget::NoDockWidgetFeatures);
-		setCentralWidget(buttonDockWidgetQt.get());
+		configureUploadSection();
 
-		cryptionAreaQt = unique_ptr<QDockWidget>{new QDockWidget(tr("Cryption"))};
-		cryptionAreaQt.get()->setFeatures(QDockWidget::NoDockWidgetFeatures);
-		addDockWidget(Qt::LeftDockWidgetArea, cryptionAreaQt.get());
+		mainWidgetQt = unique_ptr<QWidget>{new QWidget};
+		mainWidgetQt.get()->setLayout(mainLayoutQt.get());
+
+		MainDockWidgetQt = unique_ptr<QDockWidget>{new QDockWidget};
+		MainDockWidgetQt.get()->setWindowTitle(tr("Music Manager"));
+		MainDockWidgetQt.get()->setWidget(mainWidgetQt.get());
+		MainDockWidgetQt.get()->setFeatures(QDockWidget::NoDockWidgetFeatures);
+		setCentralWidget(MainDockWidgetQt.get());
 
 		createMenus();
 
-
 		configureWindowProperties();
-		actionButtonQt.get()->setEnabled(false);
 
 		connections();
+	}
+
+
+	void MainWindow::uploadSong()
+	{
+		uploadSongQt->setEnabled(false);
+
+		string url = urlQt->toPlainText().toUtf8().constData();
+		string filePath = sourceFilePathQt->toPlainText().toUtf8().constData();
+		cout<<"URL endpoint: "<<url<<endl;
+		cout<<"Music file path: "<<filePath<<endl;
+		UploadForm formData{url, filePath};
+
+		Upload upld{formData};
+		upld.uploadSong();
+
+		uploadSongQt->setEnabled(true);
 	}
 }

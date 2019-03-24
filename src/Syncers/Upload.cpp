@@ -12,6 +12,9 @@ using std::string;
 
 using json = nlohmann::json;
 
+using Managers::FileManager;
+using Models::UploadForm;
+
 using namespace cpr;
 
 namespace Syncers
@@ -20,22 +23,23 @@ namespace Syncers
 	Upload::Upload(string filePath)
 	{
 		this->songPath = filePath;
-		this->fMgr = Managers::FileManager(songPath);
+		this->fMgr = FileManager(songPath);
+	}
+	Upload::Upload(UploadForm formData)
+	{
+		this->url = formData.url;
+		this->songPath = formData.filePath;
 	}
 
 
 	void Upload::uploadSong()
 	{
-		configureSongDemo();
-
-		string url = apiUrl + ":" + std::to_string(port) + apiEndPoint;
-
 		try
 		{
 			auto r = cpr::Post(cpr::Url{url},
                    cpr::Multipart{{"key", "small value"},
                                   {"file", cpr::File{songPath}}});
-			cout << r.text << std::endl;
+			cout << r.status_code<< std::endl;
 
 			cout<<"Success"<<endl;
 		}
