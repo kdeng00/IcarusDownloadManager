@@ -35,6 +35,9 @@ namespace UI
 		void setupMainWindow();
 
 
+        std::unique_ptr<QHBoxLayout> urlPortion;
+        std::unique_ptr<QHBoxLayout> songPathPortion;
+
 		std::unique_ptr<QWidget> mainWidgetQt;
 
 		std::unique_ptr<QDockWidget> MainDockWidgetQt;
@@ -43,6 +46,9 @@ namespace UI
 
 		std::unique_ptr<QTextEdit> urlQt;
 		std::unique_ptr<QTextEdit> sourceFilePathQt;
+
+        std::unique_ptr<QLabel> urlLabel;
+        std::unique_ptr<QLabel> songPath;
 
 		std::unique_ptr<QMenu> fileMenuQt;
 		std::unique_ptr<QMenu> editMenuQt;

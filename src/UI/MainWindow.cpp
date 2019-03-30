@@ -32,10 +32,21 @@ namespace UI
 		urlQt = unique_ptr<QTextEdit>{new QTextEdit()};
 		sourceFilePathQt = unique_ptr<QTextEdit>{new QTextEdit()};
 
+        urlLabel = unique_ptr<QLabel>{new QLabel(tr("URL"))};
+        songPath = unique_ptr<QLabel>{new QLabel(tr("Song Path"))};
+
+        urlPortion = unique_ptr<QHBoxLayout>{new QHBoxLayout};
+        songPathPortion = unique_ptr<QHBoxLayout>{new QHBoxLayout};
+
+        urlPortion.get()->addWidget(urlLabel.get());
+        urlPortion.get()->addWidget(urlQt.get());
+
+        songPathPortion->addWidget(songPath.get());
+        songPathPortion->addWidget(sourceFilePathQt.get());
+
 		subLayoutOneQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
-		subLayoutOneQt.get()->addWidget(urlQt.get());
-		subLayoutOneQt.get()->addWidget(sourceFilePathQt.get());
-		subLayoutOneQt.get()->addWidget(uploadSongQt.get());
+        subLayoutOneQt.get()->addLayout(urlPortion.get());
+        subLayoutOneQt->addLayout(songPathPortion.get());
 		mainLayoutQt.get()->addLayout(subLayoutOneQt.get());
 	}
 	void MainWindow::configureWindowDimensions()
