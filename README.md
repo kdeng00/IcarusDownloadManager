@@ -1,15 +1,9 @@
 # IcarusDownloadManager
 
-IcarusDownloadManager is a CLI program tool that has the feature of uploading and downloading songs from the [Icarus](https://github.com/amazing-username/Icarus) Music Server.
+IcarusDownloadManager is a Linux UI software client application that has the feature of uploading and downloading songs from the [Icarus](https://github.com/amazing-username/Icarus) Music Server. 
 
-### Prerequisites
 
-* CMake
-* gcc
-* libcurl
-* [cpr](http://whoshuu.github.io/cpr/)
-
-### Installing
+### Getting Started
 
 Clone the repository and esnure that the cpr c++ module is implemented by checking the contents of the cpr directory. If you notice a directory structure and a *CMakeList.txt* file then you are fine. Otherwise implement the modules with the following command:
 
@@ -30,7 +24,12 @@ The program has been built and can be executed by the binary file *icd*
 
 ## Built With
 
-* c++
+* C++
+* CMake
+* GCC
+* libCurl
+* Qt 5
+* [cpr](http://whoshuu.github.io/cpr/)
 
 ## Contributing
 
