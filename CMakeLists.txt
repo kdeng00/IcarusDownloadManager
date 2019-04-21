@@ -47,6 +47,7 @@ set(SOURCES
 	src/Syncers/Download.cpp
 	src/Syncers/Upload.cpp
 	src/UI/MainWindow.cpp	
+	src/UI/AboutWindow.cpp
 )
 set(HEADERS
 	src/Managers/FileManager.h
@@ -56,6 +57,7 @@ set(HEADERS
 	src/Syncers/Upload.h
 	src/UI/CommonWindow.h
 	src/UI/MainWindow.h
+	src/UI/AboutWindow.h
 )
 
 add_executable(icd ${SOURCES} ${HEADERS})

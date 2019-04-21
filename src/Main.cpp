@@ -17,7 +17,6 @@ string newSongPath;
 
 int main(int argc, char** argv)
 {
-	cout<<"Argument size: "<<argc<<endl;
 	switch(argc)
 	{
 		case 0:

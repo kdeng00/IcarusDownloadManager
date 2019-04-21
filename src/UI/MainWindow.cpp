@@ -18,8 +18,8 @@ namespace UI
 {
 	MainWindow::MainWindow() 
 	{
-
 		setupMainWindow();
+		aboutWindow = unique_ptr<AboutWindow>{new AboutWindow};
    	}
 
 
@@ -51,8 +51,8 @@ namespace UI
 	}
 	void MainWindow::configureWindowDimensions()
 	{
-		windowWidth = 400;
-		windowHeight = 400;
+		windowWidth = 450;
+		windowHeight = 450;
 	}
 	void MainWindow::configureWindowProperties()
 	{
@@ -63,20 +63,25 @@ namespace UI
 	void MainWindow::connections()
 	{
 		QObject::connect(uploadSongQt.get(), SIGNAL(clicked()), this, SLOT(uploadSong()));
+		QObject::connect(closeApplicationQt.get(), SIGNAL(triggered()), this, 
+						SLOT(exitApplication()));
+		QObject::connect(aboutApplicationQt.get(), SIGNAL(triggered()), this, 
+						SLOT(displaySoftwareInformation()));
 	}
 	void MainWindow::createMenus()
 	{
 		fileMenuQt = unique_ptr<QMenu>{menuBar()->addMenu(tr("File"))};
 		editMenuQt = unique_ptr<QMenu>{menuBar()->addMenu(tr("Edit"))};
+		helpMenuQt = unique_ptr<QMenu>{menuBar()->addMenu(tr("Help"))};
 
 		closeApplicationQt = unique_ptr<QAction>{new QAction(new QObject(nullptr))};
-		closeApplicationQt.get()->setText("Exit Application");
+		closeApplicationQt->setText("Exit Application");
 
-		/**
-		fileMenu.get()->addAction(closeApplication.get());
-		editMenu.get()->addAction(keyEdit.get());
-		editMenu.get()->addAction(passwordManage.get());
-		*/
+		aboutApplicationQt = unique_ptr<QAction>{new QAction(new QObject(nullptr))};
+		aboutApplicationQt->setText("About");
+
+		fileMenuQt->addAction(closeApplicationQt.get());
+		helpMenuQt->addAction(aboutApplicationQt.get());
 
 	}
 	void MainWindow::setupMainWindow()
@@ -103,6 +108,14 @@ namespace UI
 	}
 
 
+	void MainWindow::exitApplication()
+	{
+		exit(0);
+	}
+	void MainWindow::displaySoftwareInformation()
+	{
+		aboutWindow->show();
+	}
 	void MainWindow::uploadSong()
 	{
 		uploadSongQt->setEnabled(false);

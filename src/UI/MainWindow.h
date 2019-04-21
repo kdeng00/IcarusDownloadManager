@@ -16,6 +16,7 @@
 #include<QWidget>
 
 #include"UI/CommonWindow.h"
+#include"UI/AboutWindow.h"
 
 namespace UI
 {
@@ -52,10 +53,17 @@ namespace UI
 
 		std::unique_ptr<QMenu> fileMenuQt;
 		std::unique_ptr<QMenu> editMenuQt;
+		std::unique_ptr<QMenu> helpMenuQt;
+
 		std::unique_ptr<QAction> closeApplicationQt;
+		std::unique_ptr<QAction> aboutApplicationQt;
+
+		std::unique_ptr<AboutWindow> aboutWindow;
 	signals:
 	private slots:
 		void uploadSong();
+		void exitApplication();
+		void displaySoftwareInformation();
 	};
 }
 
