@@ -38,6 +38,7 @@ set(CMAKE_AUTOUIC ON)
 		
 
 find_package(Qt5Widgets CONFIG REQUIRED)
+find_package(nlohmann_json 3.6.1 REQUIRED)
 
 add_subdirectory(cpr)
 
@@ -48,6 +49,7 @@ set(SOURCES
 	src/Syncers/Upload.cpp
 	src/UI/MainWindow.cpp	
 	src/UI/AboutWindow.cpp
+	src/Utilities/Conversions.cpp
 )
 set(HEADERS
 	src/Managers/FileManager.h
@@ -58,6 +60,7 @@ set(HEADERS
 	src/UI/CommonWindow.h
 	src/UI/MainWindow.h
 	src/UI/AboutWindow.h
+	src/Utilities/Conversions.h
 )
 
 add_executable(icd ${SOURCES} ${HEADERS})

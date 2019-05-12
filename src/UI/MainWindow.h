@@ -5,6 +5,7 @@
 #include<memory>
 
 #include<QAction>
+#include<QComboBox>
 #include<QDialog>
 #include<QDockWidget>
 #include<QLabel>
@@ -12,6 +13,7 @@
 #include<QMenuBar>
 #include<QMainWindow>
 #include<QPushButton>
+#include<QStackedWidget>
 #include<QTextEdit>
 #include<QWidget>
 
@@ -33,23 +35,32 @@ namespace UI
 		void configureWindowProperties();
 		void connections();
 		void createMenus();
+		void setupMainWidget();
 		void setupMainWindow();
+		void setupWindowLists();
 
 
-        std::unique_ptr<QHBoxLayout> urlPortion;
-        std::unique_ptr<QHBoxLayout> songPathPortion;
+		std::unique_ptr<QStackedWidget> widgetStack;
+
+		std::unique_ptr<QVBoxLayout> stackLayout;
+
+        	std::unique_ptr<QHBoxLayout> urlPortion;
+        	std::unique_ptr<QHBoxLayout> songPathPortion;
 
 		std::unique_ptr<QWidget> mainWidgetQt;
+		std::unique_ptr<QWidget> uploadSongWidgetQt;
 
 		std::unique_ptr<QDockWidget> MainDockWidgetQt;
 
+		std::unique_ptr<QComboBox> windowComboBox;
+		
 		std::unique_ptr<QPushButton> uploadSongQt;
 
 		std::unique_ptr<QTextEdit> urlQt;
 		std::unique_ptr<QTextEdit> sourceFilePathQt;
 
-        std::unique_ptr<QLabel> urlLabel;
-        std::unique_ptr<QLabel> songPath;
+        	std::unique_ptr<QLabel> urlLabel;
+        	std::unique_ptr<QLabel> songPath;
 
 		std::unique_ptr<QMenu> fileMenuQt;
 		std::unique_ptr<QMenu> editMenuQt;
@@ -64,6 +75,7 @@ namespace UI
 		void uploadSong();
 		void exitApplication();
 		void displaySoftwareInformation();
+		void setCurrentIndex(int);
 	};
 }
 

@@ -5,6 +5,7 @@
 
 #include"Models/UploadForm.h"
 #include"Syncers/Upload.h"
+#include"Utilities/Conversions.h"
 
 using std::cout;
 using std::endl;
@@ -32,21 +33,21 @@ namespace UI
 		urlQt = unique_ptr<QTextEdit>{new QTextEdit()};
 		sourceFilePathQt = unique_ptr<QTextEdit>{new QTextEdit()};
 
-        urlLabel = unique_ptr<QLabel>{new QLabel(tr("URL"))};
-        songPath = unique_ptr<QLabel>{new QLabel(tr("Song Path"))};
+        	urlLabel = unique_ptr<QLabel>{new QLabel(tr("URL"))};
+        	songPath = unique_ptr<QLabel>{new QLabel(tr("Song Path"))};
 
-        urlPortion = unique_ptr<QHBoxLayout>{new QHBoxLayout};
-        songPathPortion = unique_ptr<QHBoxLayout>{new QHBoxLayout};
+        	urlPortion = unique_ptr<QHBoxLayout>{new QHBoxLayout};
+        	songPathPortion = unique_ptr<QHBoxLayout>{new QHBoxLayout};
 
-        urlPortion.get()->addWidget(urlLabel.get());
-        urlPortion.get()->addWidget(urlQt.get());
+        	urlPortion.get()->addWidget(urlLabel.get());
+        	urlPortion.get()->addWidget(urlQt.get());
 
-        songPathPortion->addWidget(songPath.get());
-        songPathPortion->addWidget(sourceFilePathQt.get());
+        	songPathPortion->addWidget(songPath.get());
+        	songPathPortion->addWidget(sourceFilePathQt.get());
 
 		subLayoutOneQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
-        subLayoutOneQt.get()->addLayout(urlPortion.get());
-        subLayoutOneQt->addLayout(songPathPortion.get());
+        	subLayoutOneQt.get()->addLayout(urlPortion.get());
+        	subLayoutOneQt->addLayout(songPathPortion.get());
 		mainLayoutQt.get()->addLayout(subLayoutOneQt.get());
 	}
 	void MainWindow::configureWindowDimensions()
@@ -67,6 +68,8 @@ namespace UI
 						SLOT(exitApplication()));
 		QObject::connect(aboutApplicationQt.get(), SIGNAL(triggered()), this, 
 						SLOT(displaySoftwareInformation()));
+		QObject::connect(windowComboBox.get(), SIGNAL(activated(int)),
+            					this, SLOT(setCurrentIndex(int)));
 	}
 	void MainWindow::createMenus()
 	{
@@ -84,20 +87,42 @@ namespace UI
 		helpMenuQt->addAction(aboutApplicationQt.get());
 
 	}
+	void MainWindow::setupMainWidget()
+	{
+		mainWidgetQt = unique_ptr<QWidget>{new QWidget};
+
+		windowComboBox = unique_ptr<QComboBox>{new QComboBox};
+		setupWindowLists();
+
+
+		stackLayout = unique_ptr<QVBoxLayout>{new QVBoxLayout};
+		stackLayout->addWidget(windowComboBox.get());
+
+		uploadSongWidgetQt = unique_ptr<QWidget>{new QWidget};
+		uploadSongWidgetQt->setLayout(mainLayoutQt.get());
+
+		stackLayout->addWidget(uploadSongWidgetQt.get());
+
+		mainWidgetQt->setLayout(stackLayout.get());
+	}
 	void MainWindow::setupMainWindow()
 	{
 		configureWindowDimensions();
+
 		mainLayoutQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
+		widgetStack = unique_ptr<QStackedWidget>{new QStackedWidget};
 
 		configureUploadSection();
 
-		mainWidgetQt = unique_ptr<QWidget>{new QWidget};
-		mainWidgetQt.get()->setLayout(mainLayoutQt.get());
+		setupMainWidget();
+
+		widgetStack->addWidget(mainWidgetQt.get());
 
 		MainDockWidgetQt = unique_ptr<QDockWidget>{new QDockWidget};
 		MainDockWidgetQt.get()->setWindowTitle(tr("Music Manager"));
-		MainDockWidgetQt.get()->setWidget(mainWidgetQt.get());
+		MainDockWidgetQt->setWidget(widgetStack.get());
 		MainDockWidgetQt.get()->setFeatures(QDockWidget::NoDockWidgetFeatures);
+
 		setCentralWidget(MainDockWidgetQt.get());
 
 		createMenus();
@@ -105,6 +130,13 @@ namespace UI
 		configureWindowProperties();
 
 		connections();
+	}
+	void MainWindow::setupWindowLists()
+	{
+		windowComboBox->addItem(tr("Upload song"));
+		windowComboBox->addItem(tr("Download song"));
+		windowComboBox->addItem(tr("Display all songs"));
+		windowComboBox->addItem(tr("Display songs"));
 	}
 
 
@@ -115,6 +147,14 @@ namespace UI
 	void MainWindow::displaySoftwareInformation()
 	{
 		aboutWindow->show();
+	}
+	void MainWindow::setCurrentIndex(int index)
+	{
+		cout<<"index "<<index<<endl;
+		QString qText = windowComboBox->itemText(index);
+		auto cnvert = Utilities::Conversions(qText);
+		auto convertedStr = cnvert.convertQStringToString();
+		cout<<"item text"<<endl;
 	}
 	void MainWindow::uploadSong()
 	{
