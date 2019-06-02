@@ -43,6 +43,7 @@ endif()
 set(SOURCES
 	src/Main.cpp
 	src/Managers/ActionManager.cpp
+	src/Managers/CommitManager.cpp
 	src/Managers/FileManager.cpp
 	src/Syncers/Download.cpp
 	src/Syncers/Upload.cpp
@@ -50,9 +51,14 @@ set(SOURCES
 )
 set(HEADERS
 	src/Managers/ActionManager.h
+	src/Managers/CommitManager.h
 	src/Managers/FileManager.h
+	src/Models/Token.h
+	src/Models/Flags.h
+	src/Models/IcarusAction.h
 	src/Models/Song.h
 	src/Models/UploadForm.h
+	src/Models/User.h
 	src/Syncers/Download.h
 	src/Syncers/Upload.h
 	src/Utilities/Conversions.h
