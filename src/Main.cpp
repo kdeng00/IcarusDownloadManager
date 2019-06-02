@@ -1,43 +1,28 @@
 #include<iostream>
 #include<string>
 
-#include<QApplication>
-
-#include"UI/MainWindow.h"
+#include"Managers/ActionManager.h"
 
 using std::cin;
 using std::cout;
 using std::endl;
 using std::string;
 
-using UI::MainWindow;
+using Managers::ActionManager;
 
 string songPath{};
-string newSongPath;
+string newSongPath{};
 
 int main(int argc, char** argv)
 {
-	switch(argc)
+	if (argc <= 1)
 	{
-		case 0:
-			break;
-		case 1:
-			break;
-		case 2:
-			break;
-		case 3:
-			songPath = argv[1];
-			newSongPath = argv[2];
-			break;
-		default:
-			break;
+		cout<<"No actions provided"<<endl;
+		return 1;
 	}
 
-	QApplication app{argc, argv};
-
-	MainWindow icarusMgr{};
-	icarusMgr.show();
+	ActionManager actMgr{argv};
 
 
-	return app.exec();
+	return 0;
 }

@@ -1,5 +1,15 @@
-cmake_minimum_required(VERSION 2.8.7)
+cmake_minimum_required(VERSION 3.2)
+
+
+include("cmake/HunterGate.cmake")
+HunterGate(
+    URL "https://github.com/ruslo/hunter/archive/v0.23.184.tar.gz"
+    SHA1 "fe3fb05d51c21499c7eebbe7d0e102742a54a9cd"
+)
+
 project(IcarusDownloadManager)
+
+
 
 if(NOT ${CMAKE_VERSION} LESS 3.2)
     set(CMAKE_CXX_STANDARD 11)
@@ -29,41 +39,33 @@ else()
     endif()
 endif()
 
-# Find includes in corresponding build directories
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
-# Instruct CMake to run moc automatically when needed
-set(CMAKE_AUTOMOC ON)
-# Create code from a list of Qt designer ui files
-set(CMAKE_AUTOUIC ON)
-		
-
-find_package(Qt5Widgets CONFIG REQUIRED)
-find_package(nlohmann_json 3.6.1 REQUIRED)
-
-add_subdirectory(cpr)
 
 set(SOURCES
 	src/Main.cpp
+	src/Managers/ActionManager.cpp
 	src/Managers/FileManager.cpp
 	src/Syncers/Download.cpp
 	src/Syncers/Upload.cpp
-	src/UI/MainWindow.cpp	
-	src/UI/AboutWindow.cpp
 	src/Utilities/Conversions.cpp
 )
 set(HEADERS
+	src/Managers/ActionManager.h
 	src/Managers/FileManager.h
 	src/Models/Song.h
 	src/Models/UploadForm.h
 	src/Syncers/Download.h
 	src/Syncers/Upload.h
-	src/UI/CommonWindow.h
-	src/UI/MainWindow.h
-	src/UI/AboutWindow.h
 	src/Utilities/Conversions.h
 )
 
+
+hunter_add_package(nlohmann_json)
+find_package(nlohmann_json CONFIG REQUIRED)
+
+hunter_add_package(cpr)
+find_package(cpr CONFIG REQUIRED)
+
+
 add_executable(icd ${SOURCES} ${HEADERS})
-			   
-target_link_libraries(icd ${CPR_LIBRARIES} Qt5::Widgets)
-include_directories(${CPR_INCLUDE_DIRS} ${JSON_INCLUDE_DIRS} src/)
+target_link_libraries(icd PUBLIC nlohmann_json::nlohmann_json cpr::cpr)
+include_directories(src/)
