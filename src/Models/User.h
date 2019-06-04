@@ -9,7 +9,7 @@ namespace Models
 	{
 		std::string username;
 		std::string password;
-	}
+	};
 }
 
 #endif

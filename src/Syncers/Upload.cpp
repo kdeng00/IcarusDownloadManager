@@ -1,4 +1,5 @@
 #include<iostream>
+#include<exception>
 #include<string>
 
 #include<cpr/cpr.h>
@@ -8,6 +9,7 @@
 
 using std::cout;
 using std::endl;
+using std::exception;
 using std::string;
 
 using json = nlohmann::json;
@@ -37,8 +39,8 @@ namespace Syncers
 		try
 		{
 			auto r = cpr::Post(cpr::Url{url},
-                   cpr::Multipart{{"key", "small value"},
-                                  {"file", cpr::File{songPath}}});
+                   		cpr::Multipart{{"key", "small value"},
+                                {"file", cpr::File{songPath}}});
 			cout << r.status_code<< std::endl;
 
 			cout<<"Success"<<endl;
@@ -49,6 +51,27 @@ namespace Syncers
 		}
 		cout<<"Finished"<<endl;
 
+	}
+	void Upload::uploadSong(const Models::Token token, const std::string songPath)
+	{
+		try
+		{
+			string auth{token.tokenType};
+			auth.append(" " + token.accessToken);
+			auto r = cpr::Post(cpr::Url{""},
+                   		cpr::Multipart{{"key", "small value"},
+                                {"file", cpr::File{songPath}}},
+		   		cpr::Header{{"authorization", auth}}
+				);
+
+			cout << r.status_code<< std::endl;
+		}
+		catch (exception e)
+		{
+			auto msg = e.what();
+			cout<<msg<<endl;
+		}
+		cout<<"Finished"<<endl;
 	}
 
 	void Upload::configureSongDemo()

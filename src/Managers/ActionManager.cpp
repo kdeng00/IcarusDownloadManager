@@ -103,7 +103,6 @@ namespace Managers
 				flg = Flags{};
 				continue;
 			}
-			cout<<"\nprovided flag: "<<flag<<endl;
 			if (std::any_of(supportedFlags.begin(), supportedFlags.end(), 
 				[&](string val)
 				{
@@ -113,7 +112,6 @@ namespace Managers
 					return !val.compare(flag);
 				}))
 			{
-				cout<<"Flag : "<<flag<<" is valid"<<endl;
 				flg.flag = flag;
 			}
 			else

@@ -45,6 +45,8 @@ set(SOURCES
 	src/Managers/ActionManager.cpp
 	src/Managers/CommitManager.cpp
 	src/Managers/FileManager.cpp
+	src/Managers/TokenManager.cpp
+	src/Managers/UserManager.cpp
 	src/Syncers/Download.cpp
 	src/Syncers/Upload.cpp
 	src/Utilities/Conversions.cpp
@@ -53,10 +55,12 @@ set(HEADERS
 	src/Managers/ActionManager.h
 	src/Managers/CommitManager.h
 	src/Managers/FileManager.h
-	src/Models/Token.h
+	src/Managers/TokenManager.h
+	src/Managers/UserManager.h
 	src/Models/Flags.h
 	src/Models/IcarusAction.h
 	src/Models/Song.h
+	src/Models/Token.h
 	src/Models/UploadForm.h
 	src/Models/User.h
 	src/Syncers/Download.h

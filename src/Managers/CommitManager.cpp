@@ -2,12 +2,20 @@
 
 #include<iostream>
 
+#include"Syncers/Upload.h"
+
+#include"TokenManager.h"
+#include"UserManager.h"
+
 using std::cout;
 using std::endl;
 using std::map;
 using std::string;
 
+using Managers::TokenManager;
+using Managers::UserManager;
 using Models::IcarusAction;
+using Syncers::Upload;
 
 namespace Managers
 {
@@ -50,14 +58,36 @@ namespace Managers
 	void CommitManager::uploadSong()
 	{
 		cout<<"Uploading song..."<<endl;
+		UserManager usrMgr{icaAction};
+		auto user = usrMgr.retrieveUser();
+
+		TokenManager tk{user};
+		auto token = tk.requestToken();
+
+		string songPath{};
+
+		for (auto arg : icaAction.flags)
+		{
+			auto flag = arg.flag;
+			auto value = arg.value;
+
+			if (flag.compare("-s") == 0)
+			{
+				songPath.assign(arg.value);
+			}
+		}
+
+		Upload upld{};
+		upld.uploadSong(token, songPath);
+
 		// TODO: Implement functionality for uploading
 		//
 		// Need to the following:
-		// 1. Parse the login credentials from the Flag model
-		// 2. Retrieve a token -- implement token management
-		// 3. Parse song path from the Flag model
-		// 4. Parse the HTTP API endpoint
-		// 5. Upload the song
+		// 1. Parse the login credentials from the Flag model x
+		// 2. Retrieve a token -- implement token management x
+		// 3. Parse song path from the Flag model x Make a parser class
+		// 4. Parse the HTTP API endpoint Make parser class
+		// 5. Upload the song x
 	}
 	#pragma Functions
 }

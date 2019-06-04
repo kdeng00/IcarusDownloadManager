@@ -7,6 +7,7 @@
 
 #include"Managers/FileManager.h"
 #include"Models/Song.h"
+#include"Models/Token.h"
 #include"Models/UploadForm.h"
 
 
@@ -20,7 +21,7 @@ namespace Syncers
 			Upload(Models::UploadForm);
 
 			void uploadSong();
-
+			void uploadSong(const Models::Token, const std::string);
 		private:
 			Managers::FileManager fMgr;
 			Models::Song song;
