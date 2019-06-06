@@ -4,12 +4,18 @@
 #include<iostream>
 #include<string>
 
+#include"Models/API.h"
+#include"Models/Song.h"
+
+#include"SyncerBase.h"
+
 namespace Syncers
 {
-	class Download
+	class Download : SyncerBase
 	{
 	public:
 		Download();
+		Download(Models::API);
 		Download(std::string);
 
 		void downloadSong(int);

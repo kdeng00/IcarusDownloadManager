@@ -16,7 +16,6 @@ namespace Managers
 	UserManager::UserManager(User user)
 	{
 		this->user = user;
-		this->user = User{};
 	}
 	UserManager::UserManager(const IcarusAction icaAct)
 	{

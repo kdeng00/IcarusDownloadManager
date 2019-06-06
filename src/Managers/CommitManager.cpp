@@ -2,6 +2,9 @@
 
 #include<iostream>
 
+#include"Models/API.h"
+#include"Models/Song.h"
+#include"Parsers/APIParser.h"
 #include"Syncers/Upload.h"
 
 #include"TokenManager.h"
@@ -14,6 +17,9 @@ using std::string;
 
 using Managers::TokenManager;
 using Managers::UserManager;
+using Models::API;
+using Models::Song;
+using Parsers::APIParser;
 using Models::IcarusAction;
 using Syncers::Upload;
 
@@ -38,6 +44,7 @@ namespace Managers
 			case deleteAct:
 				break;
 			case downloadAct:
+				downloadSong();
 				break;
 			case retrieveAct:
 				break;
@@ -55,16 +62,23 @@ namespace Managers
 			{"upload", uploadAct}
 		};
 	}
+	void CommitManager::downloadSong()
+	{
+		// TODO: Implement this functionality
+	}
 	void CommitManager::uploadSong()
 	{
 		cout<<"Uploading song..."<<endl;
 		UserManager usrMgr{icaAction};
 		auto user = usrMgr.retrieveUser();
 
-		TokenManager tk{user};
+		APIParser apiPrs{icaAction};
+		auto api = apiPrs.retrieveAPI();
+
+		TokenManager tk{user, api};
 		auto token = tk.requestToken();
 
-		string songPath{};
+		Song song{};
 
 		for (auto arg : icaAction.flags)
 		{
@@ -73,21 +87,12 @@ namespace Managers
 
 			if (flag.compare("-s") == 0)
 			{
-				songPath.assign(arg.value);
+				song.songPath.assign(arg.value);
 			}
 		}
 
-		Upload upld{};
-		upld.uploadSong(token, songPath);
-
-		// TODO: Implement functionality for uploading
-		//
-		// Need to the following:
-		// 1. Parse the login credentials from the Flag model x
-		// 2. Retrieve a token -- implement token management x
-		// 3. Parse song path from the Flag model x Make a parser class
-		// 4. Parse the HTTP API endpoint Make parser class
-		// 5. Upload the song x
+		Upload upld{api};
+		upld.uploadSong(token, song);
 	}
 	#pragma Functions
 }

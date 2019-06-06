@@ -10,9 +10,15 @@ using std::endl;
 using std::ofstream;
 using std::string;
 
+using Models::API;
+
 namespace Syncers
 {
 	Download::Download() { }
+	Download::Download(API api)
+	{
+		this->api = api;
+	}
 	Download::Download(string filePath)
 	{
 		downloadFilePath = filePath;

@@ -47,6 +47,7 @@ set(SOURCES
 	src/Managers/FileManager.cpp
 	src/Managers/TokenManager.cpp
 	src/Managers/UserManager.cpp
+	src/Parsers/APIParser.cpp
 	src/Syncers/Download.cpp
 	src/Syncers/Upload.cpp
 	src/Utilities/Conversions.cpp
@@ -57,13 +58,16 @@ set(HEADERS
 	src/Managers/FileManager.h
 	src/Managers/TokenManager.h
 	src/Managers/UserManager.h
+	src/Models/API.h
 	src/Models/Flags.h
 	src/Models/IcarusAction.h
 	src/Models/Song.h
 	src/Models/Token.h
 	src/Models/UploadForm.h
 	src/Models/User.h
+	src/Parsers/APIParser.h
 	src/Syncers/Download.h
+	src/Syncers/SyncerBase.h
 	src/Syncers/Upload.h
 	src/Utilities/Conversions.h
 )

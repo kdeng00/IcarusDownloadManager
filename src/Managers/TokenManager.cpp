@@ -11,6 +11,7 @@ using std::endl;
 using json = nlohmann::json;
 
 using Managers::TokenManager;
+using Models::API;
 using Models::Token;
 using Models::User;
 
@@ -20,6 +21,13 @@ namespace Managers
 	TokenManager::TokenManager(const User user)
 	{
 		this->user = user;
+	}
+	TokenManager::TokenManager(const User user, API api)
+	{
+		this->user = user;
+		this->api = api;
+		this->api.endpoint = "api/" + api.version 
+			+ "/login";
 	}
 	#pragma Constructors
 
@@ -33,7 +41,9 @@ namespace Managers
 		usrObj["username"] = user.username;
 		usrObj["password"] = user.password;
 
-		auto r = cpr::Post(cpr::Url{""},
+		cout<<"Sending request for token"<<endl;
+		auto url = api.url + api.endpoint;
+		auto r = cpr::Post(cpr::Url{url},
 				cpr::Body{usrObj.dump()},
 		   cpr::Header{{"Content-Type", "application/json"}});
 

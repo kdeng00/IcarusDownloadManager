@@ -6,6 +6,7 @@
 #include<nlohmann/json.hpp>
 
 #include"Managers/FileManager.h"
+#include"Models/API.h"
 #include"Models/Song.h"
 #include"Models/Token.h"
 #include"Models/UploadForm.h"
@@ -18,24 +19,28 @@ namespace Syncers
 		public:
 			Upload();
 			Upload(std::string);
+			Upload(Models::API);
 			Upload(Models::UploadForm);
 
 			void uploadSong();
-			void uploadSong(const Models::Token, const std::string);
+			void uploadSong(const Models::Token, Models::Song);
 		private:
 			Managers::FileManager fMgr;
+			Models::API api;
 			Models::Song song;
-			std::string apiUrl{"http://192.168.1.3"};
-			std::string apiEndPoint{"/api/song/data"};
-			std::string songPath;
-			std::string url;
-			int port{9349};
+			std::string apiUrl{""}; // Not being used
+			std::string apiEndPoint{""}; // Not being used
+			std::string songPath; // Not being used
+			std::string url; // Not being used
+			int port{9349}; // Not being used
+
+			std::string retrieveUrl();
 
 			void configureSongDemo();
 			void printSongDetails();
 			void printJsonData(nlohmann::json);
 
-			nlohmann::json serializeObject();
+			nlohmann::json serializeObject(); // Not being used
 	};
 }
 

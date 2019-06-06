@@ -15,6 +15,8 @@ using std::string;
 using json = nlohmann::json;
 
 using Managers::FileManager;
+using Models::API;
+using Models::Song;
 using Models::UploadForm;
 
 using namespace cpr;
@@ -26,6 +28,11 @@ namespace Syncers
 	{
 		this->songPath = filePath;
 		this->fMgr = FileManager(songPath);
+	}
+	Upload::Upload(API api)
+	{
+		this->api = api;
+		this->api.endpoint = "song/data";
 	}
 	Upload::Upload(UploadForm formData)
 	{
@@ -52,15 +59,18 @@ namespace Syncers
 		cout<<"Finished"<<endl;
 
 	}
-	void Upload::uploadSong(const Models::Token token, const std::string songPath)
+	void Upload::uploadSong(const Models::Token token, Song song)
 	{
 		try
 		{
+			auto url = retrieveUrl();
+
+			cout<<"url "<<url<<endl;
 			string auth{token.tokenType};
 			auth.append(" " + token.accessToken);
-			auto r = cpr::Post(cpr::Url{""},
+			auto r = cpr::Post(cpr::Url{url},
                    		cpr::Multipart{{"key", "small value"},
-                                {"file", cpr::File{songPath}}},
+                                {"file", cpr::File{song.songPath}}},
 		   		cpr::Header{{"authorization", auth}}
 				);
 
@@ -74,6 +84,14 @@ namespace Syncers
 		cout<<"Finished"<<endl;
 	}
 
+	string Upload::retrieveUrl()
+	{
+		string url = api.url + "api/" + api.version + "/" +
+			api.endpoint;
+			
+		return url;
+	}
+	#pragma
 	void Upload::configureSongDemo()
 	{
 		int id = 0;
@@ -135,4 +153,6 @@ namespace Syncers
 
 		return jObj;
 	}
+	#pragma Testing
+	#pragma Functions
 }
