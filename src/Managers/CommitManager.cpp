@@ -5,6 +5,7 @@
 #include"Models/API.h"
 #include"Models/Song.h"
 #include"Parsers/APIParser.h"
+#include"Syncers/Delete.h"
 #include"Syncers/Upload.h"
 
 #include"TokenManager.h"
@@ -21,6 +22,7 @@ using Models::API;
 using Models::Song;
 using Parsers::APIParser;
 using Models::IcarusAction;
+using Syncers::Delete;
 using Syncers::Upload;
 
 namespace Managers
@@ -42,6 +44,7 @@ namespace Managers
 		switch (mapActions[action])
 		{
 			case deleteAct:
+				deleteSong();
 				break;
 			case downloadAct:
 				downloadSong();
@@ -61,6 +64,35 @@ namespace Managers
 			{"retrieve", retrieveAct},
 			{"upload", uploadAct}
 		};
+	}
+	void CommitManager::deleteSong()
+	{
+		cout<<"Deleting song..."<<endl;
+
+		UserManager usrMgr{icaAction};
+		auto user = usrMgr.retrieveUser();
+
+		APIParser apiPrs{icaAction};
+		auto api = apiPrs.retrieveAPI();
+
+		TokenManager tk{user, api};
+		auto token = tk.requestToken();
+
+		Song song{};
+
+		for (auto arg : icaAction.flags)
+		{
+			auto flag = arg.flag;
+			auto value = arg.value;
+
+			if (flag.compare("-D") == 0)
+			{
+				song.id = atoi(value.c_str());
+			}
+		}
+
+		Delete del{api};
+		del.deleteSong(token, song);
 	}
 	void CommitManager::downloadSong()
 	{

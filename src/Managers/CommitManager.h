@@ -16,6 +16,7 @@ namespace Managers
 		void commitAction();
 	private:
 		void initializeMapActions();
+		void deleteSong();
 		void downloadSong();
 		void uploadSong();
 

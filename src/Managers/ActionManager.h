@@ -18,6 +18,8 @@ namespace Managers
 		std::vector<Models::Flags> retrieveFlags() const;
 		std::string retrieveAction() const;
 	private:
+		bool isNumber(std::string);
+
 		void initialize();
 		void initializeSupportedActions();
 		void initializeSupportedFlags();

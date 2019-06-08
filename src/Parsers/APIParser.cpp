@@ -1,5 +1,10 @@
 #include"APIParser.h"
 
+#include<iostream>
+
+using std::cout;
+using std::endl;
+
 using Models::API;
 using Models::IcarusAction;
 
@@ -24,16 +29,25 @@ namespace Parsers
 	void APIParser::parseAPI()
 	{
 		auto flags = icaAct.flags;
+		cout<<"Parsing api"<<endl;
 
-		for (auto flag :  flags)
+		//for (auto flag :  flags)
+		for (auto i =0; i < flags.size(); ++i)
 		{
-			auto arg = flag.flag;
-			auto value = flag.value;
+			auto arg = flags[i].flag;
+			auto value = flags[i].value;
 
 			if (arg.compare("-h") == 0)
+				
 			{
 				api.url = value;
 			}
+			if (value.compare("-h") == 0)
+			{
+				api.url = flags[i + 1].value;
+			}
+
+			cout<<"url is "<<api.url<<endl;
 		}
 
 		// TODO: For now I will hard code

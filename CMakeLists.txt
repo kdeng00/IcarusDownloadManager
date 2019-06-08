@@ -48,6 +48,7 @@ set(SOURCES
 	src/Managers/TokenManager.cpp
 	src/Managers/UserManager.cpp
 	src/Parsers/APIParser.cpp
+	src/Syncers/Delete.cpp
 	src/Syncers/Download.cpp
 	src/Syncers/Upload.cpp
 	src/Utilities/Conversions.cpp
@@ -66,6 +67,7 @@ set(HEADERS
 	src/Models/UploadForm.h
 	src/Models/User.h
 	src/Parsers/APIParser.h
+	src/Syncers/Delete.h
 	src/Syncers/Download.h
 	src/Syncers/SyncerBase.h
 	src/Syncers/Upload.h

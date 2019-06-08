@@ -47,6 +47,15 @@ namespace Managers
 		return action;
 	}
 
+	bool ActionManager::isNumber(string val)
+	{
+		return !val.empty() && std::find_if(val.begin(), 
+			val.end(), [](char c)
+			{
+				return !std::isdigit(c);
+		       	}) == val.end();
+	}
+
 	void ActionManager::initialize()
 	{
 		initializeSupportedActions();
@@ -64,7 +73,7 @@ namespace Managers
 	{
 		supportedFlags = vector<string>{
 			"-u", "-p", "-t", "-h", "-s",
-			"-d"
+			"-d", "-D"
 		};
 	}
 	void ActionManager::validateAction()
@@ -96,22 +105,23 @@ namespace Managers
 
 		for (auto flag : flagVals)
 		{
-			if (flag.size() > 3)
+			//if (flag.size() > 3 ||  flg.flag.compare("-D"))
+			if (flag.size() > 3 || isNumber(flag))
 			{
 				flg.value = flag;
+				cout<<"flag value "<<flg.value<<endl;
 				flags.push_back(flg);
 				flg = Flags{};
 				continue;
 			}
+
 			if (std::any_of(supportedFlags.begin(), supportedFlags.end(), 
 				[&](string val)
 				{
-					if (val.size() < 3)
-					{
-					}
 					return !val.compare(flag);
 				}))
 			{
+				cout<<"flag "<<flag<<endl;
 				flg.flag = flag;
 			}
 			else
@@ -130,6 +140,7 @@ namespace Managers
 			for (auto i = 2; true; ++i)
 			{
 				string val{*(params + i)};
+				cout<<"Parsed flag "<<val<<endl;
 				parsed.push_back(val);
 			}
 		}
