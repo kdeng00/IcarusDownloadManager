@@ -11,6 +11,9 @@ namespace Syncers
 	{
 	protected:
 		Models::API api;
+		const int OK = 200;
+		const int UNAUTHORIZED = 401;
+		const int NOTFOUND = 404;
 	};
 }
 

@@ -6,6 +6,7 @@
 #include"Models/Song.h"
 #include"Parsers/APIParser.h"
 #include"Syncers/Delete.h"
+#include"Syncers/Download.h"
 #include"Syncers/Upload.h"
 
 #include"TokenManager.h"
@@ -23,6 +24,7 @@ using Models::Song;
 using Parsers::APIParser;
 using Models::IcarusAction;
 using Syncers::Delete;
+using Syncers::Download;
 using Syncers::Upload;
 
 namespace Managers
@@ -49,7 +51,7 @@ namespace Managers
 			case downloadAct:
 				downloadSong();
 				break;
-			case retrieveAct:
+			case retrieveAct: // No plans to imeplement
 				break;
 			case uploadAct:
 				uploadSong();
@@ -96,7 +98,35 @@ namespace Managers
 	}
 	void CommitManager::downloadSong()
 	{
-		// TODO: Implement this functionality
+		cout<<"Starting downloading process..."<<endl;
+		UserManager usrMgr{icaAction};
+		auto user = usrMgr.retrieveUser();
+
+		APIParser apiPrs{icaAction};
+		auto api = apiPrs.retrieveAPI();
+
+		TokenManager tk{user, api};
+		auto token = tk.requestToken();
+
+		Song song{};
+
+		for (auto arg : icaAction.flags)
+		{
+			auto flag = arg.flag;
+			auto value = arg.value;
+
+			if (flag.compare("-d") == 0)
+			{
+				song.songPath.assign(arg.value);
+			}
+			if (flag.compare("-b") == 0)
+			{
+				song.id = atoi(value.c_str());
+			}
+		}
+
+		Download dnld{api};
+		dnld.downloadSong(token, song);
 	}
 	void CommitManager::uploadSong()
 	{

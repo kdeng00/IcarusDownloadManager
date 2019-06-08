@@ -73,7 +73,7 @@ namespace Managers
 	{
 		supportedFlags = vector<string>{
 			"-u", "-p", "-t", "-h", "-s",
-			"-d", "-D"
+			"-d", "-D", "-b"
 		};
 	}
 	void ActionManager::validateAction()

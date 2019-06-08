@@ -6,6 +6,7 @@
 
 #include"Models/API.h"
 #include"Models/Song.h"
+#include"Models/Token.h"
 
 #include"SyncerBase.h"
 
@@ -19,8 +20,12 @@ namespace Syncers
 		Download(std::string);
 
 		void downloadSong(int);
+		void downloadSong(const Models::Token token, Models::Song);
 	private:
+		std::string retrieveUrl(Models::Song);
+
 		std::string downloadFilePath;
+		void saveSong(Models::Song*);
 	};
 }
 
