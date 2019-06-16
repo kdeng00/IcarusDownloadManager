@@ -5,17 +5,14 @@ IcarusDownloadManager is a Linux UI software client application that has the fea
 
 ### Getting Started
 
-Clone the repository and esnure that the cpr c++ module is implemented by checking the contents of the cpr directory. If you notice a directory structure and a *CMakeList.txt* file then you are fine. Otherwise implement the modules with the following command:
-
-
-```
-git submodule update --init --recursive
-```
-
-Once that is complete, verify the contents of the cpr directory and there should be a *CMakeList.txt* file. Now you must compile and link the project
+Build the project:
 
 ```
-cmake .
+export HUNTER_ROOT=/path/to/download/hunter/files/for/dependencies
+mkdir _build
+cd _build
+cmake -H. -B_builds -DHUNTER_STATUS_DEBUG=ON -DCMAKE_BUILD_TYPE=DEBUG
+cmake --build _builds --config Debug
 make
 ```
 
@@ -27,8 +24,9 @@ The program has been built and can be executed by the binary file *icd*
 * C++
 * CMake
 * GCC
+* [Hunter](https://github.com/ruslo/hunter)
 * libCurl
-* Qt 5
+* [json](https://github.com/nlohmann/json)
 * [cpr](http://whoshuu.github.io/cpr/)
 
 ## Contributing
@@ -37,7 +35,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduc
 
 ## Versioning
 
-No version has been released 
+[v0.1.0](https://github.com/amazing-username/IcarusDownloadManager/releases/tag/0.1.0)
 
 ## Authors
 
