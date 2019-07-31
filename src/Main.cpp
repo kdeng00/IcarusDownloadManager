@@ -12,9 +12,6 @@ using std::string;
 using Managers::ActionManager;
 using Managers::CommitManager;
 
-string songPath{};
-string newSongPath{};
-
 int main(int argc, char** argv)
 {
 	if (argc < 2)

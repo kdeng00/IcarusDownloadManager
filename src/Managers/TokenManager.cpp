@@ -1,4 +1,4 @@
-#include"TokenManager.h"
+#include"Managers/TokenManager.h"
 
 #include<iostream>
 
@@ -17,46 +17,46 @@ using Models::User;
 
 namespace Managers
 {
-	#pragma
-	TokenManager::TokenManager(const User user)
-	{
-		this->user = user;
-	}
-	TokenManager::TokenManager(const User user, API api)
-	{
-		this->user = user;
-		this->api = api;
-		this->api.endpoint = "api/" + api.version 
-			+ "/login";
-	}
-	#pragma Constructors
+    #pragma
+    TokenManager::TokenManager(const User user)
+    {
+        this->user = user;
+    }
+    TokenManager::TokenManager(const User user, API api)
+    {
+        this->user = user;
+        this->api = api;
+        this->api.endpoint = "api/" + api.version 
+            + "/login";
+    }
+    #pragma Constructors
 
 
-	#pragma
-	Token TokenManager::requestToken()
-	{
-		Token token{};
-		json usrObj;
+    #pragma
+    Token TokenManager::requestToken()
+    {
+        Token token{};
+        json usrObj;
 
-		usrObj["username"] = user.username;
-		usrObj["password"] = user.password;
-		cout<<user.username<<" "<<user.password<<endl;
+        usrObj["username"] = user.username;
+        usrObj["password"] = user.password;
+        cout<<user.username<<" "<<user.password<<endl;
 
-		cout<<"Sending request for token"<<endl;
-		auto url = api.url + api.endpoint;
-		cout<<url<<endl;
-		auto r = cpr::Post(cpr::Url{url},
-				cpr::Body{usrObj.dump()},
-		   cpr::Header{{"Content-Type", "application/json"}});
+        cout<<"Sending request for token"<<endl;
+        auto url = api.url + api.endpoint;
+        cout<<url<<endl;
+        auto r = cpr::Post(cpr::Url{url},
+                cpr::Body{usrObj.dump()},
+           cpr::Header{{"Content-Type", "application/json"}});
 
-		cout<<r.text<<endl;
-		json res = json::parse(r.text);
-		token.accessToken = res["token"];
-		token.tokenType = res["token_type"];
+        cout<<r.text<<endl;
+        json res = json::parse(r.text);
+        token.accessToken = res["token"];
+        token.tokenType = res["token_type"];
 
-		//cout<<"status code "<<r.status_code<<endl;
+        //cout<<"status code "<<r.status_code<<endl;
 
-		return token;
-	}
-	#pragma Functions
+        return token;
+    }
+    #pragma Functions
 }

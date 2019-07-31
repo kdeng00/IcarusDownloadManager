@@ -1,16 +1,17 @@
-#include"CommitManager.h"
+#include"Managers/CommitManager.h"
 
 #include<iostream>
 
 #include"Models/API.h"
 #include"Models/Song.h"
+#include"Models/Token.h"
 #include"Parsers/APIParser.h"
 #include"Syncers/Delete.h"
 #include"Syncers/Download.h"
 #include"Syncers/Upload.h"
 
-#include"TokenManager.h"
-#include"UserManager.h"
+#include"Managers/TokenManager.h"
+#include"Managers/UserManager.h"
 
 using std::cout;
 using std::endl;
@@ -21,6 +22,7 @@ using Managers::TokenManager;
 using Managers::UserManager;
 using Models::API;
 using Models::Song;
+using Models::Token;
 using Parsers::APIParser;
 using Models::IcarusAction;
 using Syncers::Delete;
@@ -59,6 +61,17 @@ namespace Managers
 		}
 	}
 
+    Token CommitManager::parseToken(API api)
+    {
+        cout<<"fetching token"<<endl;
+		UserManager usrMgr{icaAction};
+		auto user = usrMgr.retrieveUser();
+
+		TokenManager tk{user, api};
+        
+        return tk.requestToken();
+    }
+
 	void CommitManager::initializeMapActions()
 	{
 		mapActions = map<string, ActionValues>{
@@ -69,16 +82,10 @@ namespace Managers
 	}
 	void CommitManager::deleteSong()
 	{
-		cout<<"Deleting song..."<<endl;
-
-		UserManager usrMgr{icaAction};
-		auto user = usrMgr.retrieveUser();
-
 		APIParser apiPrs{icaAction};
 		auto api = apiPrs.retrieveAPI();
 
-		TokenManager tk{user, api};
-		auto token = tk.requestToken();
+		auto token = parseToken(api);
 
 		Song song{};
 
@@ -94,19 +101,17 @@ namespace Managers
 		}
 
 		Delete del{api};
+		cout<<"Deleting song..."<<endl;
 		del.deleteSong(token, song);
 	}
 	void CommitManager::downloadSong()
 	{
 		cout<<"Starting downloading process..."<<endl;
-		UserManager usrMgr{icaAction};
-		auto user = usrMgr.retrieveUser();
 
 		APIParser apiPrs{icaAction};
 		auto api = apiPrs.retrieveAPI();
 
-		TokenManager tk{user, api};
-		auto token = tk.requestToken();
+		auto token = parseToken(api);
 
 		Song song{};
 
@@ -126,19 +131,15 @@ namespace Managers
 		}
 
 		Download dnld{api};
+        cout<<"downloading song"<<endl;
 		dnld.downloadSong(token, song);
 	}
 	void CommitManager::uploadSong()
 	{
-		cout<<"Uploading song..."<<endl;
-		UserManager usrMgr{icaAction};
-		auto user = usrMgr.retrieveUser();
-
 		APIParser apiPrs{icaAction};
 		auto api = apiPrs.retrieveAPI();
 
-		TokenManager tk{user, api};
-		auto token = tk.requestToken();
+		auto token = parseToken(api);
 
 		Song song{};
 
@@ -154,6 +155,7 @@ namespace Managers
 		}
 
 		Upload upld{api};
+		cout<<"Uploading song..."<<endl;
 		upld.uploadSong(token, song);
 	}
 	#pragma Functions

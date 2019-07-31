@@ -1,4 +1,4 @@
-#include"Delete.h"
+#include"Syncers/Delete.h"
 
 #include<exception>
 #include<iostream>
@@ -16,47 +16,47 @@ using Models::Token;
 
 namespace Syncers
 {
-	#pragma
-	Delete::Delete(API api)
-	{
-		this->api = api;
-		this->api.endpoint = "song/data";
-	}
-	#pragma Constructors
+    #pragma
+    Delete::Delete(API api)
+    {
+        this->api = api;
+        this->api.endpoint = "song/data";
+    }
+    #pragma Constructors
 
 
-	#pragma
-	void Delete::deleteSong(const Token token, Song song)
-	{
-		try
-		{
-			auto url = retrieveUrl(song);
-			string auth{token.tokenType};
-			auth.append(" " + token.accessToken);
-			auto r = cpr::Delete(cpr::Url(url),
-				cpr::Header{{"authorization", auth}});
+    #pragma
+    void Delete::deleteSong(const Token token, Song song)
+    {
+        try
+        {
+            auto url = retrieveUrl(song);
+            string auth{token.tokenType};
+            auth.append(" " + token.accessToken);
+            auto r = cpr::Delete(cpr::Url(url),
+                cpr::Header{{"authorization", auth}});
 
-			auto statusCode = r.status_code;
+            auto statusCode = r.status_code;
 
-			cout<<"Status code "<<statusCode<<endl;
-		}
-		catch (exception e)
-		{
-			auto msg = e.what();
-			cout<<msg<<endl;
-		}
-		cout<<"Finished"<<endl;
-	}
+            cout<<"Status code "<<statusCode<<endl;
+        }
+        catch (exception e)
+        {
+            auto msg = e.what();
+            cout<<msg<<endl;
+        }
+        cout<<"Finished"<<endl;
+    }
 
-	string Delete::retrieveUrl(Song song)
-	{
-		string url{api.url + "api/" + api.version + "/" +
-			api.endpoint + "/"};
+    string Delete::retrieveUrl(Song song)
+    {
+        string url{api.url + "api/" + api.version + "/" +
+            api.endpoint + "/"};
 
-		url.append(std::to_string(song.id));
-		cout<<"url "<<url<<endl;
+        url.append(std::to_string(song.id));
+        cout<<"url "<<url<<endl;
 
-		return url;
-	}
-	#pragma Functions
+        return url;
+    }
+    #pragma Functions
 }
