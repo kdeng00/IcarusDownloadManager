@@ -14,17 +14,17 @@ using Managers::CommitManager;
 
 int main(int argc, char** argv)
 {
-	if (argc < 2)
-	{
-		cout<<"No actions provided"<<endl;
-		return 1;
-	}
+    if (argc < 2)
+    {
+        cout<<"No actions provided"<<endl;
+        return 1;
+    }
 
-	ActionManager actMgr{argv};
-	auto chosenAction = actMgr.retrieveIcarusAction();
+    ActionManager actMgr{argv};
+    auto chosenAction = actMgr.retrieveIcarusAction();
 
-	CommitManager commitMgr{chosenAction};
-	commitMgr.commitAction();
+    CommitManager commitMgr{chosenAction};
+    commitMgr.commitAction();
 
-	return 0;
+    return 0;
 }

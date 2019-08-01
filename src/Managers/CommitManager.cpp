@@ -8,6 +8,7 @@
 #include"Parsers/APIParser.h"
 #include"Syncers/Delete.h"
 #include"Syncers/Download.h"
+#include"Syncers/RetrieveRecords.h"
 #include"Syncers/Upload.h"
 
 #include"Managers/TokenManager.h"
@@ -27,6 +28,7 @@ using Parsers::APIParser;
 using Models::IcarusAction;
 using Syncers::Delete;
 using Syncers::Download;
+using Syncers::RetrieveRecords;
 using Syncers::Upload;
 
 namespace Managers
@@ -54,6 +56,7 @@ namespace Managers
 				downloadSong();
 				break;
 			case retrieveAct: // No plans to imeplement
+                retrieveObjects();
 				break;
 			case uploadAct:
 				uploadSong();
@@ -134,6 +137,35 @@ namespace Managers
         cout<<"downloading song"<<endl;
 		dnld.downloadSong(token, song);
 	}
+    void CommitManager::retrieveObjects()
+    {
+        cout<<"Starting retrieve process..."<<endl;
+        
+        APIParser apiPrs{icaAction};
+        auto api = apiPrs.retrieveAPI();
+
+        auto token = parseToken(api);
+        RetrieveTypes retrieveType;
+
+        for (auto arg : icaAction.flags)
+        {
+            auto flag = arg.flag;
+            auto value = arg.value;
+
+            if (flag.compare("-rt") == 0)
+            {
+                if (value.compare("songs") == 0)
+                {
+                    retrieveType = RetrieveTypes::songs;
+                    break;
+                }
+            }
+        }
+
+        RetrieveRecords songs{api, token};
+        songs.retrieve(retrieveType);
+
+    }
 	void CommitManager::uploadSong()
 	{
 		APIParser apiPrs{icaAction};

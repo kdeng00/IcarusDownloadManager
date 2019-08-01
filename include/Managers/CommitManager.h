@@ -16,12 +16,19 @@ namespace Managers
         CommitManager(Models::IcarusAction);
 
         void commitAction();
+
+        enum RetrieveTypes
+        {
+            songs
+        };
+
     private:
         Models::Token parseToken(Models::API);
 
         void initializeMapActions();
         void deleteSong();
         void downloadSong();
+        void retrieveObjects();
         void uploadSong();
 
         enum ActionValues

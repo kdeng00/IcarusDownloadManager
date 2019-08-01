@@ -50,6 +50,7 @@ set(SOURCES
 	src/Parsers/APIParser.cpp
 	src/Syncers/Delete.cpp
 	src/Syncers/Download.cpp
+    src/Syncers/RetrieveRecords.cpp
 	src/Syncers/Upload.cpp
 	src/Utilities/Conversions.cpp
 )
@@ -69,6 +70,7 @@ set(HEADERS
 	include/Parsers/APIParser.h
 	include/Syncers/Delete.h
 	include/Syncers/Download.h
+    include/Syncers/RetrieveRecords.h
 	include/Syncers/SyncerBase.h
 	include/Syncers/Upload.h
 	include/Utilities/Conversions.h

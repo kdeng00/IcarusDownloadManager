@@ -74,7 +74,7 @@ namespace Managers
     {
         supportedFlags = vector<string>{
             "-u", "-p", "-t", "-h", "-s",
-            "-d", "-D", "-b"
+            "-d", "-D", "-b", "-rt"
         };
     }
     void ActionManager::validateAction()
@@ -109,7 +109,7 @@ namespace Managers
             if (flag.size() > 3 || isNumber(flag))
             {
                 flg.value = flag;
-                //cout<<"flag value "<<flg.value<<endl;
+                cout<<"flag value "<<flg.value<<endl;
                 flags.push_back(flg);
                 flg = Flags{};
                 continue;
@@ -121,7 +121,7 @@ namespace Managers
                     return !val.compare(flag);
                 }))
             {
-                //cout<<"flag "<<flag<<endl;
+                cout<<"flag "<<flag<<endl;
                 flg.flag = flag;
             }
             else
