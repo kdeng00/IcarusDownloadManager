@@ -40,7 +40,6 @@ namespace Managers
 
         usrObj["username"] = user.username;
         usrObj["password"] = user.password;
-        cout<<user.username<<" "<<user.password<<endl;
 
         cout<<"Sending request for token"<<endl;
         auto url = api.url + api.endpoint;
@@ -49,12 +48,11 @@ namespace Managers
                 cpr::Body{usrObj.dump()},
            cpr::Header{{"Content-Type", "application/json"}});
 
-        cout<<r.text<<endl;
         json res = json::parse(r.text);
         token.accessToken = res["token"];
         token.tokenType = res["token_type"];
 
-        //cout<<"status code "<<r.status_code<<endl;
+        cout<<"status code "<<r.status_code<<endl;
 
         return token;
     }

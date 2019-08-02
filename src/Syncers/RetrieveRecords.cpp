@@ -4,6 +4,7 @@
 #include <fstream>
 
 #include <cpr/cpr.h>
+#include <nlohmann/json.hpp>
 
 using std::cout;
 using std::endl;
@@ -35,7 +36,6 @@ namespace Syncers
     {
         cout<<"fetching songs"<<endl;
         auto url = api.url + "api/" + api.version + "/" + "song";
-        cout<<url<<endl;
 
         auto auth = token.tokenType;
         auth.append(" " + token.accessToken);
@@ -43,9 +43,11 @@ namespace Syncers
              cpr::Header{{"authorization", auth},
                  });
 
+        auto songData = nlohmann::json::parse(r.text);
+
         ofstream writeData{};
         writeData.open("songs.json");
-        writeData<<r.text;
+        writeData<<songData.dump(4);
         writeData.close();
     }
 }

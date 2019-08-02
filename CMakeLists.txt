@@ -15,7 +15,7 @@ if(NOT ${CMAKE_VERSION} LESS 3.2)
     set(CMAKE_CXX_STANDARD 11)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
 else()
-    message(STATUS "Checking compiler flags for C++117support.")
+    message(STATUS "Checking compiler flags for C++17 support.")
     # Set C++17 support flags for various compilers
     include(CheckCXXCompilerFlag)
     check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
@@ -41,39 +41,39 @@ endif()
 
 
 set(SOURCES
-	src/Main.cpp
-	src/Managers/ActionManager.cpp
-	src/Managers/CommitManager.cpp
-	src/Managers/FileManager.cpp
-	src/Managers/TokenManager.cpp
-	src/Managers/UserManager.cpp
-	src/Parsers/APIParser.cpp
-	src/Syncers/Delete.cpp
-	src/Syncers/Download.cpp
+    src/Main.cpp
+    src/Managers/ActionManager.cpp
+    src/Managers/CommitManager.cpp
+    src/Managers/FileManager.cpp
+    src/Managers/TokenManager.cpp
+    src/Managers/UserManager.cpp
+    src/Parsers/APIParser.cpp
+    src/Syncers/Delete.cpp
+    src/Syncers/Download.cpp
     src/Syncers/RetrieveRecords.cpp
-	src/Syncers/Upload.cpp
-	src/Utilities/Conversions.cpp
+    src/Syncers/Upload.cpp
+    src/Utilities/Conversions.cpp
 )
 set(HEADERS
-	include/Managers/ActionManager.h
-	include/Managers/CommitManager.h
-	include/Managers/FileManager.h
-	include/Managers/TokenManager.h
-	include/Managers/UserManager.h
-	include/Models/API.h
-	include/Models/Flags.h
-	include/Models/IcarusAction.h
-	include/Models/Song.h
-	include/Models/Token.h
-	include/Models/UploadForm.h
-	include/Models/User.h
-	include/Parsers/APIParser.h
-	include/Syncers/Delete.h
-	include/Syncers/Download.h
+    include/Managers/ActionManager.h
+    include/Managers/CommitManager.h
+    include/Managers/FileManager.h
+    include/Managers/TokenManager.h
+    include/Managers/UserManager.h
+    include/Models/API.h
+    include/Models/Flags.h
+    include/Models/IcarusAction.h
+    include/Models/Song.h
+    include/Models/Token.h
+    include/Models/UploadForm.h
+    include/Models/User.h
+    include/Parsers/APIParser.h
+    include/Syncers/Delete.h
+    include/Syncers/Download.h
     include/Syncers/RetrieveRecords.h
-	include/Syncers/SyncerBase.h
-	include/Syncers/Upload.h
-	include/Utilities/Conversions.h
+    include/Syncers/SyncerBase.h
+    include/Syncers/Upload.h
+    include/Utilities/Conversions.h
 )
 
 

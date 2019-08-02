@@ -109,7 +109,7 @@ namespace Managers
             if (flag.size() > 3 || isNumber(flag))
             {
                 flg.value = flag;
-                cout<<"flag value "<<flg.value<<endl;
+                //cout<<"flag value "<<flg.value<<endl;
                 flags.push_back(flg);
                 flg = Flags{};
                 continue;
@@ -121,7 +121,7 @@ namespace Managers
                     return !val.compare(flag);
                 }))
             {
-                cout<<"flag "<<flag<<endl;
+                //cout<<"flag "<<flag<<endl;
                 flg.flag = flag;
             }
             else
@@ -140,7 +140,7 @@ namespace Managers
             for (auto i = 2; true; ++i)
             {
                 string val{*(params + i)};
-                cout<<"Parsed flag "<<val<<endl;
+                //cout<<"Parsed flag "<<val<<endl;
                 parsed.push_back(val);
             }
         }
