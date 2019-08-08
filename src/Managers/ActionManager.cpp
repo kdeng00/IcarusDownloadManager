@@ -20,10 +20,6 @@ namespace Managers
     {
         this->params = param;
 
-        action = string{params[1]};
-        transform(action.begin(), action.end(),
-                action.begin(), ::tolower);
-
         initialize();
     }
     #pragma Constructors
@@ -59,23 +55,11 @@ namespace Managers
 
     void ActionManager::initialize()
     {
-        initializeSupportedActions();
-        validateAction();
         validateFlags();
-    }
-    void ActionManager::initializeSupportedActions()
-    {
-        supportedActions = vector<string>{
-            "download", "delete",
-            "retrieve", "upload"
-        };
-    }
-    void ActionManager::initializeSupportedFlags()
-    {
-        supportedFlags = vector<string>{
-            "-u", "-p", "-t", "-h", "-s",
-            "-d", "-D", "-b", "-rt"
-        };
+
+        action = string{params[1]};
+        transform(action.begin(), action.end(),
+                action.begin(), ::tolower);
     }
     void ActionManager::validateAction()
     {
@@ -100,7 +84,6 @@ namespace Managers
         cout<<"Validating flags"<<endl;
 
         auto flagVals = parsedFlags();
-        initializeSupportedFlags();
 
         Flags flg{};
 

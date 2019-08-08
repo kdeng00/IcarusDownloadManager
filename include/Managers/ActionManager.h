@@ -2,6 +2,7 @@
 #define ACTIONMANAGER_H_
 
 #include<string>
+#include<array>
 #include<vector>
 
 #include"Models/Flags.h"
@@ -21,8 +22,6 @@ namespace Managers
         bool isNumber(std::string);
 
         void initialize();
-        void initializeSupportedActions();
-        void initializeSupportedFlags();
         void validateAction();
         void validateFlags();
 
@@ -33,8 +32,13 @@ namespace Managers
         void printFlags();
 
         std::string action;
-        std::vector<std::string> supportedActions;
-        std::vector<std::string> supportedFlags;
+        std::array<std::string, 4> supportedActions{
+            "download", "upload", "retrieve", "delete"
+        };
+        std::array<std::string, 9> supportedFlags{
+            "-u", "-p", "-t", "-h", "-s",
+            "-d", "-D", "-b", "-rt"
+        };
         std::vector<Models::Flags> flags;
         char **params;
     };
