@@ -13,7 +13,7 @@ namespace Managers
     class CommitManager
     {
     public:
-        CommitManager(Models::IcarusAction);
+        CommitManager(Models::IcarusAction&);
 
         void commitAction();
 
@@ -25,7 +25,6 @@ namespace Managers
     private:
         Models::Token parseToken(Models::API);
 
-        void initializeMapActions();
         void deleteSong();
         void downloadSong();
         void retrieveObjects();
@@ -39,7 +38,13 @@ namespace Managers
             uploadAct
         };
 
-        std::map<std::string, ActionValues> mapActions;
+        std::map<std::string, ActionValues> mapActions = 
+            std::map<std::string, ActionValues>{
+			{"delete", deleteAct}, {"download", downloadAct},
+			{"retrieve", retrieveAct},
+			{"upload", uploadAct}
+		};
+
         Models::IcarusAction icaAction;
     };
 }

@@ -15,7 +15,6 @@ namespace Models
         std::string genre;
         int year;
         int duration;
-        char *songData;
         std::string  data;
         std::string songPath;
     };

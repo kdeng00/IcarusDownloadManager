@@ -11,9 +11,8 @@ using Models::IcarusAction;
 namespace Parsers
 {
     #pragma
-    APIParser::APIParser(IcarusAction icaAct)
+    APIParser::APIParser(IcarusAction icaAct) : icaAct(icaAct)
     {
-        this->icaAct = icaAct;
         api = API{};
         parseAPI();
     }
@@ -38,7 +37,7 @@ namespace Parsers
 
             if (arg.compare("-h") == 0)
             {
-                api.url = (value[value.size()-1 == '/']) ? value : value + "/";
+                api.url = (value[value.size()-1] == '/') ? value : value + "/";
                 break;
             }
 

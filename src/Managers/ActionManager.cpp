@@ -2,7 +2,7 @@
 
 #include<algorithm>
 #include<iostream>
-#include<exception>
+#include<utility>
 #include<cstring>
 
 using std::cout;
@@ -16,10 +16,9 @@ using Models::IcarusAction;
 namespace Managers
 {
     #pragma
-    ActionManager::ActionManager(char **param)
+    ActionManager::ActionManager(char **param, int paramCount) : 
+        params(std::move(param)), paramCount(paramCount)
     {
-        this->params = param;
-
         initialize();
     }
     #pragma Constructors
@@ -33,15 +32,6 @@ namespace Managers
         icarusAction.action = action;
 
         return icarusAction;
-    }
-    vector<Flags> ActionManager::retrieveFlags() const
-    {
-        return flags;
-    }
-
-    string ActionManager::retrieveAction() const
-    {
-        return action;
     }
 
     bool ActionManager::isNumber(string val)
@@ -57,27 +47,9 @@ namespace Managers
     {
         validateFlags();
 
-        action = string{params[1]};
+        action = std::move(string{params[1]});
         transform(action.begin(), action.end(),
                 action.begin(), ::tolower);
-    }
-    void ActionManager::validateAction()
-    {
-        cout<<"Validating action"<<endl;
-
-        if (std::any_of(supportedActions.begin(), supportedActions.end(), 
-            [&](string val)
-            {
-                return !val.compare(action);
-            })) 
-        {
-            //cout<<"Action: "<<action<<" is valid"<<endl;
-        }
-        else
-        {
-            cout<<"Action is not valid"<<endl;
-            exit(1);
-        }
     }
     void ActionManager::validateFlags()
     {
@@ -118,19 +90,10 @@ namespace Managers
     vector<string> ActionManager::parsedFlags()
     {
         auto parsed = vector<string>{};
-        try
+        
+        for (auto i = 2; i < paramCount; ++i)
         {
-            for (auto i = 2; true; ++i)
-            {
-                string val{*(params + i)};
-                //cout<<"Parsed flag "<<val<<endl;
-                parsed.push_back(val);
-            }
-        }
-        catch (std::exception e)
-        {
-            auto msg = e.what();
-            cout<<"This happend: "<<msg<<endl<<endl;
+            parsed.push_back(std::move(*(params + i)));
         }
 
         return parsed;
@@ -146,21 +109,6 @@ namespace Managers
         else
         {
             cout<<"Action is "<<action<<endl;
-        }
-    }
-    void ActionManager::printFlags(vector<string> flagVals)
-    {
-        if (flagVals.empty())
-        {
-            printf("Flags and values are empty\n");
-        }
-        else
-        {
-            printf("Printing flags and values..\n");
-            for (auto flgVal : flagVals)
-            {
-                cout<<flgVal<<endl;
-            }
         }
     }
     void ActionManager::printFlags()

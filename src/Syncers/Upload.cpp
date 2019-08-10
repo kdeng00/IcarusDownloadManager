@@ -24,41 +24,12 @@ using namespace cpr;
 namespace Syncers
 {
     Upload::Upload() { }
-    Upload::Upload(string filePath)
+    Upload::Upload(API api) : api(api)
     {
-        this->songPath = filePath;
-        this->fMgr = FileManager(songPath);
-    }
-    Upload::Upload(API api)
-    {
-        this->api = api;
         this->api.endpoint = "song/data";
     }
-    Upload::Upload(UploadForm formData)
-    {
-        this->url = formData.url;
-        this->songPath = formData.filePath;
-    }
 
 
-    void Upload::uploadSong()
-    {
-        try
-        {
-            auto r = cpr::Post(cpr::Url{url},
-                        cpr::Multipart{{"key", "small value"},
-                                {"file", cpr::File{songPath}}});
-            cout << r.status_code<< std::endl;
-
-            cout<<"Success"<<endl;
-        }
-        catch(std::exception& e)
-        {
-            cout<<e.what()<<endl;
-        }
-        cout<<"Finished"<<endl;
-
-    }
     void Upload::uploadSong(const Models::Token token, Song song)
     {
         try
@@ -86,33 +57,12 @@ namespace Syncers
 
     string Upload::retrieveUrl()
     {
-        string url = api.url + "api/" + api.version + "/" +
-            api.endpoint;
+        const string url{api.url + "api/" + api.version + "/" +
+            api.endpoint};
             
         return url;
     }
     #pragma
-    void Upload::configureSongDemo()
-    {
-        int id = 0;
-        string title = "What of it?";
-        string artist = "Kuoth";
-        string album = "I";
-        string genre = "Untitled";
-        int year = 2019;
-        int duration = 260;
-
-        this->song = Models::Song{};
-        this->song.id = id;
-        this->song.title = title;
-        this->song.artist = artist;
-        this->song.album = album;
-        this->song.genre = genre;
-        this->song.year = year;
-        this->song.duration = duration;
-        this->song.songData = fMgr.retrieveFileBuffer();
-        cout<<*song.songData<<endl;
-    }
     void Upload::printSongDetails()
     {
         cout<<"Song details: "<<endl;
@@ -137,21 +87,6 @@ namespace Syncers
         cout<<"song_data: "<<obj["song_data"]<<endl;
 
         cout<<endl<<endl;;
-    }
-
-    json Upload::serializeObject()
-    {
-        json jObj{};
-        jObj["id"] = song.id;
-        jObj["title"] = song.title;
-        jObj["artist"] = song.artist;
-        jObj["album"] = song.album;
-        jObj["genre"] = song.genre;
-        jObj["year"] = song.year;
-        jObj["duration"] = song.duration;
-        jObj["song_data"] = *song.songData;
-
-        return jObj;
     }
     #pragma Testing
     #pragma Functions

@@ -34,11 +34,8 @@ using Syncers::Upload;
 namespace Managers
 {
 	#pragma
-	CommitManager::CommitManager(IcarusAction icaAct)
-	{
-		icaAction = icaAct;
-		initializeMapActions();
-	}
+	CommitManager::CommitManager(IcarusAction& icaAct) : icaAction(std::move(icaAct))
+	{ }
 	#pragma Constructors;
 
 
@@ -46,7 +43,7 @@ namespace Managers
 	void CommitManager::commitAction()
 	{
 		auto action = icaAction.action;
-		cout<<"Commitning "<<action<<" action"<<endl;
+		cout<<"Commiting "<<action<<" action"<<endl;
 		switch (mapActions[action])
 		{
 			case deleteAct:
@@ -55,7 +52,7 @@ namespace Managers
 			case downloadAct:
 				downloadSong();
 				break;
-			case retrieveAct: // No plans to imeplement
+			case retrieveAct:
                 retrieveObjects();
 				break;
 			case uploadAct:
@@ -75,14 +72,6 @@ namespace Managers
         return tk.requestToken();
     }
 
-	void CommitManager::initializeMapActions()
-	{
-		mapActions = map<string, ActionValues>{
-			{"delete", deleteAct}, {"download", downloadAct},
-			{"retrieve", retrieveAct},
-			{"upload", uploadAct}
-		};
-	}
 	void CommitManager::deleteSong()
 	{
 		APIParser apiPrs{icaAction};

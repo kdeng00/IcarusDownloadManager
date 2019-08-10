@@ -6,6 +6,8 @@
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
 
+#include "Utilities/Conversions.h"
+
 using std::cout;
 using std::endl;
 using std::ofstream;
@@ -13,6 +15,7 @@ using std::ofstream;
 using Managers::CommitManager;
 using Models::API;
 using Models::Token;
+using Utilities::Conversions;
 
 namespace Syncers
 {

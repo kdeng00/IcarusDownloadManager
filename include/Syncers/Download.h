@@ -19,7 +19,6 @@ namespace Syncers
         Download(Models::API);
         Download(std::string);
 
-        void downloadSong(int);
         void downloadSong(const Models::Token token, Models::Song);
     private:
         std::string retrieveUrl(Models::Song);

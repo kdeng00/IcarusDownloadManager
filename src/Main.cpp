@@ -20,7 +20,7 @@ int main(int argc, char** argv)
         return 1;
     }
 
-    ActionManager actMgr{argv};
+    ActionManager actMgr{argv, argc};
     auto chosenAction = actMgr.retrieveIcarusAction();
 
     CommitManager commitMgr{chosenAction};
