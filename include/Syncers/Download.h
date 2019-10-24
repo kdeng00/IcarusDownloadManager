@@ -24,7 +24,7 @@ namespace Syncers
         std::string retrieveUrl(Models::Song);
 
         std::string downloadFilePath;
-        void saveSong(Models::Song*);
+        void saveSong(Models::Song&);
     };
 }
 

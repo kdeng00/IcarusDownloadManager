@@ -42,15 +42,19 @@ namespace Syncers
             cout<<"song path "<<song.songPath<<endl;
             string auth{token.tokenType};
             auth.append(" " + token.accessToken);
+            /**
             auto r = cpr::Get(cpr::Url(url), 
                 cpr::Header{{"authorization", auth}});
+                */
+            auto r = cpr::Get(cpr::Url(url),
+                    cpr::Header{{"Content-type", "audio/mpeg"}});
+                
 
             int statusCode = r.status_code;
 
-            if (statusCode == OK)
-            {
+            if (statusCode == OK) {
                 song.data = r.text;
-                saveSong(&song);
+                saveSong(song);
             }
 
 
@@ -74,14 +78,14 @@ namespace Syncers
         return url;
     }
 
-    void Download::saveSong(Song *song)
+    void Download::saveSong(Song& song)
     {
-        cout<<"\nSaving song to: "<<song->songPath<<endl;
-        int bufferLength = song->data.length();
-        const char *data = song->data.c_str();
+        cout<<"\nSaving song to: "<<song.songPath<<endl;
+        int bufferLength = song.data.length();
+        const char *data = song.data.c_str();
         cout<<"buff length  "<<bufferLength<<endl;
 
-        ofstream saveSong{song->songPath, std::ios::binary};
+        ofstream saveSong{song.songPath, std::ios::binary};
         saveSong.write(data, bufferLength);
         saveSong.close();
     }

@@ -71,7 +71,7 @@ namespace Managers
             }
 
             if (std::any_of(supportedFlags.begin(), supportedFlags.end(), 
-                [&](string val)
+                [&](string& val)
                 {
                     return !val.compare(flag);
                 }))

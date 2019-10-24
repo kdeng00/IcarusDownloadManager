@@ -157,14 +157,17 @@ namespace Managers
     }
 	void CommitManager::uploadSong()
 	{
+        bool uploadSingleSong = true;
+        bool recursiveDirectory = false;
+        string songDirectory;
 		APIParser apiPrs{icaAction};
 		auto api = apiPrs.retrieveAPI();
 
 		auto token = parseToken(api);
 
-		Song song{};
+		Song song;
 
-		for (auto arg : icaAction.flags)
+		for (auto& arg : icaAction.flags)
 		{
 			auto flag = arg.flag;
 			auto value = arg.value;
@@ -173,11 +176,30 @@ namespace Managers
 			{
 				song.songPath.assign(arg.value);
 			}
+            else if (flag.compare("-sd") == 0)
+            {
+                songDirectory = value;
+                uploadSingleSong = false;
+            } 
+            else if (flag.compare("-sr") == 0)
+            {
+                songDirectory = value;
+                uploadSingleSong = false;
+                recursiveDirectory = true;
+            }
 		}
 
 		Upload upld{api};
-		cout<<"Uploading song..."<<endl;
-		upld.uploadSong(token, song);
+        if (uploadSingleSong)
+        {
+		    cout<<"Uploading song..."<<endl;
+		    upld.uploadSong(token, song);
+        }
+        else
+        {
+            cout<<"Uploading songs from " << songDirectory << endl;
+            upld.uploadSongsFromDirectory(token, songDirectory, recursiveDirectory);
+        }
 	}
 	#pragma Functions
 }

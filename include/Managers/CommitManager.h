@@ -38,8 +38,7 @@ namespace Managers
             uploadAct
         };
 
-        std::map<std::string, ActionValues> mapActions = 
-            std::map<std::string, ActionValues>{
+        std::map<std::string, ActionValues> mapActions{
 			{"delete", deleteAct}, {"download", downloadAct},
 			{"retrieve", retrieveAct},
 			{"upload", uploadAct}

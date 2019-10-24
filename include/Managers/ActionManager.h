@@ -31,9 +31,9 @@ namespace Managers
         std::array<std::string, 4> supportedActions{
             "download", "upload", "retrieve", "delete"
         };
-        std::array<std::string, 9> supportedFlags{
-            "-u", "-p", "-t", "-h", "-s",
-            "-d", "-D", "-b", "-rt"
+        std::array<std::string, 11> supportedFlags{
+            "-u", "-p", "-t", "-h", "-s", "-sd",
+            "-sr", "-d", "-D", "-b", "-rt"
         };
         std::vector<Models::Flags> flags;
         char **params;

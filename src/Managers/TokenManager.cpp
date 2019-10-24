@@ -18,11 +18,11 @@ using Models::User;
 namespace Managers
 {
     #pragma
-    TokenManager::TokenManager(const User user)
+    TokenManager::TokenManager(const User& user)
     {
         this->user = user;
     }
-    TokenManager::TokenManager(const User user, API api)
+    TokenManager::TokenManager(const User& user, API& api)
     {
         this->user = user;
         this->api = api;
