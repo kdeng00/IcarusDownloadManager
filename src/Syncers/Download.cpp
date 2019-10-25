@@ -42,12 +42,10 @@ namespace Syncers
             cout<<"song path "<<song.songPath<<endl;
             string auth{token.tokenType};
             auth.append(" " + token.accessToken);
-            /**
-            auto r = cpr::Get(cpr::Url(url), 
-                cpr::Header{{"authorization", auth}});
-                */
+            
             auto r = cpr::Get(cpr::Url(url),
-                    cpr::Header{{"Content-type", "audio/mpeg"}});
+                    cpr::Header{{"Content-type", "audio/mpeg"},
+                                {"Authorization", auth}});
                 
 
             int statusCode = r.status_code;
