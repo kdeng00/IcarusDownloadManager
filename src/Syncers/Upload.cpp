@@ -79,8 +79,6 @@ namespace Syncers
             {
                 song = uploadSong(token, song);
             }
-            printSongDetails(songs);
-
         }
         catch (exception& e)
         {

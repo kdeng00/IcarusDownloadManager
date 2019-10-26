@@ -4,10 +4,11 @@
 #include "Managers/CommitManager.h"
 #include "Models/API.h"
 #include "Models/Token.h"
+#include "Syncers/SyncerBase.h"
 
 namespace Syncers
 {
-    class RetrieveRecords
+    class RetrieveRecords: public SyncerBase
     {
     public:
         RetrieveRecords();

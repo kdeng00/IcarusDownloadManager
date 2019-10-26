@@ -12,11 +12,44 @@ using std::string;
 using Managers::ActionManager;
 using Managers::CommitManager;
 
+void printHelp()
+{
+    cout<<"icd [Action] [flag]\n\n";
+
+    cout<<"Actions\n";
+    cout<<"download\n";
+    cout<<"upload\n";
+    cout<<"retrieve\n";
+    cout<<"delete\n\n";
+
+    cout<<"Flags\n";
+    cout<<"Required for all actions\n";
+    cout<<"-u username\n";
+    cout<<"-p password\n";
+    cout<<"-h host\n\n";
+
+    cout<<"Required for upload\n";
+    cout<<"-s path of song\n";
+    cout<<"-sd directory where to search for songs to upload (Optional)\n";
+    cout<<"-sr directory where to recursively search for songs to upload (Optional)\n\n";
+
+    cout<<"Required for download\n";
+    cout<<"-b song id\n";
+    cout<<"-d path to download song (Optional)\n\n";
+
+    cout<<"Required for retrieving records\n";
+    cout<<"-rt retrieve type (songs is only accepted)\n\n";
+
+    cout<<"Required for deleting a song\n";
+    cout<<"-D song id\n\n";
+}
+
+
 int main(int argc, char** argv)
 {
     if (argc < 2)
     {
-        cout<<"No actions provided"<<endl;
+        printHelp();
         return 1;
     }
 

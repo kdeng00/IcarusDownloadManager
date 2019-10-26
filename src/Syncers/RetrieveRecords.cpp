@@ -46,6 +46,12 @@ namespace Syncers
              cpr::Header{{"authorization", auth},
                  });
 
+        if (r.status_code != (int)Result::OK) {
+            cout<<"something went wrong\n";
+            cout<<"status code: "<<r.status_code<<endl;
+            cout<<"message: "<<r.text<<endl;
+            return;
+        }
         auto songData = nlohmann::json::parse(r.text);
 
         ofstream writeData{};
