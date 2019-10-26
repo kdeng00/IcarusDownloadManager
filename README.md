@@ -1,6 +1,17 @@
 # IcarusDownloadManager
 
-IcarusDownloadManager is a Linux UI software client application that has the feature of uploading and downloading songs from the [Icarus](https://github.com/amazing-username/Icarus) Music Server. 
+IcarusDownloadManager is a Linux CLI software client application that has the feature of uploading and downloading songs from the [Icarus](https://github.com/amazing-username/Icarus) Music Server. 
+
+
+## Built With
+
+* C++
+* CMake
+* GCC
+* [Hunter](https://github.com/ruslo/hunter)
+* libCurl
+* [json](https://github.com/nlohmann/json)
+* [cpr](http://whoshuu.github.io/cpr/)
 
 
 ### Getting Started
@@ -16,18 +27,20 @@ cmake --build _builds --config Debug
 make
 ```
 
-The program has been built and can be executed by the binary file *icd*
+The program has been built and can be executed by the binary file *icd*. For information on how to use icd, merely execute the program without any command line arguments.
 
+### Downloading Song
+``icd download -u spacecadet -p stellar40 -h https://icarus.com -b 15``
 
-## Built With
+### Uploading Song
+``icd upload -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3``
 
-* C++
-* CMake
-* GCC
-* [Hunter](https://github.com/ruslo/hunter)
-* libCurl
-* [json](https://github.com/nlohmann/json)
-* [cpr](http://whoshuu.github.io/cpr/)
+### Retrieving Song in json
+``icd retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs``
+
+### Deleting Song
+``icd delete -u spacecadet -p stellar40 -h https://icarus.com -D 15``
+
 
 ## Contributing
 
@@ -35,7 +48,8 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduc
 
 ## Versioning
 
-[v0.1.0](https://github.com/amazing-username/IcarusDownloadManager/releases/tag/0.1.0)
+[v0.1.1](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/v0.1.1)  
+[v0.1.0](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/0.1.0)
 
 ## Authors
 
