@@ -14,6 +14,13 @@ namespace Syncers
         const int OK = 200;
         const int UNAUTHORIZED = 401;
         const int NOTFOUND = 404;
+
+        enum class Result 
+        {
+            OK = 200,
+            UNAUTHORIZED = 401,
+            NOTFOUND = 404
+        };
     };
 }
 

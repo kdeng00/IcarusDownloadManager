@@ -8,6 +8,7 @@
 #include"Syncers/Upload.h"
 
 using std::cout;
+using std::cin;
 using std::endl;
 using std::exception;
 using std::string;
@@ -46,6 +47,7 @@ namespace Syncers
                 );
 
             cout << "status code: " << r.status_code<< std::endl;
+            cout << r.text << endl;
             auto result = nlohmann::json::parse(r.text);
             cout<<"Finished"<<endl;
             song.id = result["id"].get<int>();
@@ -59,7 +61,7 @@ namespace Syncers
 
             return song;
         }
-        catch (exception e)
+        catch (exception& e)
         {
             auto msg = e.what();
             cout<<msg<<endl;
@@ -75,6 +77,33 @@ namespace Syncers
         try
         {
             auto songs = retrieveAllSongsFromDirectory(directory, recursive);
+            auto confirmUpload = false;
+
+            while (true) 
+            {
+                auto answer = 'a';
+                cout << "are you sure you want to upload " << songs.size() << " songs? [y/n]";
+                cin >> answer;
+
+                if (answer == 'y' || answer == 'Y') 
+                {
+                    confirmUpload = true;
+                    break;
+                } 
+                else if (answer == 'n' || answer == 'N') 
+                {
+                    confirmUpload = false;
+                    break;
+                }
+            }
+
+            if (!confirmUpload) 
+            {
+                cout << "exiting...\n";
+                std::exit(-1);
+            }
+
+            cout << "uploading songs\n";
             for (auto& song: songs)
             {
                 song = uploadSong(token, song);
