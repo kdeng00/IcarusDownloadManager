@@ -17,12 +17,16 @@ namespace Managers
 
         void commitAction();
 
-        enum RetrieveTypes
+        enum class RetrieveTypes
         {
             songs
         };
 
     private:
+        enum class ActionValues;
+
+        std::map<std::string, ActionValues> mapActions() noexcept;
+
         Models::Token parseToken(Models::API);
 
         void deleteSong();
@@ -30,19 +34,13 @@ namespace Managers
         void retrieveObjects();
         void uploadSong();
 
-        enum ActionValues
+        enum class ActionValues
         {
             deleteAct,
             downloadAct,
             retrieveAct,
             uploadAct
         };
-
-        std::map<std::string, ActionValues> mapActions{
-			{"delete", deleteAct}, {"download", downloadAct},
-			{"retrieve", retrieveAct},
-			{"upload", uploadAct}
-		};
 
         Models::IcarusAction icaAction;
     };

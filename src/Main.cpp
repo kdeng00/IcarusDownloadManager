@@ -31,7 +31,8 @@ void printHelp()
     cout<<"Required for upload\n";
     cout<<"-s path of song\n";
     cout<<"-sd directory where to search for songs to upload (Optional)\n";
-    cout<<"-sr directory where to recursively search for songs to upload (Optional)\n\n";
+    cout<<"-sr directory where to recursively search for songs to upload (Optional)\n";
+    cout<<"-nc will not prompt the user when uploading from a directory\n\n";
 
     cout<<"Required for download\n";
     cout<<"-b song id\n";
@@ -50,13 +51,13 @@ int main(int argc, char** argv)
     if (argc < 2)
     {
         printHelp();
-        return 1;
+        return -1;
     }
 
-    ActionManager actMgr{argv, argc};
+    ActionManager actMgr(argv, argc);
     auto chosenAction = actMgr.retrieveIcarusAction();
 
-    CommitManager commitMgr{chosenAction};
+    CommitManager commitMgr(chosenAction);
     commitMgr.commitAction();
 
     return 0;

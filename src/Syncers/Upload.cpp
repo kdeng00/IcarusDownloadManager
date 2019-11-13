@@ -72,14 +72,14 @@ namespace Syncers
 
     void Upload::uploadSongsFromDirectory(const Models::Token& token, 
         const std::string& directory, 
-        bool recursive = false)
+        const bool noConfirm, bool recursive = false)
     {
         try
         {
             auto songs = retrieveAllSongsFromDirectory(directory, recursive);
-            auto confirmUpload = false;
+            auto confirmUpload = true;
 
-            while (true) 
+            while (!noConfirm) 
             {
                 auto answer = 'a';
                 cout << "are you sure you want to upload " << songs.size() << " songs? [y/n]";
@@ -197,7 +197,7 @@ namespace Syncers
             cout<<"Path: "<<song.songPath<<endl;
         }
     }
-    void Upload::printJsonData(json obj)
+    void Upload::printJsonData(const json& obj)
     {
         cout<<endl<<endl<<"JSon data: "<<endl;
         cout<<"id: "<<obj["id"]<<endl;

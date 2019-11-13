@@ -25,7 +25,8 @@ namespace Syncers
             Upload(Models::API);
 
             Models::Song uploadSong(const Models::Token&, Models::Song&);
-            void uploadSongsFromDirectory(const Models::Token&, const std::string&, bool);
+            void uploadSongsFromDirectory(const Models::Token&, 
+                    const std::string&, const bool, bool);
         private:
             Managers::FileManager fMgr;
             Models::API api;
@@ -40,7 +41,7 @@ namespace Syncers
 
             void printSongDetails();
             void printSongDetails(std::vector<Models::Song>&);
-            void printJsonData(nlohmann::json);
+            void printJsonData(const nlohmann::json&);
     };
 }
 

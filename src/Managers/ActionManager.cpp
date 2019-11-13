@@ -8,6 +8,7 @@
 using std::cout;
 using std::endl;
 using std::string;
+using std::string_view;
 using std::vector;
 
 using Models::Flags;
@@ -27,14 +28,24 @@ namespace Managers
     #pragma
     IcarusAction ActionManager::retrieveIcarusAction() const
     {
-        auto icarusAction = IcarusAction{};
+        IcarusAction icarusAction;
         icarusAction.flags = flags;
         icarusAction.action = action;
 
         return icarusAction;
     }
 
-    bool ActionManager::isNumber(string val)
+
+    constexpr std::array<const char*, 12> ActionManager::supportedFlags() noexcept
+    {
+        constexpr std::array<const char*, 12> allFlags{"-u", "-p", "-t", "-h", "-s",
+                "-sd", "-sr", "-d", "-D", "-b", "-rt", "-nc"};
+
+        return allFlags;
+    }
+
+
+    bool ActionManager::isNumber(string_view val) noexcept
     {
         return !val.empty() && std::find_if(val.begin(), 
             val.end(), [](char c)
@@ -59,8 +70,16 @@ namespace Managers
 
         Flags flg{};
 
+        auto allSupportedFlags = supportedFlags();
+
         for (auto flag : flagVals)
         {
+            if (flag.compare("-nc") == 0)
+            {
+                flg.flag = flag;
+                flags.push_back(flg);
+                continue;
+            }
             if (flag.size() > 3 || isNumber(flag))
             {
                 flg.value = flag;
@@ -70,10 +89,10 @@ namespace Managers
                 continue;
             }
 
-            if (std::any_of(supportedFlags.begin(), supportedFlags.end(), 
-                [&](string& val)
+            if (std::any_of(allSupportedFlags.begin(), allSupportedFlags.end(), 
+                [&](const char *val)
                 {
-                    return !val.compare(flag);
+                    return !flag.compare(val);
                 }))
             {
                 //cout<<"flag "<<flag<<endl;
@@ -81,7 +100,7 @@ namespace Managers
             }
             else
             {
-                cout<<"Action is not valid"<<endl;
+                cout<<"Flag is not valid"<<endl;
                 exit(1);
             }
         }
@@ -89,18 +108,19 @@ namespace Managers
 
     vector<string> ActionManager::parsedFlags()
     {
-        auto parsed = vector<string>{};
+        auto parsed = vector<string>();
         
         for (auto i = 2; i < paramCount; ++i)
         {
-            parsed.push_back(std::move(*(params + i)));
+            const std::string flag(std::move(*(params + i)));
+            parsed.push_back(std::move(flag));
         }
 
         return parsed;
     }
 
     #pragma
-    void ActionManager::printAction()
+    void ActionManager::printAction() noexcept
     {
         if (action.empty())
         {
@@ -111,7 +131,7 @@ namespace Managers
             cout<<"Action is "<<action<<endl;
         }
     }
-    void ActionManager::printFlags()
+    void ActionManager::printFlags() noexcept
     {
         cout<<"\nPrinting flags..."<<endl;
         for (auto flag: flags)

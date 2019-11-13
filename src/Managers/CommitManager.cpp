@@ -36,7 +36,7 @@ namespace Managers
 	#pragma
 	CommitManager::CommitManager(IcarusAction& icaAct) : icaAction(std::move(icaAct))
 	{ }
-	#pragma Constructors;
+	#pragma Constructors
 
 
 	#pragma
@@ -44,22 +44,41 @@ namespace Managers
 	{
 		auto action = icaAction.action;
 		cout<<"Commiting "<<action<<" action"<<endl;
-		switch (mapActions[action])
+		switch (mapActions()[action])
 		{
-			case deleteAct:
+            case ActionValues::deleteAct:
 				deleteSong();
 				break;
-			case downloadAct:
+            case ActionValues::downloadAct:
 				downloadSong();
 				break;
-			case retrieveAct:
+            case ActionValues::retrieveAct:
                 retrieveObjects();
 				break;
-			case uploadAct:
+            case ActionValues::uploadAct:
 				uploadSong();
 				break;
+            default:
+                break;
 		}
 	}
+
+
+    enum class ActionValues;
+
+    std::map<std::string, CommitManager::ActionValues> 
+        CommitManager::mapActions() noexcept
+    {
+        const std::map<std::string, ActionValues> actions{
+            {"delete", ActionValues::deleteAct},
+            {"download", ActionValues::downloadAct},
+            {"retrieve", ActionValues::retrieveAct},
+            {"upload", ActionValues::uploadAct}
+        };
+
+        return actions;
+    }
+
 
     Token CommitManager::parseToken(API api)
     {
@@ -157,8 +176,9 @@ namespace Managers
     }
 	void CommitManager::uploadSong()
 	{
-        bool uploadSingleSong = true;
-        bool recursiveDirectory = false;
+        auto uploadSingleSong = true;
+        auto recursiveDirectory = false;
+        auto noConfirm = false;
         string songDirectory;
 		APIParser apiPrs{icaAction};
 		auto api = apiPrs.retrieveAPI();
@@ -187,6 +207,10 @@ namespace Managers
                 uploadSingleSong = false;
                 recursiveDirectory = true;
             }
+            else if (flag.compare("-nc") == 0)
+            {
+                noConfirm = true;
+            }
 		}
 
 		Upload upld{api};
@@ -198,7 +222,7 @@ namespace Managers
         else
         {
             cout<<"Uploading songs from " << songDirectory << endl;
-            upld.uploadSongsFromDirectory(token, songDirectory, recursiveDirectory);
+            upld.uploadSongsFromDirectory(token, songDirectory, noConfirm, recursiveDirectory);
         }
 	}
 	#pragma Functions

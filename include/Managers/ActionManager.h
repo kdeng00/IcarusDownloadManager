@@ -2,6 +2,7 @@
 #define ACTIONMANAGER_H_
 
 #include<string>
+#include<string_view>
 #include<array>
 #include<vector>
 
@@ -17,25 +18,23 @@ namespace Managers
 
         Models::IcarusAction retrieveIcarusAction() const;
     private:
-        bool isNumber(std::string);
+        constexpr std::array<const char*, 12> supportedFlags() noexcept;
+        constexpr std::array<const char*, 4> supportedActions() noexcept;
+
+        bool isNumber(const std::string_view) noexcept;
 
         void initialize();
         void validateFlags();
 
         std::vector<std::string> parsedFlags();
 
-        void printAction();
-        void printFlags();
+        void printAction() noexcept;
+        void printFlags() noexcept;
 
         std::string action;
-        std::array<std::string, 4> supportedActions{
-            "download", "upload", "retrieve", "delete"
-        };
-        std::array<std::string, 11> supportedFlags{
-            "-u", "-p", "-t", "-h", "-s", "-sd",
-            "-sr", "-d", "-D", "-b", "-rt"
-        };
+        
         std::vector<Models::Flags> flags;
+
         char **params;
         int paramCount;
     };
