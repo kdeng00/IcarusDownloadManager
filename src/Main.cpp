@@ -12,6 +12,11 @@ using std::string;
 using Managers::ActionManager;
 using Managers::CommitManager;
 
+constexpr static auto IcarusDownloadManager_version()
+{
+    return "v0.1.2";
+}
+
 void printHelp()
 {
     cout<<"icd [Action] [flag]\n\n";
