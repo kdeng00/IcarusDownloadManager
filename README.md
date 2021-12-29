@@ -1,6 +1,6 @@
 # IcarusDownloadManager
 
-IcarusDownloadManager is a Linux CLI software client application that has the feature of uploading and downloading songs from the [Icarus](https://github.com/amazing-username/Icarus) Music Server. 
+IcarusDownloadManager is a Linux CLI software client application that has the feature of uploading and downloading songs from the [Icarus](https://github.com/kdeng00/Icarus) Music Server. 
 
 
 ## Built With
@@ -8,9 +8,10 @@ IcarusDownloadManager is a Linux CLI software client application that has the fe
 * C++
 * CMake
 * GCC
-* [Hunter](https://github.com/ruslo/hunter)
-* libCurl
+* conan
 * [json](https://github.com/nlohmann/json)
+* openssl
+* libCurl
 * [cpr](http://whoshuu.github.io/cpr/)
 
 
@@ -19,12 +20,16 @@ IcarusDownloadManager is a Linux CLI software client application that has the fe
 Build the project:
 
 ```
-export HUNTER_ROOT=/path/to/download/hunter/files/for/dependencies
-mkdir _build
-cd _build
-cmake -H. -B_builds -DHUNTER_STATUS_DEBUG=ON -DCMAKE_BUILD_TYPE=DEBUG
-cmake --build _builds --config Debug
-make
+git clone --recursive https://github.com/kdeng00/IcarusDownloadManager
+
+
+mkdir build
+cd build
+
+conan install .. --build
+
+cmake -DCMAKE_BUILD_TYPE=RELEASE
+cmake --build . -j
 ```
 
 The program has been built and can be executed by the binary file *icd*. For information on how to use icd, merely execute the program without any command line arguments.
@@ -53,9 +58,9 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduc
 
 ## Authors
 
-* **Kun Deng** - [amazing-username](https://github.com/amazing-username)
+* **Kun Deng** - [kdeng00](https://github.com/kdeng00)
 
-See also the list of [contributors](https://github.com/amazing-username/Icarus/graphs/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/kdeng00/Icarus/graphs/contributors) who participated in this project.
 
 ## License
 

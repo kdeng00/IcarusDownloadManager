@@ -1,42 +1,37 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.12)
 
-
-include("cmake/HunterGate.cmake")
-HunterGate(
-    URL "https://github.com/ruslo/hunter/archive/v0.23.184.tar.gz"
-    SHA1 "fe3fb05d51c21499c7eebbe7d0e102742a54a9cd"
-)
 
 project(IcarusDownloadManager)
 
 
 
-if(NOT ${CMAKE_VERSION} LESS 3.2)
-    set(CMAKE_CXX_STANDARD 11)
+message(STATUS "Checking compiler flags for C++17 support.")
+# Set C++17 support flags for various compilers
+include(CheckCXXCompilerFlag)
+
+check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
+check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+
+if(COMPILER_SUPPORTS_CXX17)
+    message(STATUS "C++17 is supported.")
+
+    set(CMAKE_CXX_STANDARD 17)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
-else()
-    message(STATUS "Checking compiler flags for C++17 support.")
-    # Set C++17 support flags for various compilers
-    include(CheckCXXCompilerFlag)
-    check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
-    check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-    if(COMPILER_SUPPORTS_CXX17)
-        message(STATUS "C++17 is supported.")
-        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-        endif()
-    elseif(COMPILER_SUPPORTS_CXX0X)
-        message(STATUS "C++0x is supported.")
-        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
-        else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-        endif()
+
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
     else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
     endif()
+elseif(COMPILER_SUPPORTS_CXX0X)
+    message(STATUS "C++0x is supported.")
+    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
+    else()
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+    endif()
+else()
+    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
 endif()
 
 
@@ -54,36 +49,19 @@ set(SOURCES
     src/Syncers/Upload.cpp
     src/Utilities/Conversions.cpp
 )
-set(HEADERS
-    include/Managers/ActionManager.h
-    include/Managers/CommitManager.h
-    include/Managers/FileManager.h
-    include/Managers/TokenManager.h
-    include/Managers/UserManager.h
-    include/Models/API.h
-    include/Models/Flags.h
-    include/Models/IcarusAction.h
-    include/Models/Song.h
-    include/Models/Token.h
-    include/Models/UploadForm.h
-    include/Models/User.h
-    include/Parsers/APIParser.h
-    include/Syncers/Delete.h
-    include/Syncers/Download.h
-    include/Syncers/RetrieveRecords.h
-    include/Syncers/SyncerBase.h
-    include/Syncers/Upload.h
-    include/Utilities/Conversions.h
-)
+
+set(IDM_INCLUDE_DIR
+    "${CMAKE_CURRENT_SOURCE_DIR}/include")
+
+# conan
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+
+include_directories(${CPR_INCLUDE_DIRS} ${IDM_INCLUDE_DIR})
+
+set(USE_SYSTEM_CURL OFF)
+set(BUILD_CPR_TESTS OFF)
 
 
-hunter_add_package(nlohmann_json)
-find_package(nlohmann_json CONFIG REQUIRED)
-
-hunter_add_package(cpr)
-find_package(cpr CONFIG REQUIRED)
-
-
-add_executable(icd ${SOURCES} ${HEADERS})
-target_link_libraries(icd PUBLIC nlohmann_json::nlohmann_json cpr::cpr)
-include_directories(include/)
+add_executable(icd ${SOURCES})
+target_link_libraries(icd PUBLIC ${CONAN_LIBS})
