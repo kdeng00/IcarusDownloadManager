@@ -5,10 +5,10 @@ IcarusDownloadManager is a Linux CLI software client application that has the fe
 
 ## Built With
 
-* C++
+* C++ with C++17 features
 * CMake
 * GCC >= 9
-* conan
+* [conan](https://github.com/conan-io/conan)
 * [json](https://github.com/nlohmann/json)
 * [openssl](https://github.com/openssl/openssl)
 * [curl](https://github.com/curl/curl)
