@@ -40,6 +40,12 @@ The program has been built and can be executed by the binary file *icd*. For inf
 ### Uploading Song
 ``icd upload -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3``
 
+### Uploading Song with metadata
+
+```BASH
+icd upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
+```
+
 ### Retrieving Song in json
 ``icd retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs``
 
