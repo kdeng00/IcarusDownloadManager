@@ -19,26 +19,58 @@ namespace Managers
 
         Models::IcarusAction retrieveIcarusAction() const;
     private:
-        constexpr std::array<const char*, 15> supportedFlags() noexcept
+        constexpr std::array<const char*, 16> supportedFlags() noexcept
         {
-            constexpr std::array<const char*, 15> allFlags{"-u", "-p", "-t", "-h", "-s",
+            constexpr std::array<const char*, 16> allFlags{"-u", "-p", "-t", "-h", "-s",
                 "-sd", "-sr", "-d", "-D", "-b", "-rt", "-nc",
-                "-m", "-ca", "-smca"};
+                "-m", "-ca", "-smca", "-t"};
 
             return allFlags;
         }
         constexpr std::array<const char*, 4> supportedActions() noexcept;
 
-        bool isNumber(const std::string_view val) noexcept
-        {
-            return !val.empty() && std::find_if(val.begin(), 
-                val.end(), [](char c)
-                {
-                    return !std::isdigit(c);
-                    }) == val.end();
-        }
         void initialize();
         void validateFlags();
+        // Checks to see if the flag is valid
+        template<typename Str>
+        bool isValidFlag(const Str flag)
+        {
+            const auto flags = supportedFlags();
+            const auto i = std::find_if(flags.begin(), flags.end(), [&](const Str &f)
+            {
+                return f.compare(flag) == 0 ? true : false;
+            });
+
+            auto result = i != flags.end() ? true : false;
+
+            return result;
+        }
+
+        template<typename Str>
+        bool doesFlagHaveValue(const Str flag)
+        {
+            const auto flags = parsedFlags();
+            auto i = std::find_if(flags.begin(), flags.end(), [&](const Str &f)
+            {
+                return f.compare(flag) == 0 ? true : false;
+            });
+
+            if (i != flags.end())
+            {
+                if (++i != flags.end() && !isValidFlag<Str>(*i))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
 
         std::vector<std::string> parsedFlags();
 

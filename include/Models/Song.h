@@ -18,6 +18,10 @@ namespace Models
             std::cout<<"\n";
         }
 
+        // TODO: Incomplete implementation
+        std::string toMetadataJson();
+        
+
         int id;
         std::string title;
         std::string artist;

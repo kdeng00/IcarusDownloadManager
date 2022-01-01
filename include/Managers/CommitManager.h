@@ -60,9 +60,18 @@ namespace Managers
         //
         // Expects
         // * Song - mp3 file path
+        // * TrackID - track number to chose from when retrieving metadata. "1" and "1:1" are similar
         // * Metadata - Source file containing metadata of the song
         // * Cover art - path to image cover art
-	    void uploadSingleSong();
+	    // TODO: Change the name
+	    void uploadSongWithMetadata();
+
+        // Expects the song path, trackID, metadata file path, and cover path
+		void singTargetUpload(const std::string &songPath, const std::string &trackID, 
+            const std::string &metaPath, const std::string &coverPath);
+        // Expects the source directory that contains songs, a metadata file, and cover image
+		void multiTargetUpload(const std::string &sourcePath);
+
 
         // Checks for the no confirm flag. Used when uploading songs from a directory
         bool checkForNoConfirm()

@@ -11,6 +11,15 @@ namespace Utilities
     public:
         Conversions();
 
+
+        static void toLowerChar(char &c)
+        {
+            if (std::isalpha(c))
+            {
+                c = std::tolower(c);
+            }
+        }
+
         void initializeValues();
 
         template <typename T>

@@ -6,6 +6,7 @@
 #include<nlohmann/json.hpp>
 
 #include"Syncers/Upload.h"
+#include"Utilities/Conversions.h"
 
 using std::cout;
 using std::cin;
@@ -24,6 +25,7 @@ using namespace cpr;
 
 namespace Syncers
 {
+    #pragma region Functions
     Song Upload::uploadSong(Song& song)
     {
         try
@@ -76,17 +78,13 @@ namespace Syncers
                 auto answer = 'a';
                 cout << "are you sure you want to upload " << songs.size() << " songs? [y/n]";
                 cin >> answer;
+                Utilities::Conversions::toLowerChar(answer);
 
                 if (answer == 'y' || answer == 'Y') 
                 {
                     confirmUpload = true;
                     break;
                 } 
-                else if (answer == 'n' || answer == 'N') 
-                {
-                    confirmUpload = false;
-                    break;
-                }
             }
 
             if (!confirmUpload) 
@@ -110,12 +108,55 @@ namespace Syncers
 
     void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Models::Song& song, Models::CoverArt &cover)
     {
-        // TODO: Implement
+        this->api.endpoint.append("/upload/with/data");
+
+        try
+        {
+            auto url = retrieveUrl();
+
+            cout<<"url "<<url<<endl;
+            string auth{this->m_token.tokenType};
+            auth.append(" " + this->m_token.accessToken);
+
+            // const auto meta = song.toMetadataJson();
+            nlohmann::json s;
+            s["title"] = song.title;
+            s["album"] = album.album;
+            s["album_artist"] = album.albumArtist;
+            s["artist"] = song.artist;
+            s["year"] = album.year;
+            s["genre"] = album.genre;
+            s["disc"] = song.disc;
+            s["track"] = song.track;
+            s["disc_count"] = album.discCount;
+            s["track_count"] = album.trackCount;
+
+            const auto meta = s.dump();
+
+            // cout<<"\n\nMeta:\n"<<meta<<"\n";
+
+            auto multipart = cpr::Multipart{{"cover", cpr::File{cover.path}},
+                {"metadata", meta},
+                {"file", cpr::File{song.songPath}}};
+
+            auto r = cpr::Post(cpr::Url{url}, multipart,
+                cpr::Header{{"authorization", auth}}
+            );
+
+            cout << "status code: " << r.status_code<< std::endl;
+            cout << r.text << endl;
+        }
+        catch (exception &e)
+        {
+            auto msg = e.what();
+            cout<<"Error: "<<msg<<"\n";
+        }
     }
     std::vector<Song> Upload::retrieveAllSongsFromDirectory(const std::string& directory,
         bool recursive)
     {
         std::vector<Song> allSongs;
+
         if (recursive)
         {
             for (auto p: fs::recursive_directory_iterator(directory))
@@ -166,7 +207,7 @@ namespace Syncers
     }
 
 
-    #pragma
+    #pragma region Testing
     void Upload::printSongDetails()
     {
         cout<<"Song details: "<<endl;
@@ -207,6 +248,6 @@ namespace Syncers
 
         cout<<endl<<endl;;
     }
-    #pragma Testing
-    #pragma Functions
+    #pragma endregion
+    #pragma endregion
 }

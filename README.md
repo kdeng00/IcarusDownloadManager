@@ -43,7 +43,7 @@ The program has been built and can be executed by the binary file *icd*. For inf
 ### Uploading Song with metadata
 
 ```BASH
-icd upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
+icd upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3 -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
 ```
 
 ### Uploading Song with metadata from directory

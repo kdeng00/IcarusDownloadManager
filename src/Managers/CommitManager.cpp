@@ -15,6 +15,7 @@
 #include"Syncers/Download.h"
 #include"Syncers/RetrieveRecords.h"
 #include"Syncers/Upload.h"
+#include"Utilities/Checks.h"
 
 #include"Managers/TokenManager.h"
 #include"Managers/UserManager.h"
@@ -67,7 +68,7 @@ namespace Managers
 				uploadSong();
 				break;
 			case ActionValues::UPLOAD_SONG_WITH_METADATA:
-				uploadSingleSong();
+				uploadSongWithMetadata();
 				break;
             default:
                 break;
@@ -234,22 +235,18 @@ namespace Managers
         }
 	}
 
-	// TODO: Change the name
-	void CommitManager::uploadSingleSong()
+	void CommitManager::uploadSongWithMetadata()
 	{
 		cout<<"Uploading single song with metadata\n\n";
 
-		APIParser apiPrs{icaAction};
-		auto api = apiPrs.retrieveAPI();
-		const auto token = parseToken(api);
-
-		// Either the set of "-s", "-m", "-ca" flags or "-smca" must exist with values
+		// Either the set of "-s", "-m", "-ca", "-t" flags or "-smca" must exist with values
 		// in order to be valid but not both
 		const auto songPath = this->icaAction.retrieveFlagValue("-s");
 		const auto metadataPath = this->icaAction.retrieveFlagValue("-m");
 		const auto coverPath = this->icaAction.retrieveFlagValue("-ca");
+		const auto trackID = this->icaAction.retrieveFlagValue("-t");
 		const auto singleTarget = !songPath.empty() && !metadataPath.empty() && 
-			!coverPath.empty() ? true : false;
+			!coverPath.empty() && !trackID.empty() ? true : false;
 
 		const auto uni = this->icaAction.retrieveFlagValue("-smca");
 		const auto multiTarget = !uni.empty() ? true : false;
@@ -260,19 +257,62 @@ namespace Managers
 			return;
 		}
 
-		cout<<"song path: "<<songPath<<"\n";
+		cout<<"Song path: "<<songPath<<"\n";
+		cout<<"TrackID: "<<trackID<<"\n";
 		cout<<"Metadata path: "<<metadataPath<<"\n";
 		cout<<"Cover Art path: "<<coverPath<<"\n";
 
-		auto album = retrieveMetadata(metadataPath);
+		if (singleTarget)
+		{
+			singTargetUpload(songPath, trackID, metadataPath, coverPath);
+		}
+		else if (multiTarget)
+		{
+			multiTargetUpload(uni);
+		}
+	}
+
+
+	void CommitManager::singTargetUpload(const std::string &songPath, const std::string &trackID, 
+		const std::string &metaPath, const std::string &coverPath)
+	{
+		APIParser apiPrs(icaAction);
+		auto api = apiPrs.retrieveAPI();
+		const auto token = parseToken(api);
+
+		auto album = retrieveMetadata(metaPath);
 		album.printInfo();
 		for (auto sng : album.songs)
 		{
 			// sng.printInfo();
 		}
 
-		auto disc = 0;
+		auto disc = 1;
 		auto track = 1;
+
+		auto separator = std::find_if(trackID.begin(), trackID.end(), [&](char c)
+		{
+			return c == ':';
+		});
+
+		if (separator != trackID.end())
+		{
+			cout<<"Found colon\n";
+			auto dStr = string(trackID.begin(), separator);
+			auto tStr = string(++separator, trackID.end());
+
+			cout<<"disc "<<dStr<<" track "<<tStr<<"\n";
+			disc = std::atoi(dStr.c_str());
+			track = std::atoi(tStr.c_str());
+		}
+		else
+		{
+			auto isNumber = Utilities::Checks::isNumber(trackID);
+			if (isNumber)
+			{
+				track = std::atoi(trackID.c_str());
+			}
+		}
 
 		auto sng = std::find_if(album.songs.begin(), album.songs.end(), [&](Song s)
 		{
@@ -281,7 +321,8 @@ namespace Managers
 
 		if (sng == album.songs.end())
 		{
-			cout<<"Not found\n";
+			cout<<"Not found with disc "<<disc<<" track "<<track<<"\n";
+			std::exit(-1);
 		}
 
 		auto song = *sng;
@@ -291,12 +332,16 @@ namespace Managers
 		cover.title = song.title;
 		cover.path = coverPath;
 
-
-
 		Upload up(api, token);
 		up.uploadSongWithMetadata(album, song, cover);
 	}
 
+	void CommitManager::multiTargetUpload(const std::string &sourcePath)
+	{
+		APIParser apiPrs(icaAction);
+		auto api = apiPrs.retrieveAPI();
+		const auto token = parseToken(api);
+	}
 
 	#pragma region private
 	CommitManager::Album CommitManager::retrieveMetadata(const std::string_view path)

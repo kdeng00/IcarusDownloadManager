@@ -42,6 +42,7 @@ set(SOURCES
     src/Managers/FileManager.cpp
     src/Managers/TokenManager.cpp
     src/Managers/UserManager.cpp
+    src/Models/Song.cpp
     src/Parsers/APIParser.cpp
     src/Syncers/Delete.cpp
     src/Syncers/Download.cpp
