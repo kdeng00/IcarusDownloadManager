@@ -15,7 +15,6 @@
 #include"Syncers/Download.h"
 #include"Syncers/RetrieveRecords.h"
 #include"Syncers/Upload.h"
-#include"Utilities/Checks.h"
 
 #include"Managers/TokenManager.h"
 #include"Managers/UserManager.h"
@@ -282,50 +281,25 @@ namespace Managers
 
 		auto album = retrieveMetadata(metaPath);
 		album.printInfo();
-		for (auto sng : album.songs)
-		{
-			// sng.printInfo();
-		}
+		
+		Song song;
+		song.track = 1;
+		song.disc = 1;
 
-		auto disc = 1;
-		auto track = 1;
+		cout<<"TrackID: "<<trackID<<"\n";
 
-		auto separator = std::find_if(trackID.begin(), trackID.end(), [&](char c)
-		{
-			return c == ':';
-		});
+		parseDiscAndTrack<Song, std::string>(song, trackID);
 
-		if (separator != trackID.end())
-		{
-			cout<<"Found colon\n";
-			auto dStr = string(trackID.begin(), separator);
-			auto tStr = string(++separator, trackID.end());
-
-			cout<<"disc "<<dStr<<" track "<<tStr<<"\n";
-			disc = std::atoi(dStr.c_str());
-			track = std::atoi(tStr.c_str());
-		}
-		else
-		{
-			auto isNumber = Utilities::Checks::isNumber(trackID);
-			if (isNumber)
-			{
-				track = std::atoi(trackID.c_str());
-			}
-		}
-
-		auto sng = std::find_if(album.songs.begin(), album.songs.end(), [&](Song s)
-		{
-			return s.track == track && s.disc == disc;
-		});
+		auto c = [](const Song &songA, const Song &songB) { return songA.track == songB.track && songA.disc == songB.disc; };
+		auto sng = Utilities::Checks::itemIterInContainer<Song, std::vector<Song>>(album.songs, song, c);
 
 		if (sng == album.songs.end())
 		{
-			cout<<"Not found with disc "<<disc<<" track "<<track<<"\n";
+			cout<<"Not found with disc "<<song.disc<<" track "<<song.track<<"\n";
 			std::exit(-1);
 		}
 
-		auto song = *sng;
+		song = *sng;
 		song.songPath = songPath;
 
 		Models::CoverArt cover;
@@ -341,6 +315,53 @@ namespace Managers
 		APIParser apiPrs(icaAction);
 		auto api = apiPrs.retrieveAPI();
 		const auto token = parseToken(api);
+
+		if (!fs::is_directory(sourcePath))
+		{
+			cout<<sourcePath<<" is not a directory\n";
+			std::exit(-1);
+		}
+
+		std::vector<Song> songs;
+		Models::CoverArt cover;
+		string metadataPath;
+
+		for (auto &p: fs::directory_iterator(sourcePath))
+		{
+			const auto &pp = p.path();
+			const auto stem = pp.stem();
+			const auto file = pp.filename();
+			const auto extension = pp.extension();
+
+			cout<<"Stem "<<stem<<" Extension "<<extension<<"\n";
+
+			if (extension.compare(".mp3") == 0)
+			{
+				Song song;
+				song.songPath = pp.string();
+
+				initializeDiscAndTrack<Song, std::string>(song);
+
+				songs.emplace_back(std::move(song));
+			}
+			else if (extension.compare(".jpg") == 0 || extension.compare(".png") == 0)
+			{
+				cover.path.assign(pp.string());
+			}
+			else if (extension.compare(".json") == 0)
+			{
+				metadataPath.assign(pp.string());
+			}
+		}
+
+		auto album = retrieveMetadata(metadataPath);
+
+		Upload up(api, token);
+
+		for (auto &song : songs)
+		{
+			up.uploadSongWithMetadata(album, song, cover);
+		}
 	}
 
 	#pragma region private

@@ -108,7 +108,7 @@ namespace Syncers
 
     void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Models::Song& song, Models::CoverArt &cover)
     {
-        this->api.endpoint.append("/upload/with/data");
+        this->api.endpoint.assign("song/data/upload/with/data");
 
         try
         {
@@ -133,8 +133,9 @@ namespace Syncers
 
             const auto meta = s.dump();
 
-            // cout<<"\n\nMeta:\n"<<meta<<"\n";
+            cout<<"\n\nMeta:\n"<<meta<<"\n";
 
+            /**
             auto multipart = cpr::Multipart{{"cover", cpr::File{cover.path}},
                 {"metadata", meta},
                 {"file", cpr::File{song.songPath}}};
@@ -145,6 +146,7 @@ namespace Syncers
 
             cout << "status code: " << r.status_code<< std::endl;
             cout << r.text << endl;
+            */
         }
         catch (exception &e)
         {

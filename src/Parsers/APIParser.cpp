@@ -43,9 +43,6 @@ namespace Parsers
 
         }
 
-        // TODO: For now I will hard code
-        // the api version since I am only
-        // on version 1
         api.version = "v1";
     }
     #pragma functions

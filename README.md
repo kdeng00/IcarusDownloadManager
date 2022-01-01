@@ -35,10 +35,14 @@ cmake --build . -j
 The program has been built and can be executed by the binary file *icd*. For information on how to use icd, merely execute the program without any command line arguments.
 
 ### Downloading Song
-``icd download -u spacecadet -p stellar40 -h https://icarus.com -b 15``
+``BASH
+icd download -u spacecadet -p stellar40 -h https://icarus.com -b 15
+```
 
 ### Uploading Song
-``icd upload -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3``
+```BASH
+icd upload -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3
+```
 
 ### Uploading Song with metadata
 
@@ -54,10 +58,14 @@ icd upload-meta -u spacecadet -p stellar40 -h https://icarus.com -smca /path/whe
 
 
 ### Retrieving Song in json
-``icd retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs``
+```Bash
+icd retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs
+```
 
 ### Deleting Song
-``icd delete -u spacecadet -p stellar40 -h https://icarus.com -D 15``
+```BASH
+icd delete -u spacecadet -p stellar40 -h https://icarus.com -D 15
+```
 
 
 ## Contributing

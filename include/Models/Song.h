@@ -18,7 +18,6 @@ namespace Models
             std::cout<<"\n";
         }
 
-        // TODO: Incomplete implementation
         std::string toMetadataJson();
         
 

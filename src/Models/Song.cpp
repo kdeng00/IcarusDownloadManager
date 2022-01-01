@@ -10,6 +10,12 @@ namespace Models
     {
         nlohmann::json s;
         s["title"] = this->title;
+        s["artist"] = this->artist;
+        s["album"] = this->album;
+        s["genre"] = this->genre;
+        s["year"] = this->year;
+        s["track"] = this->track;
+        s["disc"] = this->disc;
 
         return s.dump();
     }
