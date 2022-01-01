@@ -1,6 +1,11 @@
 #include"Managers/CommitManager.h"
 
 #include<iostream>
+#include<fstream>
+#include<sstream>
+#include<filesystem>
+
+#include"nlohmann/json.hpp"
 
 #include"Models/API.h"
 #include"Models/Song.h"
@@ -31,6 +36,8 @@ using Syncers::Download;
 using Syncers::RetrieveRecords;
 using Syncers::Upload;
 
+namespace filesystem = std::filesystem;
+
 namespace Managers
 {
 	#pragma
@@ -44,6 +51,7 @@ namespace Managers
 	{
 		auto action = icaAction.action;
 		cout<<"Commiting "<<action<<" action"<<endl;
+
 		switch (mapActions()[action])
 		{
             case ActionValues::deleteAct:
@@ -57,6 +65,9 @@ namespace Managers
 				break;
             case ActionValues::uploadAct:
 				uploadSong();
+				break;
+			case ActionValues::UPLOAD_SONG_WITH_METADATA:
+				uploadSingleSong();
 				break;
             default:
                 break;
@@ -73,7 +84,8 @@ namespace Managers
             {"delete", ActionValues::deleteAct},
             {"download", ActionValues::downloadAct},
             {"retrieve", ActionValues::retrieveAct},
-            {"upload", ActionValues::uploadAct}
+            {"upload", ActionValues::uploadAct},
+			{"upload-meta", ActionValues::UPLOAD_SONG_WITH_METADATA}
         };
 
         return actions;
@@ -82,7 +94,7 @@ namespace Managers
 
     Token CommitManager::parseToken(API api)
     {
-        cout<<"fetching token"<<endl;
+        cout<<"fetching token\n";
 		UserManager usrMgr{icaAction};
 		auto user = usrMgr.retrieveUser();
 
@@ -178,7 +190,7 @@ namespace Managers
 	{
         auto uploadSingleSong = true;
         auto recursiveDirectory = false;
-        auto noConfirm = false;
+        const auto noConfirm = checkForNoConfirm();
         string songDirectory;
 		APIParser apiPrs{icaAction};
 		auto api = apiPrs.retrieveAPI();
@@ -207,23 +219,145 @@ namespace Managers
                 uploadSingleSong = false;
                 recursiveDirectory = true;
             }
-            else if (flag.compare("-nc") == 0)
-            {
-                noConfirm = true;
-            }
 		}
 
-		Upload upld{api};
+		Upload upld{api, token};
         if (uploadSingleSong)
         {
 		    cout<<"Uploading song..."<<endl;
-		    upld.uploadSong(token, song);
+		    upld.uploadSong(song);
         }
         else
         {
             cout<<"Uploading songs from " << songDirectory << endl;
-            upld.uploadSongsFromDirectory(token, songDirectory, noConfirm, recursiveDirectory);
+            upld.uploadSongsFromDirectory(songDirectory, noConfirm, recursiveDirectory);
         }
 	}
+
+	// TODO: Change the name
+	void CommitManager::uploadSingleSong()
+	{
+		cout<<"Uploading single song with metadata\n\n";
+
+		APIParser apiPrs{icaAction};
+		auto api = apiPrs.retrieveAPI();
+		const auto token = parseToken(api);
+
+		// Either the set of "-s", "-m", "-ca" flags or "-smca" must exist with values
+		// in order to be valid but not both
+		const auto songPath = this->icaAction.retrieveFlagValue("-s");
+		const auto metadataPath = this->icaAction.retrieveFlagValue("-m");
+		const auto coverPath = this->icaAction.retrieveFlagValue("-ca");
+		const auto singleTarget = !songPath.empty() && !metadataPath.empty() && 
+			!coverPath.empty() ? true : false;
+
+		const auto uni = this->icaAction.retrieveFlagValue("-smca");
+		const auto multiTarget = !uni.empty() ? true : false;
+
+		if (singleTarget && multiTarget)
+		{
+			cout<<"Cannot upload from source and directory\n";
+			return;
+		}
+
+		cout<<"song path: "<<songPath<<"\n";
+		cout<<"Metadata path: "<<metadataPath<<"\n";
+		cout<<"Cover Art path: "<<coverPath<<"\n";
+
+		auto album = retrieveMetadata(metadataPath);
+		album.printInfo();
+		for (auto sng : album.songs)
+		{
+			// sng.printInfo();
+		}
+
+		auto disc = 0;
+		auto track = 1;
+
+		auto sng = std::find_if(album.songs.begin(), album.songs.end(), [&](Song s)
+		{
+			return s.track == track && s.disc == disc;
+		});
+
+		if (sng == album.songs.end())
+		{
+			cout<<"Not found\n";
+		}
+
+		auto song = *sng;
+		song.songPath = songPath;
+
+		Models::CoverArt cover;
+		cover.title = song.title;
+		cover.path = coverPath;
+
+
+
+		Upload up(api, token);
+		up.uploadSongWithMetadata(album, song, cover);
+	}
+
+
+	#pragma region private
+	CommitManager::Album CommitManager::retrieveMetadata(const std::string_view path)
+	{
+		CommitManager::Album album;
+		const auto fileContent = retrieveFileContent(path);
+		cout<<"Parsing...\n";
+		auto serialized = nlohmann::json::parse(fileContent);
+		cout<<"Parsed\n";
+
+		album.album = serialized["album"].get<std::string>();
+		album.albumArtist = serialized["album_artist"].get<std::string>();
+		album.genre = serialized["genre"].get<std::string>();
+		album.year = serialized["year"].get<int>();
+		album.trackCount = serialized["track_count"].get<int>();
+		album.discCount = serialized["disc_count"].get<int>();
+		album.songs.reserve(album.trackCount);
+
+		for (auto &j : serialized["tracks"])
+		{
+			Song song;
+			song.title = j["title"].get<std::string>();
+			song.track = j["track"].get<int>();
+			song.disc = j["disc"].get<int>();
+			song.artist = j["artist"].get<std::string>();
+			song.album = album.album;
+			song.year = album.year;
+			song.genre = album.genre;
+
+			album.songs.push_back(song);
+		}
+
+		return album;
+	}
+	
+    string CommitManager::retrieveFileContent(const std::string_view path)
+	{
+		string path_str(path);
+		string value;
+
+		std::stringstream buffer;
+		std::fstream file(path_str, std::ios::in);
+		buffer<<file.rdbuf();
+		file.close();
+
+		value.assign(buffer.str());
+
+		return value;
+	}
+	#pragma endregion
+
+	void CommitManager::Album::printInfo()
+	{
+		std::cout<<"Album: "<<this->album<<"\n";
+		std::cout<<"Album Artist: "<<this->albumArtist<<"\n";
+		std::cout<<"Genre: "<<this->genre<<"\n";
+		std::cout<<"Year: "<<this->year<<"\n";
+		std::cout<<"Track count: "<<this->trackCount<<"\n";
+		std::cout<<"Disc count: "<<this->discCount<<"\n";
+		std::cout<<"\n";
+    }
+
 	#pragma Functions
 }

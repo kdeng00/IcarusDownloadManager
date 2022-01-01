@@ -5,8 +5,9 @@
 
 namespace Models
 {
-    struct Flags
+    class Flags
     {
+    public:
         std::string flag;
         std::string value;
     };

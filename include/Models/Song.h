@@ -2,12 +2,22 @@
 #define SONG_H_
 
 #include<string>
+#include<iostream>
 
 
 namespace Models
 {
-    struct Song
+    class Song
     {
+    public:
+        Song() = default;
+
+        void printInfo()
+        {
+            std::cout<<"Title: "<<this->title<<"\n";
+            std::cout<<"\n";
+        }
+
         int id;
         std::string title;
         std::string artist;
@@ -16,8 +26,17 @@ namespace Models
         int year;
         int duration;
         int track;
+        int disc;
         std::string data;
         std::string songPath;
+    };
+
+    class CoverArt
+    {
+    public:
+        int id;
+        std::string title;
+        std::string path;
     };
 } 
 

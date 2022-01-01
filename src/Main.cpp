@@ -62,6 +62,8 @@ int main(int argc, char** argv)
     ActionManager actMgr(argv, argc);
     auto chosenAction = actMgr.retrieveIcarusAction();
 
+    chosenAction.print_action_and_flags();
+
     CommitManager commitMgr(chosenAction);
     commitMgr.commitAction();
 

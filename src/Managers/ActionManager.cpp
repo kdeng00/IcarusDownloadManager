@@ -36,23 +36,6 @@ namespace Managers
     }
 
 
-    constexpr std::array<const char*, 12> ActionManager::supportedFlags() noexcept
-    {
-        constexpr std::array<const char*, 12> allFlags{"-u", "-p", "-t", "-h", "-s",
-                "-sd", "-sr", "-d", "-D", "-b", "-rt", "-nc"};
-
-        return allFlags;
-    }
-
-
-    bool ActionManager::isNumber(string_view val) noexcept
-    {
-        return !val.empty() && std::find_if(val.begin(), 
-            val.end(), [](char c)
-            {
-                return !std::isdigit(c);
-                }) == val.end();
-    }
 
     void ActionManager::initialize()
     {
@@ -62,13 +45,14 @@ namespace Managers
         transform(action.begin(), action.end(),
                 action.begin(), ::tolower);
     }
+
     void ActionManager::validateFlags()
     {
-        cout<<"Validating flags"<<endl;
+        cout<<"Validating flags\n";
 
-        auto flagVals = parsedFlags();
+        const auto flagVals = parsedFlags();
 
-        Flags flg{};
+        Flags flg;
 
         auto allSupportedFlags = supportedFlags();
 
@@ -83,7 +67,7 @@ namespace Managers
             if (flag.size() > 3 || isNumber(flag))
             {
                 flg.value = flag;
-                //cout<<"flag value "<<flg.value<<endl;
+
                 flags.push_back(flg);
                 flg = Flags{};
                 continue;
@@ -95,7 +79,6 @@ namespace Managers
                     return !flag.compare(val);
                 }))
             {
-                //cout<<"flag "<<flag<<endl;
                 flg.flag = flag;
             }
             else
@@ -108,7 +91,8 @@ namespace Managers
 
     vector<string> ActionManager::parsedFlags()
     {
-        auto parsed = vector<string>();
+        vector<string> parsed;
+        parsed.reserve(paramCount);
         
         for (auto i = 2; i < paramCount; ++i)
         {

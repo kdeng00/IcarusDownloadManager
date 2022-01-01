@@ -24,22 +24,15 @@ using namespace cpr;
 
 namespace Syncers
 {
-    Upload::Upload() { }
-    Upload::Upload(API api) : api(api)
-    {
-        this->api.endpoint = "song/data";
-    }
-
-
-    Song Upload::uploadSong(const Models::Token& token, Song& song)
+    Song Upload::uploadSong(Song& song)
     {
         try
         {
             auto url = retrieveUrl();
 
             cout<<"url "<<url<<endl;
-            string auth{token.tokenType};
-            auth.append(" " + token.accessToken);
+            string auth{this->m_token.tokenType};
+            auth.append(" " + this->m_token.accessToken);
             auto r = cpr::Post(cpr::Url{url},
                         cpr::Multipart{{"key", "small value"},
                                 {"file", cpr::File{song.songPath}}},
@@ -70,8 +63,7 @@ namespace Syncers
         return song;
     }
 
-    void Upload::uploadSongsFromDirectory(const Models::Token& token, 
-        const std::string& directory, 
+    void Upload::uploadSongsFromDirectory(const std::string& directory, 
         const bool noConfirm, bool recursive = false)
     {
         try
@@ -106,7 +98,7 @@ namespace Syncers
             cout << "uploading songs\n";
             for (auto& song: songs)
             {
-                song = uploadSong(token, song);
+                song = uploadSong(song);
             }
         }
         catch (exception& e)
@@ -116,6 +108,10 @@ namespace Syncers
     }
 
 
+    void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Models::Song& song, Models::CoverArt &cover)
+    {
+        // TODO: Implement
+    }
     std::vector<Song> Upload::retrieveAllSongsFromDirectory(const std::string& directory,
         bool recursive)
     {
