@@ -16,103 +16,111 @@ using Models::IcarusAction;
 
 namespace Managers
 {
-    #pragma
-    ActionManager::ActionManager(char **param, int paramCount) : 
-        params(std::move(param)), paramCount(paramCount)
-    {
-        initialize();
-    }
-    #pragma Constructors
+
+#pragma region Constructors
+ActionManager::ActionManager(char **param, int paramCount) : 
+    params(std::move(param)), paramCount(paramCount)
+{
+    initialize();
+}
+#pragma endregion
 
 
-    #pragma
-    IcarusAction ActionManager::retrieveIcarusAction() const
-    {
-        IcarusAction icarusAction;
-        icarusAction.flags = flags;
-        icarusAction.action = action;
+#pragma region Functions
+IcarusAction ActionManager::retrieveIcarusAction() const
+{
+    IcarusAction icarusAction;
+    icarusAction.flags = flags;
+    icarusAction.action = action;
 
-        return icarusAction;
-    }
+    return icarusAction;
+}
+
+bool ActionManager::isNumber(string_view val) noexcept
+{
+    return !val.empty() && std::find_if(val.begin(), 
+        val.end(), [](char c)
+        {
+            return !std::isdigit(c);
+            }) == val.end();
+}
 
 
+void ActionManager::initialize()
+{
+    validateFlags();
 
-    void ActionManager::initialize()
-    {
-        validateFlags();
-
-        action = std::move(string{params[1]});
-        transform(action.begin(), action.end(),
-                action.begin(), ::tolower);
-    }
-
-    void ActionManager::validateFlags()
-    {
+    action = std::move(string{params[1]});
+    transform(action.begin(), action.end(),
+            action.begin(), ::tolower);
+}
+void ActionManager::validateFlags()
+{
         cout<<"Validating flags\n";
 
-        const auto flagVals = parsedFlags();
+    const auto flagVals = parsedFlags();
 
-        for (auto flag = flagVals.begin(); flag != flagVals.end(); ++flag)
-        {
-            Flags flg;
-            cout<<"Value: "<<*flag<<"\n";
-
-            if (isValidFlag<string>(*flag) && doesFlagHaveValue<string>(*flag))
-            {
-                cout<<"Flag has value\n";
-                flg.flag = *flag;
-                flg.value = *(++flag);
-            }
-            else if (isValidFlag<string>(*flag))
-            {
-                cout<<"Flag does not have a value\n";
-                flg.flag = *flag;
-            }
-            else
-            {
-                cout<<"Flag "<<*flag<<" is not valid"<<endl;
-                exit(1);
-            }
-
-            flags.emplace_back(std::move(flg));
-        }
-    }
-
-    vector<string> ActionManager::parsedFlags()
+    for (auto flag = flagVals.begin(); flag != flagVals.end(); ++flag)
     {
-        vector<string> parsed;
-        parsed.reserve(paramCount);
-        
-        for (auto i = 2; i < paramCount; ++i)
+        Flags flg;
+        cout<<"Value: "<<*flag<<"\n";
+
+        if (isValidFlag<string>(*flag) && doesFlagHaveValue<string>(*flag))
         {
-            const std::string flag(std::move(*(params + i)));
-            parsed.emplace_back(std::move(flag));
+            cout<<"Flag has value\n";
+            flg.flag = *flag;
+            flg.value = *(++flag);
         }
-
-        return parsed;
-    }
-
-    #pragma
-    void ActionManager::printAction() noexcept
-    {
-        if (action.empty())
+        else if (isValidFlag<string>(*flag))
         {
-            printf("Action is empty\n");
+            cout<<"Flag does not have a value\n";
+            flg.flag = *flag;
         }
         else
         {
-            cout<<"Action is "<<action<<endl;
+            cout<<"Flag "<<*flag<<" is not valid"<<endl;
+            exit(1);
         }
+
+        flags.emplace_back(std::move(flg));
     }
-    void ActionManager::printFlags() noexcept
+}
+
+vector<string> ActionManager::parsedFlags()
+{
+    auto parsed = vector<string>();
+    
+    for (auto i = 2; i < paramCount; ++i)
     {
-        cout<<"\nPrinting flags..."<<endl;
-        for (auto flag: flags)
-        {
-            cout<<"flag "<<flag.flag<<endl;
-            cout<<"value "<<flag.value<<endl;
-        }
+        const std::string flag(std::move(*(params + i)));
+        parsed.push_back(std::move(flag));
     }
-    #pragma Testing
-    #pragma Functions
+
+    return parsed;
+}
+
+#pragma region Testing
+void ActionManager::printAction() noexcept
+{
+    if (action.empty())
+    {
+        printf("Action is empty\n");
+    }
+    else
+    {
+        cout<<"Action is "<<action<<endl;
+    }
+}
+void ActionManager::printFlags() noexcept
+{
+    cout<<"\nPrinting flags..."<<endl;
+    for (auto flag: flags)
+    {
+        cout<<"flag "<<flag.flag<<endl;
+        cout<<"value "<<flag.value<<endl;
+    }
+}
+#pragma endregion
+#pragma endregion
+
 }

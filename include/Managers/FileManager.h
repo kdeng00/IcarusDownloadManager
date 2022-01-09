@@ -5,25 +5,27 @@
 
 namespace Managers
 {
-    class FileManager
-    {
-    public:
-        FileManager();
-        FileManager(std::string);
 
-        void saveFile(std::string);
-        void modifyFilePath(std::string);
+class FileManager
+{
+public:
+    FileManager();
+    FileManager(std::string);
 
-        char* retrieveFileBuffer() const;
-        int retrieveFileBufferLength() const;
-    private:
-        void readFile();
+    void saveFile(std::string);
+    void modifyFilePath(std::string);
 
-        std::string filePath;
-        char* fileBuffer;
-        bool fileRead;
-        int fileBufferLength;
-    };
+    char* retrieveFileBuffer() const;
+    int retrieveFileBufferLength() const;
+private:
+    void readFile();
+
+    std::string filePath;
+    char* fileBuffer;
+    bool fileRead;
+    int fileBufferLength;
+};
+
 }
 
 #endif

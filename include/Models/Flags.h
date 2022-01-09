@@ -5,12 +5,21 @@
 
 namespace Models
 {
-    class Flags
-    {
-    public:
-        std::string flag;
-        std::string value;
-    };
+
+class Flags
+{
+public:
+    std::string flag;
+    std::string value;
+};
+
+
+struct Flags
+{
+    std::string flag;
+    std::string value;
+};
+
 }
 
 #endif

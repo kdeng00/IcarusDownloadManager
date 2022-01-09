@@ -6,26 +6,24 @@
 
 namespace Utilities
 {
-    class Conversions
+
+class Conversions
+{
+public:
+    Conversions();
+
+    static void toLowerChar(char &c)
     {
-    public:
-        Conversions();
-
-
-        static void toLowerChar(char &c)
+        if (std::isalpha(c))
         {
-            if (std::isalpha(c))
-            {
-                c = std::tolower(c);
-            }
+            c = std::tolower(c);
         }
+    }
 
-        void initializeValues();
+    void initializeValues();
+private:
+};
 
-        template <typename T>
-        void printValue(T);
-    private:
-    };
 }
 
 #endif

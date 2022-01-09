@@ -1,6 +1,6 @@
-#include"Parsers/APIParser.h"
+#include "Parsers/APIParser.h"
 
-#include<iostream>
+#include <iostream>
 
 using std::cout;
 using std::endl;
@@ -10,40 +10,44 @@ using Models::IcarusAction;
 
 namespace Parsers
 {
-    #pragma
-    APIParser::APIParser(IcarusAction icaAct) : icaAct(icaAct)
+
+#pragma region Constructors
+APIParser::APIParser(IcarusAction icaAct) : icaAct(icaAct)
+{
+    api = API{};
+    parseAPI();
+}
+#pragma endregion
+
+
+#pragma region Functions
+API APIParser::retrieveAPI() const
+{
+    return api;
+}
+
+void APIParser::parseAPI()
+{
+    auto flags = icaAct.flags;
+    cout << "Parsing api" << endl;
+
+    for (auto i =0; i < flags.size(); ++i)
     {
-        api = API{};
-        parseAPI();
-    }
-    #pragma endregion
+        auto arg = flags[i].flag;
+        auto value = flags[i].value;
 
-
-    #pragma
-    API APIParser::retrieveAPI() const
-    {
-        return api;
-    }
-
-    void APIParser::parseAPI()
-    {
-        auto flags = icaAct.flags;
-        cout<<"Parsing api"<<endl;
-
-        for (auto i =0; i < flags.size(); ++i)
+        if (arg.compare("-h") == 0)
         {
-            auto arg = flags[i].flag;
-            auto value = flags[i].value;
-
-            if (arg.compare("-h") == 0)
-            {
-                api.url = (value[value.size()-1] == '/') ? value : value + "/";
-                break;
-            }
-
+            api.url = (value[value.size()-1] == '/') ? value : value + "/";
+            break;
         }
-
-        api.version = "v1";
     }
-    #pragma functions
+
+    // TODO: For now I will hard code
+    // the api version since I am only
+    // on version 1
+    api.version = "v1";
+}
+#pragma endregion
+
 }

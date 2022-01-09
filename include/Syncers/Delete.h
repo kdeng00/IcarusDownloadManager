@@ -9,15 +9,17 @@
 
 namespace Syncers
 {
-    class Delete : SyncerBase
-    {
-    public:
-        Delete(Models::API);
 
-        void deleteSong(const Models::Token, Models::Song);
-    private:
-        std::string retrieveUrl(Models::Song);
-    };
+class Delete : SyncerBase
+{
+public:
+    Delete(Models::API);
+
+    void deleteSong(const Models::Token, Models::Song);
+private:
+    std::string retrieveUrl(Models::Song);
+};
+
 }
 
 #endif

@@ -5,12 +5,14 @@
 
 namespace Models
 {
-    struct Token
-    {
-        std::string accessToken;
-        std::string tokenType;
-        int expiration;
-    };
+
+struct Token
+{
+    std::string accessToken;
+    std::string tokenType;
+    int expiration;
+};
+
 }
 
 #endif

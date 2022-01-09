@@ -19,34 +19,36 @@ namespace fs = std::filesystem;
 
 namespace Syncers
 {
-    class Upload
+
+class Upload
+{
+public:
+    Upload(Models::API api, Models::Token token) : m_token(token), api(api)
     {
-        public:
-            Upload(Models::API api, Models::Token token) : m_token(token), api(api)
-            {
-                this->api.endpoint = "song/data";
-            }
+        this->api.endpoint = "song/data";
+    }
 
-            Models::Song uploadSong(Models::Song&);
-            void uploadSongsFromDirectory(const std::string&, const bool, bool);
-            void uploadSongWithMetadata(Managers::CommitManager::Album&, Models::Song&, Models::CoverArt&);
-        private:
-            Managers::FileManager fMgr;
-            Models::API api;
-            Models::Song song;
-            Models::Token m_token;
+    Models::Song uploadSong(Models::Song&);
+    void uploadSongsFromDirectory(const std::string&, const bool, bool);
+    void uploadSongWithMetadata(Managers::CommitManager::Album&, Models::Song&, Models::CoverArt&);
+private:
+    Managers::FileManager fMgr;
+    Models::API api;
+    Models::Song song;
+    Models::Token m_token;
 
-            std::vector<Models::Song> retrieveAllSongsFromDirectory(const std::string&,
-                bool);
+    std::vector<Models::Song> retrieveAllSongsFromDirectory(const std::string&,
+        bool);
 
-            std::string retrieveUrl();
+    std::string retrieveUrl();
 
-            Models::Song retrieveSongPath(fs::directory_entry&);
+    Models::Song retrieveSongPath(fs::directory_entry&);
 
-            void printSongDetails();
-            void printSongDetails(std::vector<Models::Song>&);
-            void printJsonData(const nlohmann::json&);
-    };
+    void printSongDetails();
+    void printSongDetails(std::vector<Models::Song>&);
+    void printJsonData(const nlohmann::json&);
+};
+
 }
 
 #endif

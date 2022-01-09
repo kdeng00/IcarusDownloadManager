@@ -7,40 +7,42 @@
 
 namespace Models
 {
-    class Song
+
+class Song
+{
+public:
+    Song() = default;
+
+    void printInfo()
     {
-    public:
-        Song() = default;
+        std::cout<<"Title: "<<this->title<<"\n";
+        std::cout<<"\n";
+    }
 
-        void printInfo()
-        {
-            std::cout<<"Title: "<<this->title<<"\n";
-            std::cout<<"\n";
-        }
+    std::string toMetadataJson();
 
-        std::string toMetadataJson();
-        
 
-        int id;
-        std::string title;
-        std::string artist;
-        std::string album;
-        std::string genre;
-        int year;
-        int duration;
-        int track;
-        int disc;
-        std::string data;
-        std::string songPath;
-    };
+    int id;
+    std::string title;
+    std::string artist;
+    std::string album;
+    std::string genre;
+    int year;
+    int duration;
+    int track;
+    int disc;
+    std::string data;
+    std::string songPath;
+};
 
-    class CoverArt
-    {
-    public:
-        int id;
-        std::string title;
-        std::string path;
-    };
+class CoverArt
+{
+public:
+    int id;
+    std::string title;
+    std::string path;
+};
+
 } 
 
 #endif

@@ -7,17 +7,19 @@
 
 namespace Managers
 {
-    class TokenManager
-    {
-    public:
-        TokenManager(const Models::User&);
-        TokenManager(const Models::User&, Models::API&);
 
-        Models::Token requestToken();
-    private:
-        Models::API api;
-        Models::User user;
-    };
+class TokenManager
+{
+public:
+    TokenManager(const Models::User&);
+    TokenManager(const Models::User&, Models::API&);
+
+    Models::Token requestToken();
+private:
+    Models::API api;
+    Models::User user;
+};
+
 }
 
 #endif

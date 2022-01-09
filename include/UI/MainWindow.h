@@ -22,61 +22,63 @@
 
 namespace UI
 {
-    class MainWindow: public QMainWindow, public CommonWindow
-    {
-        Q_OBJECT
-    public:
-        MainWindow();
-        ~MainWindow() = default;
-    private:
-        void configureDownloadSection();
-        void configureUploadSection();
-        void configureWindowDimensions();
-        void configureWindowProperties();
-        void connections();
-        void createMenus();
-        void setupMainWidget();
-        void setupMainWindow();
-        void setupWindowLists();
+
+class MainWindow: public QMainWindow, public CommonWindow
+{
+    Q_OBJECT
+public:
+    MainWindow();
+    ~MainWindow() = default;
+private:
+    void configureDownloadSection();
+    void configureUploadSection();
+    void configureWindowDimensions();
+    void configureWindowProperties();
+    void connections();
+    void createMenus();
+    void setupMainWidget();
+    void setupMainWindow();
+    void setupWindowLists();
 
 
-        std::unique_ptr<QStackedWidget> widgetStack;
+    std::unique_ptr<QStackedWidget> widgetStack;
 
-        std::unique_ptr<QVBoxLayout> stackLayout;
+    std::unique_ptr<QVBoxLayout> stackLayout;
 
-            std::unique_ptr<QHBoxLayout> urlPortion;
-            std::unique_ptr<QHBoxLayout> songPathPortion;
+        std::unique_ptr<QHBoxLayout> urlPortion;
+        std::unique_ptr<QHBoxLayout> songPathPortion;
 
-        std::unique_ptr<QWidget> mainWidgetQt;
-        std::unique_ptr<QWidget> uploadSongWidgetQt;
+    std::unique_ptr<QWidget> mainWidgetQt;
+    std::unique_ptr<QWidget> uploadSongWidgetQt;
 
-        std::unique_ptr<QDockWidget> MainDockWidgetQt;
+    std::unique_ptr<QDockWidget> MainDockWidgetQt;
 
-        std::unique_ptr<QComboBox> windowComboBox;
-        
-        std::unique_ptr<QPushButton> uploadSongQt;
+    std::unique_ptr<QComboBox> windowComboBox;
+    
+    std::unique_ptr<QPushButton> uploadSongQt;
 
-        std::unique_ptr<QTextEdit> urlQt;
-        std::unique_ptr<QTextEdit> sourceFilePathQt;
+    std::unique_ptr<QTextEdit> urlQt;
+    std::unique_ptr<QTextEdit> sourceFilePathQt;
 
-            std::unique_ptr<QLabel> urlLabel;
-            std::unique_ptr<QLabel> songPath;
+        std::unique_ptr<QLabel> urlLabel;
+        std::unique_ptr<QLabel> songPath;
 
-        std::unique_ptr<QMenu> fileMenuQt;
-        std::unique_ptr<QMenu> editMenuQt;
-        std::unique_ptr<QMenu> helpMenuQt;
+    std::unique_ptr<QMenu> fileMenuQt;
+    std::unique_ptr<QMenu> editMenuQt;
+    std::unique_ptr<QMenu> helpMenuQt;
 
-        std::unique_ptr<QAction> closeApplicationQt;
-        std::unique_ptr<QAction> aboutApplicationQt;
+    std::unique_ptr<QAction> closeApplicationQt;
+    std::unique_ptr<QAction> aboutApplicationQt;
 
-        std::unique_ptr<AboutWindow> aboutWindow;
-    signals:
-    private slots:
-        void uploadSong();
-        void exitApplication();
-        void displaySoftwareInformation();
-        void setCurrentIndex(int);
-    };
+    std::unique_ptr<AboutWindow> aboutWindow;
+signals:
+private slots:
+    void uploadSong();
+    void exitApplication();
+    void displaySoftwareInformation();
+    void setCurrentIndex(int);
+};
+
 }
 
 #endif

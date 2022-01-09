@@ -1,10 +1,10 @@
-#include"Syncers/Download.h"
+#include "Syncers/Download.h"
 
-#include<exception>
-#include<iostream>
-#include<fstream>
+#include <exception>
+#include <iostream>
+#include <fstream>
 
-#include<cpr/cpr.h>
+#include <cpr/cpr.h>
 
 using std::cout;
 using std::endl;
@@ -18,74 +18,76 @@ using Models::Token;
 
 namespace Syncers
 {
-    #pragma
-    Download::Download() { }
-    Download::Download(API api)
-    {
-        this->api = api;
-        this->api.endpoint = "song/data";
-    }
-    Download::Download(string filePath)
-    {
-        downloadFilePath = filePath;
-    }
-    #pragma Constructors
+
+#pragma region Constructors
+Download::Download() { }
+Download::Download(API api)
+{
+    this->api = api;
+    this->api.endpoint = "song/data";
+}
+Download::Download(string filePath)
+{
+    downloadFilePath = filePath;
+}
+#pragma endregion
 
 
-    #pragma
-    void Download::downloadSong(const Token token, Song song)
+#pragma region Functions
+void Download::downloadSong(const Token token, Song song)
+{
+    try
     {
-        try
-        {
-            string url = retrieveUrl(song);
-            song.songPath.append("track.mp3");
-            cout<<"song path "<<song.songPath<<endl;
-            string auth{token.tokenType};
-            auth.append(" " + token.accessToken);
+        string url = retrieveUrl(song);
+        song.songPath.append("track.mp3");
+        cout<<"song path "<<song.songPath<<endl;
+        string auth{token.tokenType};
+        auth.append(" " + token.accessToken);
+        
+        auto r = cpr::Get(cpr::Url(url),
+                cpr::Header{{"Content-type", "audio/mpeg"},
+                            {"Authorization", auth}});
             
-            auto r = cpr::Get(cpr::Url(url),
-                    cpr::Header{{"Content-type", "audio/mpeg"},
-                                {"Authorization", auth}});
-                
 
-            int statusCode = r.status_code;
+        int statusCode = r.status_code;
 
-            if (statusCode == OK) {
-                song.data = r.text;
-                saveSong(song);
-            }
-
-
-            cout<<"finsihed with status code "<<statusCode<<endl;
+        if (statusCode == OK) {
+            song.data = r.text;
+            saveSong(song);
         }
-        catch (exception e)
-        {
-            auto msg = e.what();
-            cout<<msg<<endl;
-        }
-    }
 
-    string Download::retrieveUrl(Song song)
+
+        cout<<"finsihed with status code "<<statusCode<<endl;
+    }
+    catch (exception e)
     {
-        string url{api.url + "api/" + api.version + "/" + 
-            api.endpoint + "/"};
-
-        url.append(std::to_string(song.id));
-        cout<<"url "<<url<<endl;
-
-        return url;
+        auto msg = e.what();
+        cout<<msg<<endl;
     }
+}
 
-    void Download::saveSong(Song& song)
-    {
-        cout<<"\nSaving song to: "<<song.songPath<<endl;
-        int bufferLength = song.data.length();
-        const char *data = song.data.c_str();
-        cout<<"buff length  "<<bufferLength<<endl;
+string Download::retrieveUrl(Song song)
+{
+    string url{api.url + "api/" + api.version + "/" + 
+        api.endpoint + "/"};
 
-        ofstream saveSong{song.songPath, std::ios::binary};
-        saveSong.write(data, bufferLength);
-        saveSong.close();
-    }
-    #pragma Functions
+    url.append(std::to_string(song.id));
+    cout<<"url "<<url<<endl;
+
+    return url;
+}
+
+void Download::saveSong(Song& song)
+{
+    cout<<"\nSaving song to: "<<song.songPath<<endl;
+    int bufferLength = song.data.length();
+    const char *data = song.data.c_str();
+    cout<<"buff length  "<<bufferLength<<endl;
+
+    ofstream saveSong{song.songPath, std::ios::binary};
+    saveSong.write(data, bufferLength);
+    saveSong.close();
+}
+#pragma endregion
+
 }

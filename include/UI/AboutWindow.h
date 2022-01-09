@@ -13,22 +13,24 @@
 
 namespace UI
 {
-    class AboutWindow: public QDialog, public CommonWindow
-    {
-        Q_OBJECT
-    public:
-        AboutWindow(QWidget* parent=0);
-        ~AboutWindow() = default;
 
-    private:
-        void connections();
-        void setupWindow();
+class AboutWindow: public QDialog, public CommonWindow
+{
+    Q_OBJECT
+public:
+    AboutWindow(QWidget* parent=0);
+    ~AboutWindow() = default;
 
-        std::unique_ptr<QLabel> appName;
+private:
+    void connections();
+    void setupWindow();
 
-    private slots:
-        void closeWindow();
-    };
+    std::unique_ptr<QLabel> appName;
+
+private slots:
+    void closeWindow();
+};
+
 }
 
 #endif

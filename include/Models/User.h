@@ -5,11 +5,13 @@
 
 namespace Models
 {
-    struct User
-    {
-        std::string username;
-        std::string password;
-    };
+
+struct User
+{
+    std::string username;
+    std::string password;
+};
+
 }
 
 #endif

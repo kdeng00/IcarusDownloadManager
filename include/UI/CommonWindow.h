@@ -10,6 +10,9 @@
 #include<QPushButton>
 
 
+namespace UI
+{
+
 class CommonWindow
 {
 public:
@@ -24,4 +27,7 @@ protected:
     std::unique_ptr<QVBoxLayout> subLayoutTwoQt;
     int windowHeight, windowWidth;
 };
+
+}
+
 #endif

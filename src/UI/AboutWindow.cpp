@@ -1,47 +1,52 @@
-#include"UI/AboutWindow.h"
+#include "UI/AboutWindow.h"
 
 using std::unique_ptr;
 
 namespace UI
 {
-    AboutWindow::AboutWindow(QWidget* parent): QDialog(parent)
-    {
-        setupWindow();
-    }
+#pragma region Constructors
+AboutWindow::AboutWindow(QWidget* parent): QDialog(parent)
+{
+    setupWindow();
+}
+#pragma endregion
 
 
-    void AboutWindow::setupWindow()
-    {
-        windowWidth = 250;
-        windowHeight = 300;
+#pragma region Functions
+void AboutWindow::setupWindow()
+{
+    windowWidth = 250;
+    windowHeight = 300;
 
-        mainLayoutQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
+    mainLayoutQt = unique_ptr<QVBoxLayout>{new QVBoxLayout};
 
-        appName = unique_ptr<QLabel>{new QLabel(tr("IcarusDownloadManager"))};
-        actionButtonQt = unique_ptr<QPushButton>{new QPushButton(tr("Close"))};
+    appName = unique_ptr<QLabel>{new QLabel(tr("IcarusDownloadManager"))};
+    actionButtonQt = unique_ptr<QPushButton>{new QPushButton(tr("Close"))};
 
-        mainLayoutQt->addWidget(appName.get());
-        mainLayoutQt->addWidget(actionButtonQt.get());
-
-
-        setFixedWidth(windowWidth);
-        setFixedHeight(windowHeight);
-
-        setLayout(mainLayoutQt.get());
-
-        setWindowTitle("About");
-
-        connections();
-    }
-    void AboutWindow::connections()
-    {
-        QObject::connect(actionButtonQt.get(), SIGNAL(clicked()), this, 
-                        SLOT(closeWindow()));
-    }
+    mainLayoutQt->addWidget(appName.get());
+    mainLayoutQt->addWidget(actionButtonQt.get());
 
 
-    void AboutWindow::closeWindow()
-    {
-        this->hide();   
-    }
+    setFixedWidth(windowWidth);
+    setFixedHeight(windowHeight);
+
+    setLayout(mainLayoutQt.get());
+
+    setWindowTitle("About");
+
+    connections();
+}
+void AboutWindow::connections()
+{
+    QObject::connect(actionButtonQt.get(), SIGNAL(clicked()), this, 
+                    SLOT(closeWindow()));
+}
+
+
+void AboutWindow::closeWindow()
+{
+    this->hide();   
+}
+#pragma endregion
+
 }

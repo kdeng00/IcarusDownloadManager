@@ -12,78 +12,80 @@
 
 namespace Managers
 {
-    class ActionManager
+
+
+
+class ActionManager
+{
+public:
+    ActionManager(char**, int);
+
+    Models::IcarusAction retrieveIcarusAction() const;
+private:
+    constexpr std::array<const char*, 16> supportedFlags() noexcept
     {
-    public:
-        ActionManager(char**, int);
+        constexpr std::array<const char*, 16> allFlags{"-u", "-p", "-t", "-h", "-s",
+            "-sd", "-sr", "-d", "-D", "-b", "-rt", "-nc",
+            "-m", "-ca", "-smca", "-t"};
 
-        Models::IcarusAction retrieveIcarusAction() const;
-    private:
-        constexpr std::array<const char*, 16> supportedFlags() noexcept
+        return allFlags;
+    }
+    constexpr std::array<const char*, 4> supportedActions() noexcept;
+
+    void initialize();
+    void validateFlags();
+    // Checks to see if the flag is valid
+    template<typename Str>
+    bool isValidFlag(const Str flag)
+    {
+        const auto flags = supportedFlags();
+        const auto i = std::find_if(flags.begin(), flags.end(), [&](const Str &f)
         {
-            constexpr std::array<const char*, 16> allFlags{"-u", "-p", "-t", "-h", "-s",
-                "-sd", "-sr", "-d", "-D", "-b", "-rt", "-nc",
-                "-m", "-ca", "-smca", "-t"};
+            return f.compare(flag) == 0 ? true : false;
+        });
 
-            return allFlags;
-        }
-        constexpr std::array<const char*, 4> supportedActions() noexcept;
+        auto result = i != flags.end() ? true : false;
 
-        void initialize();
-        void validateFlags();
-        // Checks to see if the flag is valid
-        template<typename Str>
-        bool isValidFlag(const Str flag)
+        return result;
+    }
+
+    template<typename Str>
+    bool doesFlagHaveValue(const Str flag)
+    {
+        const auto flags = parsedFlags();
+        auto i = std::find_if(flags.begin(), flags.end(), [&](const Str &f)
         {
-            const auto flags = supportedFlags();
-            const auto i = std::find_if(flags.begin(), flags.end(), [&](const Str &f)
-            {
-                return f.compare(flag) == 0 ? true : false;
-            });
+            return f.compare(flag) == 0 ? true : false;
+        });
 
-            auto result = i != flags.end() ? true : false;
-
-            return result;
-        }
-
-        template<typename Str>
-        bool doesFlagHaveValue(const Str flag)
+        if (i != flags.end())
         {
-            const auto flags = parsedFlags();
-            auto i = std::find_if(flags.begin(), flags.end(), [&](const Str &f)
+            if (++i != flags.end() && !isValidFlag<Str>(*i))
             {
-                return f.compare(flag) == 0 ? true : false;
-            });
-
-            if (i != flags.end())
-            {
-                if (++i != flags.end() && !isValidFlag<Str>(*i))
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
+                return true;
             }
             else
             {
                 return false;
             }
         }
+        else
+        {
+            return false;
+        }
+    }
 
-        std::vector<std::string> parsedFlags();
+    void printAction() noexcept;
+    void printFlags() noexcept;
 
-        void printAction() noexcept;
-        void printFlags() noexcept;
+    std::string action;
+    
+    std::vector<Models::Flags> flags;
 
-        std::string action;
-        
-        std::vector<Models::Flags> flags;
+    char **params;
+    int paramCount;
+};
 
-        char **params;
-        int paramCount;
-    };
 }
 
 #endif
