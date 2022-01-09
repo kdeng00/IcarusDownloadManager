@@ -19,8 +19,8 @@ void Conversions::initializeValues()
 template <typename T>
 void Conversions::printValue(T val)
 {
-    std::cout<<"going to print value"<<std::endl;
-    std::cout<<val<<std::endl;
+    std::cout<<"going to print value\n";
+    std::cout<<val<< "\n";
 }
 
 }
