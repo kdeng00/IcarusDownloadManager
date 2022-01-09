@@ -16,8 +16,11 @@ if(WIN32)
   if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL ${vs_ver})
     message("Visual Studio version is at least ${vs_ver}")
 
-    set(CMAKE_CXX17_STANDARD_COMPILE_OPTION "-std:c++latest")
-    set(CMAKE_CXX17_EXTENSION_COMPILE_OPTION "-std:c++latest")
+    set(CMAKE_CXX_STANDARD_COMPILE_OPTION "-std:c++latest")
+    set(CMAKE_CXX_EXTENSION_COMPILE_OPTION "-std:c++latest")
+
+    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD_REQUIRED ON)
   endif()
 else()
     check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
@@ -67,7 +70,11 @@ set(IDM_INCLUDE_DIR
     "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # conan
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+set(CONAN_BUILDINFO
+${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+
+message("conan build info ${CONAN_BUILDINFO}")
+include(${CONAN_BUILDINFO})
 conan_basic_setup()
 
 include_directories(${CPR_INCLUDE_DIRS} ${IDM_INCLUDE_DIR})

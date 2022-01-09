@@ -35,7 +35,7 @@ cmake --build . -j
 The program has been built and can be executed by the binary file *icd*. For information on how to use icd, merely execute the program without any command line arguments.
 
 ### Downloading Song
-``BASH
+```BASH
 icd download -u spacecadet -p stellar40 -h https://icarus.com -b 15
 ```
 
