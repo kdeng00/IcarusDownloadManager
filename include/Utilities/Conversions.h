@@ -15,7 +15,7 @@ public:
     void initializeValues();
 
     template <typename T>
-    void printValue(T);
+    void printValue(T val);
 private:
 };
 
