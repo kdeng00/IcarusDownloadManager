@@ -112,7 +112,7 @@ void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Model
     {
         auto url = retrieveUrl();
 
-        cout<<"url "<<url<<endl;
+        cout << "url " << url << "\n";
         string auth(this->m_token.tokenType);
         auth.append(" " + this->m_token.accessToken);
 
@@ -131,10 +131,11 @@ void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Model
         const auto meta = s.dump();
 
         cout<<"\n\nMeta:\n"<<meta<<"\n";
+        cout << "Filepath: " << song.song_path() << "\n";
 
         auto multipart = cpr::Multipart{{"cover", cpr::File{cover.path}},
             {"metadata", meta},
-            {"file", cpr::File{song.songPath}}};
+            {"file", cpr::File{song.song_path()}}};
 
         auto r = cpr::Post(cpr::Url{url}, multipart,
             cpr::Header{{"authorization", auth}}

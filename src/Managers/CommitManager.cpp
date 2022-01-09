@@ -1,23 +1,23 @@
 #include"Managers/CommitManager.h"
 
-#include<iostream>
-#include<fstream>
-#include<sstream>
-#include<filesystem>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <filesystem>
 
-#include"nlohmann/json.hpp"
+#include "nlohmann/json.hpp"
 
-#include"Models/API.h"
-#include"Models/Song.h"
-#include"Models/Token.h"
-#include"Parsers/APIParser.h"
-#include"Syncers/Delete.h"
-#include"Syncers/Download.h"
-#include"Syncers/RetrieveRecords.h"
-#include"Syncers/Upload.h"
+#include "Models/API.h"
+#include "Models/Song.h"
+#include "Models/Token.h"
+#include "Parsers/APIParser.h"
+#include "Syncers/Delete.h"
+#include "Syncers/Download.h"
+#include "Syncers/RetrieveRecords.h"
+#include "Syncers/Upload.h"
 
-#include"Managers/TokenManager.h"
-#include"Managers/UserManager.h"
+#include "Managers/TokenManager.h"
+#include "Managers/UserManager.h"
 
 using std::cout;
 using std::endl;
@@ -308,7 +308,9 @@ void CommitManager::singTargetUpload(const std::string &songPath, const std::str
     }
 
     song = *sng;
-    song.songPath = songPath;
+    const auto p = fs::path(songPath);
+    song.directory = p.parent_path.string();
+    song.generate_filename_from_track();
 
     Models::CoverArt cover;
     cover.title = song.title;
@@ -363,6 +365,8 @@ void CommitManager::multiTargetUpload(const std::string &sourcePath)
     }
 
     auto album = retrieveMetadata(metadataPath);
+    songs.clear();
+    songs.assign(album.songs.begin(), album.songs.end());
 
     Upload up(api, token);
 
@@ -399,6 +403,9 @@ CommitManager::Album CommitManager::retrieveMetadata(const std::string_view path
         song.album = album.album;
         song.year = album.year;
         song.genre = album.genre;
+        song.generate_filename_from_track();
+        const auto p = fs::path(path);
+        song.directory = p.parent_path().string();
 
         album.songs.push_back(song);
     }

@@ -14,7 +14,7 @@ using Managers::CommitManager;
 
 constexpr static auto IcarusDownloadManager_version()
 {
-    return "v0.1.2";
+    return "v0.2.0";
 }
 
 void printHelp()

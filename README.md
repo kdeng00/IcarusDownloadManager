@@ -7,7 +7,7 @@ IcarusDownloadManager is a Linux CLI software client application that has the fe
 
 * C++ with C++17 features
 * CMake
-* GCC >= 9
+* GCC >= 9 or Visual Studio >= 16 [2019]
 * [conan](https://github.com/conan-io/conan)
 * [json](https://github.com/nlohmann/json)
 * [openssl](https://github.com/openssl/openssl)
@@ -28,18 +28,20 @@ cd build
 
 conan install .. --build
 
-cmake -DCMAKE_BUILD_TYPE=RELEASE
-cmake --build . -j
+cmake ..
+cmake --build . --config release -j
 ```
 
 The program has been built and can be executed by the binary file *icd*. For information on how to use icd, merely execute the program without any command line arguments.
 
 ### Downloading Song
+
 ```BASH
 icd download -u spacecadet -p stellar40 -h https://icarus.com -b 15
 ```
 
 ### Uploading Song
+
 ```BASH
 icd upload -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3
 ```
@@ -53,16 +55,18 @@ icd upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/son
 ### Uploading Song with metadata from directory
 
 ```BASH
-icd upload-meta -u spacecadet -p stellar40 -h https://icarus.com -smca /path/where/songs/and/metadata/exist
+icd upload-meta -u spacecadet -p stellar40 -h https://icarus.com -smca /path/where/songs/and/metadata/exists/
 ```
 
 
 ### Retrieving Song in json
+
 ```Bash
 icd retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs
 ```
 
 ### Deleting Song
+
 ```BASH
 icd delete -u spacecadet -p stellar40 -h https://icarus.com -D 15
 ```
@@ -74,6 +78,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduc
 
 ## Versioning
 
+[v0.2.0](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/v0.2.0)  
 [v0.1.1](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/v0.1.1)  
 [v0.1.0](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/0.1.0)
 
