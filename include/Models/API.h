@@ -5,12 +5,15 @@
 
 namespace Models
 {
-    struct API
-    {
-        std::string url;
-        std::string endpoint;
-        std::string version;
-    };
+
+class API
+{
+public:
+    std::string url;
+    std::string endpoint;
+    std::string version;
+};
+
 }
 
 #endif

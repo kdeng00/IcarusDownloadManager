@@ -6,17 +6,19 @@
 
 namespace Utilities
 {
-    class Conversions
-    {
-    public:
-        Conversions();
 
-        void initializeValues();
+class Conversions
+{
+public:
+    Conversions();
 
-        template <typename T>
-        void printValue(T);
-    private:
-    };
+    void initializeValues();
+
+    template <typename T>
+    void printValue(T);
+private:
+};
+
 }
 
 #endif

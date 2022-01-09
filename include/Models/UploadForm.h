@@ -6,11 +6,13 @@
 
 namespace Models
 {
-    struct UploadForm
-    {
-        std::string url;
-        std::string filePath;
-    };
+
+struct UploadForm
+{
+    std::string url;
+    std::string filePath;
+};
+
 } 
 
 #endif

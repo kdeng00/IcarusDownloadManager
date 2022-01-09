@@ -6,18 +6,20 @@
 
 namespace Parsers
 {
-    class APIParser
-    {
-    public:
-        APIParser(Models::IcarusAction);
 
-        Models::API retrieveAPI() const;
-    private:
-        void parseAPI();
+class APIParser
+{
+public:
+    APIParser(Models::IcarusAction);
 
-        Models::API api;
-        Models::IcarusAction icaAct;
-    };
+    Models::API retrieveAPI() const;
+private:
+    void parseAPI();
+
+    Models::API api;
+    Models::IcarusAction icaAct;
+};
+
 }
 
 #endif

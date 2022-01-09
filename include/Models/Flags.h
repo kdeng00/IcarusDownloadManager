@@ -5,11 +5,13 @@
 
 namespace Models
 {
-    struct Flags
-    {
-        std::string flag;
-        std::string value;
-    };
+
+struct Flags
+{
+    std::string flag;
+    std::string value;
+};
+
 }
 
 #endif

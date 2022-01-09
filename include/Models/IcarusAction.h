@@ -8,11 +8,13 @@
 
 namespace Models
 {
-    struct IcarusAction
-    {
-        std::string action;
-        std::vector<Flags> flags;
-    };
+
+struct IcarusAction
+{
+    std::string action;
+    std::vector<Flags> flags;
+};
+
 }
 
 #endif

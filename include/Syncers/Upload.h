@@ -18,31 +18,33 @@ namespace fs = std::filesystem;
 
 namespace Syncers
 {
-    class Upload
-    {
-        public:
-            Upload();
-            Upload(Models::API);
 
-            Models::Song uploadSong(const Models::Token&, Models::Song&);
-            void uploadSongsFromDirectory(const Models::Token&, 
-                    const std::string&, const bool, bool);
-        private:
-            Managers::FileManager fMgr;
-            Models::API api;
-            Models::Song song;
+class Upload
+{
+public:
+    Upload();
+    Upload(Models::API);
 
-            std::vector<Models::Song> retrieveAllSongsFromDirectory(const std::string&,
-                bool);
+    Models::Song uploadSong(const Models::Token&, Models::Song&);
+    void uploadSongsFromDirectory(const Models::Token&, 
+            const std::string&, const bool, bool);
+private:
+    Managers::FileManager fMgr;
+    Models::API api;
+    Models::Song song;
 
-            std::string retrieveUrl();
+    std::vector<Models::Song> retrieveAllSongsFromDirectory(const std::string&,
+        bool);
 
-            Models::Song retrieveSongPath(fs::directory_entry&);
+    std::string retrieveUrl();
 
-            void printSongDetails();
-            void printSongDetails(std::vector<Models::Song>&);
-            void printJsonData(const nlohmann::json&);
-    };
+    Models::Song retrieveSongPath(fs::directory_entry&);
+
+    void printSongDetails();
+    void printSongDetails(std::vector<Models::Song>&);
+    void printJsonData(const nlohmann::json&);
+};
+
 }
 
 #endif

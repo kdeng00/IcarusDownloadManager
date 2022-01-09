@@ -10,40 +10,42 @@
 
 namespace Managers
 {
-    class CommitManager
+
+class CommitManager
+{
+public:
+    CommitManager(Models::IcarusAction&);
+
+    void commitAction();
+
+    enum class RetrieveTypes
     {
-    public:
-        CommitManager(Models::IcarusAction&);
-
-        void commitAction();
-
-        enum class RetrieveTypes
-        {
-            songs
-        };
-
-    private:
-        enum class ActionValues;
-
-        std::map<std::string, ActionValues> mapActions() noexcept;
-
-        Models::Token parseToken(Models::API);
-
-        void deleteSong();
-        void downloadSong();
-        void retrieveObjects();
-        void uploadSong();
-
-        enum class ActionValues
-        {
-            deleteAct,
-            downloadAct,
-            retrieveAct,
-            uploadAct
-        };
-
-        Models::IcarusAction icaAction;
+        songs
     };
+
+private:
+    enum class ActionValues;
+
+    std::map<std::string, ActionValues> mapActions() noexcept;
+
+    Models::Token parseToken(Models::API);
+
+    void deleteSong();
+    void downloadSong();
+    void retrieveObjects();
+    void uploadSong();
+
+    enum class ActionValues
+    {
+        deleteAct,
+        downloadAct,
+        retrieveAct,
+        uploadAct
+    };
+
+    Models::IcarusAction icaAction;
+};
+
 }
 
 #endif

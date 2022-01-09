@@ -12,20 +12,22 @@
 
 namespace Syncers
 {
-    class Download : SyncerBase
-    {
-    public:
-        Download();
-        Download(Models::API);
-        Download(std::string);
 
-        void downloadSong(const Models::Token token, Models::Song);
-    private:
-        std::string retrieveUrl(Models::Song);
+class Download : SyncerBase
+{
+public:
+    Download();
+    Download(Models::API);
+    Download(std::string);
 
-        std::string downloadFilePath;
-        void saveSong(Models::Song&);
-    };
+    void downloadSong(const Models::Token token, Models::Song);
+private:
+    std::string retrieveUrl(Models::Song);
+
+    std::string downloadFilePath;
+    void saveSong(Models::Song&);
+};
+
 }
 
 #endif

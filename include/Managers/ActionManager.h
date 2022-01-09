@@ -11,33 +11,35 @@
 
 namespace Managers
 {
-    class ActionManager
-    {
-    public:
-        ActionManager(char**, int);
 
-        Models::IcarusAction retrieveIcarusAction() const;
-    private:
-        constexpr std::array<const char*, 12> supportedFlags() noexcept;
-        constexpr std::array<const char*, 4> supportedActions() noexcept;
+class ActionManager
+{
+public:
+    ActionManager(char**, int);
 
-        bool isNumber(const std::string_view) noexcept;
+    Models::IcarusAction retrieveIcarusAction() const;
+private:
+    constexpr std::array<const char*, 12> supportedFlags() noexcept;
+    constexpr std::array<const char*, 4> supportedActions() noexcept;
 
-        void initialize();
-        void validateFlags();
+    bool isNumber(const std::string_view) noexcept;
 
-        std::vector<std::string> parsedFlags();
+    void initialize();
+    void validateFlags();
 
-        void printAction() noexcept;
-        void printFlags() noexcept;
+    std::vector<std::string> parsedFlags();
 
-        std::string action;
-        
-        std::vector<Models::Flags> flags;
+    void printAction() noexcept;
+    void printFlags() noexcept;
 
-        char **params;
-        int paramCount;
-    };
+    std::string action;
+    
+    std::vector<Models::Flags> flags;
+
+    char **params;
+    int paramCount;
+};
+
 }
 
 #endif

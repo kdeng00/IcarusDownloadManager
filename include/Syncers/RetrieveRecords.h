@@ -8,19 +8,21 @@
 
 namespace Syncers
 {
-    class RetrieveRecords: public SyncerBase
-    {
-    public:
-        RetrieveRecords();
-        RetrieveRecords(Models::API, Models::Token);
 
-        void retrieve(Managers::CommitManager::RetrieveTypes);
-    private:
-        void fetchSongs();
+class RetrieveRecords: public SyncerBase
+{
+public:
+    RetrieveRecords();
+    RetrieveRecords(Models::API, Models::Token);
 
-        Models::API api;
-        Models::Token token;
-    };
+    void retrieve(Managers::CommitManager::RetrieveTypes);
+private:
+    void fetchSongs();
+
+    Models::API api;
+    Models::Token token;
+};
+
 }
 
 #endif

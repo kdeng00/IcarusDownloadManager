@@ -8,19 +8,21 @@
 
 namespace Managers
 {
-    class UserManager
-    {
-    public:
-        UserManager(Models::User);
-        UserManager(const Models::IcarusAction);
 
-        Models::User retrieveUser() const;
-    private:
-        void parseUserFromActions();
+class UserManager
+{
+public:
+    UserManager(Models::User);
+    UserManager(const Models::IcarusAction);
 
-        Models::User user;
-        Models::IcarusAction icaAction;
-    };
+    Models::User retrieveUser() const;
+private:
+    void parseUserFromActions();
+
+    Models::User user;
+    Models::IcarusAction icaAction;
+};
+
 }
 
 #endif
