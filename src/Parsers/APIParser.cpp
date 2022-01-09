@@ -41,7 +41,6 @@ void APIParser::parseAPI()
             api.url = (value[value.size()-1] == '/') ? value : value + "/";
             break;
         }
-
     }
 
     // TODO: For now I will hard code

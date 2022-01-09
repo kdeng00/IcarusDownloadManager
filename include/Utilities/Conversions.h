@@ -12,9 +12,17 @@ class Conversions
 public:
     Conversions();
 
+    static void toLowerChar(char &c)
+    {
+        if (std::isalpha(c))
+        {
+            c = std::tolower(c);
+        }
+    }
+
     void initializeValues();
 
-    template <typename T>
+    template<typename T>
     void printValue(T val);
 private:
 };

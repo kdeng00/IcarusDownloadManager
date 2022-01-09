@@ -37,23 +37,6 @@ IcarusAction ActionManager::retrieveIcarusAction() const
 }
 
 
-constexpr std::array<const char*, 12> ActionManager::supportedFlags() noexcept
-{
-    constexpr std::array<const char*, 12> allFlags{"-u", "-p", "-t", "-h", "-s",
-            "-sd", "-sr", "-d", "-D", "-b", "-rt", "-nc"};
-
-    return allFlags;
-}
-
-
-bool ActionManager::isNumber(string_view val) noexcept
-{
-    return !val.empty() && std::find_if(val.begin(), 
-        val.end(), [](char c)
-        {
-            return !std::isdigit(c);
-            }) == val.end();
-}
 
 void ActionManager::initialize()
 {
@@ -65,44 +48,33 @@ void ActionManager::initialize()
 }
 void ActionManager::validateFlags()
 {
-    cout<<"Validating flags"<<endl;
+        cout<<"Validating flags\n";
 
-    auto flagVals = parsedFlags();
+    const auto flagVals = parsedFlags();
 
-    Flags flg{};
-
-    auto allSupportedFlags = supportedFlags();
-
-    for (auto flag : flagVals)
+    for (auto flag = flagVals.begin(); flag != flagVals.end(); ++flag)
     {
-        if (flag.compare("-nc") == 0)
-        {
-            flg.flag = flag;
-            flags.push_back(flg);
-            continue;
-        }
-        if (flag.size() > 3 || isNumber(flag))
-        {
-            flg.value = flag;
+        Flags flg;
+        cout<<"Value: "<<*flag<<"\n";
 
-            flags.push_back(flg);
-            flg = Flags{};
-            continue;
-        }
-
-        if (std::any_of(allSupportedFlags.begin(), allSupportedFlags.end(), 
-            [&](const char *val)
-            {
-                return !flag.compare(val);
-            }))
+        if (isValidFlag<string>(*flag) && doesFlagHaveValue<string>(*flag))
         {
-            flg.flag = flag;
+            cout<<"Flag has value\n";
+            flg.flag = *flag;
+            flg.value = *(++flag);
+        }
+        else if (isValidFlag<string>(*flag))
+        {
+            cout<<"Flag does not have a value\n";
+            flg.flag = *flag;
         }
         else
         {
-            cout<<"Flag is not valid"<<endl;
+            cout<<"Flag "<<*flag<<" is not valid"<<endl;
             exit(1);
         }
+
+        flags.emplace_back(std::move(flg));
     }
 }
 

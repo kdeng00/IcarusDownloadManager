@@ -1,11 +1,11 @@
-#include<iostream>
-#include<filesystem>
-#include<exception>
+#include <iostream>
+#include <filesystem>
+#include <exception>
 
-#include<cpr/cpr.h>
-#include<nlohmann/json.hpp>
+#include "cpr/cpr.h"
 
-#include"Syncers/Upload.h"
+#include "Syncers/Upload.h"
+#include "Utilities/Conversions.h"
 
 using std::cout;
 using std::cin;
@@ -26,24 +26,19 @@ namespace Syncers
 {
 
 #pragma region Constructors
-Upload::Upload() { }
-Upload::Upload(API api) : api(api)
-{
-    this->api.endpoint = "song/data";
-}
 #pragma endregion
 
 
 #pragma region Functions
-Song Upload::uploadSong(const Models::Token& token, Song& song)
+Song Upload::uploadSong(Song& song)
 {
     try
     {
         auto url = retrieveUrl();
 
         cout<<"url "<<url<<endl;
-        string auth{token.tokenType};
-        auth.append(" " + token.accessToken);
+        string auth{this->m_token.tokenType};
+        auth.append(" " + this->m_token.accessToken);
         auto r = cpr::Post(cpr::Url{url},
                     cpr::Multipart{{"key", "small value"},
                             {"file", cpr::File{song.songPath}}},
@@ -70,12 +65,11 @@ Song Upload::uploadSong(const Models::Token& token, Song& song)
         auto msg = e.what();
         cout<<msg<<endl;
     }
-
+    
     return song;
 }
 
-void Upload::uploadSongsFromDirectory(const Models::Token& token, 
-    const std::string& directory, 
+void Upload::uploadSongsFromDirectory(const std::string& directory, 
     const bool noConfirm, bool recursive = false)
 {
     try
@@ -88,29 +82,19 @@ void Upload::uploadSongsFromDirectory(const Models::Token& token,
             auto answer = 'a';
             cout << "are you sure you want to upload " << songs.size() << " songs? [y/n]";
             cin >> answer;
+            Utilities::Conversions::toLowerChar(answer);
 
             if (answer == 'y' || answer == 'Y') 
             {
                 confirmUpload = true;
                 break;
             } 
-            else if (answer == 'n' || answer == 'N') 
-            {
-                confirmUpload = false;
-                break;
-            }
-        }
-
-        if (!confirmUpload) 
-        {
-            cout << "exiting...\n";
-            std::exit(-1);
         }
 
         cout << "uploading songs\n";
         for (auto& song: songs)
         {
-            song = uploadSong(token, song);
+            song = uploadSong(song);
         }
     }
     catch (exception& e)
@@ -120,10 +104,57 @@ void Upload::uploadSongsFromDirectory(const Models::Token& token,
 }
 
 
+void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Models::Song& song, Models::CoverArt &cover)
+{
+    this->api.endpoint.assign("song/data/upload/with/data");
+
+    try
+    {
+        auto url = retrieveUrl();
+
+        cout << "url " << url << "\n";
+        string auth(this->m_token.tokenType);
+        auth.append(" " + this->m_token.accessToken);
+
+        nlohmann::json s;
+        s["title"] = song.title;
+        s["album"] = album.album;
+        s["album_artist"] = album.albumArtist;
+        s["artist"] = song.artist;
+        s["year"] = album.year;
+        s["genre"] = album.genre;
+        s["disc"] = song.disc;
+        s["track"] = song.track;
+        s["disc_count"] = album.discCount;
+        s["track_count"] = album.trackCount;
+
+        const auto meta = s.dump();
+
+        cout<<"\n\nMeta:\n"<<meta<<"\n";
+        cout << "Filepath: " << song.song_path() << "\n";
+
+        auto multipart = cpr::Multipart{{"cover", cpr::File{cover.path}},
+            {"metadata", meta},
+            {"file", cpr::File{song.song_path()}}};
+
+        auto r = cpr::Post(cpr::Url{url}, multipart,
+            cpr::Header{{"authorization", auth}}
+        );
+
+        cout << "status code: " << r.status_code<< std::endl;
+        cout << r.text << endl;
+    }
+    catch (exception &e)
+    {
+        auto msg = e.what();
+        cout<<"Error: "<<msg<<"\n";
+    }
+}
 std::vector<Song> Upload::retrieveAllSongsFromDirectory(const std::string& directory,
     bool recursive)
 {
     std::vector<Song> allSongs;
+
     if (recursive)
     {
         for (auto p: fs::recursive_directory_iterator(directory))
@@ -175,17 +206,7 @@ Song Upload::retrieveSongPath(fs::directory_entry& dirEntry)
 
 
 #pragma region Testing
-void Upload::printSongDetails()
-{
-    cout<<"Song details: "<<endl;
-    cout<<"Id: "<<song.id<<endl;
-    cout<<"Title: "<<song.title<<endl;
-    cout<<"Artist: "<<song.artist<<endl;
-    cout<<"Album: "<<song.album<<endl;
-    cout<<"Genre: "<<song.genre<<endl;
-    cout<<"Year: "<<song.year<<endl;
-    cout<<"Duration: "<<song.duration<<endl;
-}
+
 void Upload::printSongDetails(std::vector<Song>& songs)
 {
     for (auto& song: songs)
@@ -201,6 +222,7 @@ void Upload::printSongDetails(std::vector<Song>& songs)
         cout<<"Path: "<<song.songPath<<endl;
     }
 }
+
 void Upload::printJsonData(const json& obj)
 {
     cout<<endl<<endl<<"JSon data: "<<endl;
@@ -213,7 +235,7 @@ void Upload::printJsonData(const json& obj)
     cout<<"duration: "<<obj["duration"]<<endl;
     cout<<"song_data: "<<obj["song_data"]<<endl;
 
-    cout<<endl<<endl;;
+    cout<<endl<<endl;
 }
 #pragma endregion
 #pragma endregion

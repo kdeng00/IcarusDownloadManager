@@ -1,17 +1,18 @@
 #ifndef UPLOAD_H_
 #define UPLOAD_H_
 
-#include<filesystem>
-#include<string>
-#include<vector>
+#include <filesystem>
+#include <string>
+#include <vector>
 
-#include<nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 
-#include"Managers/FileManager.h"
-#include"Models/API.h"
-#include"Models/Song.h"
-#include"Models/Token.h"
-#include"Models/UploadForm.h"
+#include "Managers/CommitManager.h"
+#include "Managers/FileManager.h"
+#include "Models/API.h"
+#include "Models/Song.h"
+#include "Models/Token.h"
+#include "Models/UploadForm.h"
 
 namespace fs = std::filesystem;
 
@@ -22,16 +23,20 @@ namespace Syncers
 class Upload
 {
 public:
-    Upload();
-    Upload(Models::API);
+    Upload() = default;
+    Upload(Models::API api, Models::Token token) : m_token(token), api(api)
+    {
+        this->api.endpoint = "song/data";
+    }
 
-    Models::Song uploadSong(const Models::Token&, Models::Song&);
-    void uploadSongsFromDirectory(const Models::Token&, 
-            const std::string&, const bool, bool);
+    Models::Song uploadSong(Models::Song&);
+    void uploadSongsFromDirectory(const std::string&, const bool, bool);
+    void uploadSongWithMetadata(Managers::CommitManager::Album&, Models::Song&, Models::CoverArt&);
 private:
     Managers::FileManager fMgr;
     Models::API api;
     Models::Song song;
+    Models::Token m_token;
 
     std::vector<Models::Song> retrieveAllSongsFromDirectory(const std::string&,
         bool);

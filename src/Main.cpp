@@ -14,7 +14,7 @@ using Managers::CommitManager;
 
 constexpr static auto IcarusDownloadManager_version()
 {
-    return "v0.1.2";
+    return "v0.2.0";
 }
 
 void printHelp()
@@ -61,6 +61,8 @@ int main(int argc, char** argv)
 
     ActionManager actMgr(argv, argc);
     auto chosenAction = actMgr.retrieveIcarusAction();
+
+    chosenAction.print_action_and_flags();
 
     CommitManager commitMgr(chosenAction);
     commitMgr.commitAction();
