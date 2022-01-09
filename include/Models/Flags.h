@@ -13,13 +13,6 @@ public:
     std::string value;
 };
 
-
-struct Flags
-{
-    std::string flag;
-    std::string value;
-};
-
 }
 
 #endif

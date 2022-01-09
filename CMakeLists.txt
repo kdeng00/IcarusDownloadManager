@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.20)
 
 
 project(IcarusDownloadManager)
@@ -9,29 +9,41 @@ message(STATUS "Checking compiler flags for C++17 support.")
 # Set C++17 support flags for various compilers
 include(CheckCXXCompilerFlag)
 
-check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
-check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+if(WIN32)
+  message("Windows")
+  set(vs_ver 19.29.30138)
 
-if(COMPILER_SUPPORTS_CXX17)
-    message(STATUS "C++17 is supported.")
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL ${vs_ver})
+    message("Visual Studio version is at least ${vs_ver}")
 
-    set(CMAKE_CXX_STANDARD 17)
-    set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
-    endif()
-elseif(COMPILER_SUPPORTS_CXX0X)
-    message(STATUS "C++0x is supported.")
-    if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
-    else()
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-    endif()
+    set(CMAKE_CXX17_STANDARD_COMPILE_OPTION "-std:c++latest")
+    set(CMAKE_CXX17_EXTENSION_COMPILE_OPTION "-std:c++latest")
+  endif()
 else()
-    message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
+    check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
+    check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
+
+    if(COMPILER_SUPPORTS_CXX17)
+        message(STATUS "C++17 is supported.")
+
+        set(CMAKE_CXX_STANDARD 17)
+        set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
+        else()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+        endif()
+    elseif(COMPILER_SUPPORTS_CXX0X)
+        message(STATUS "C++0x is supported.")
+        if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x -stdlib=libc++")
+        else()
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
+        endif()
+    else()
+        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
+    endif()
 endif()
 
 

@@ -1,12 +1,11 @@
-#include<iostream>
-#include<filesystem>
-#include<exception>
+#include <iostream>
+#include <filesystem>
+#include <exception>
 
-#include<cpr/cpr.h>
-#include<nlohmann/json.hpp>
+#include "cpr/cpr.h"
 
-#include"Syncers/Upload.h"
-#include"Utilities/Conversions.h"
+#include "Syncers/Upload.h"
+#include "Utilities/Conversions.h"
 
 using std::cout;
 using std::cin;
@@ -27,11 +26,6 @@ namespace Syncers
 {
 
 #pragma region Constructors
-Upload::Upload() { }
-Upload::Upload(API api) : api(api)
-{
-    this->api.endpoint = "song/data";
-}
 #pragma endregion
 
 
@@ -97,13 +91,6 @@ void Upload::uploadSongsFromDirectory(const std::string& directory,
             } 
         }
 
-        if (!confirmUpload) 
-            {
-                confirmUpload = false;
-                break;
-            }
-        }
-
         cout << "uploading songs\n";
         for (auto& song: songs)
         {
@@ -126,10 +113,9 @@ void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Model
         auto url = retrieveUrl();
 
         cout<<"url "<<url<<endl;
-        string auth{this->m_token.tokenType};
+        string auth(this->m_token.tokenType);
         auth.append(" " + this->m_token.accessToken);
 
-        // const auto meta = song.toMetadataJson();
         nlohmann::json s;
         s["title"] = song.title;
         s["album"] = album.album;
@@ -146,7 +132,6 @@ void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Model
 
         cout<<"\n\nMeta:\n"<<meta<<"\n";
 
-        /**
         auto multipart = cpr::Multipart{{"cover", cpr::File{cover.path}},
             {"metadata", meta},
             {"file", cpr::File{song.songPath}}};
@@ -157,7 +142,6 @@ void Upload::uploadSongWithMetadata(Managers::CommitManager::Album &album, Model
 
         cout << "status code: " << r.status_code<< std::endl;
         cout << r.text << endl;
-        */
     }
     catch (exception &e)
     {
@@ -250,7 +234,7 @@ void Upload::printJsonData(const json& obj)
     cout<<"duration: "<<obj["duration"]<<endl;
     cout<<"song_data: "<<obj["song_data"]<<endl;
 
-    cout<<endl<<endl;;
+    cout<<endl<<endl;
 }
 #pragma endregion
 #pragma endregion

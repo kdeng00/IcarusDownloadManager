@@ -36,14 +36,6 @@ IcarusAction ActionManager::retrieveIcarusAction() const
     return icarusAction;
 }
 
-bool ActionManager::isNumber(string_view val) noexcept
-{
-    return !val.empty() && std::find_if(val.begin(), 
-        val.end(), [](char c)
-        {
-            return !std::isdigit(c);
-            }) == val.end();
-}
 
 
 void ActionManager::initialize()

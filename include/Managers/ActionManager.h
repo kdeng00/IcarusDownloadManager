@@ -78,6 +78,8 @@ private:
     void printAction() noexcept;
     void printFlags() noexcept;
 
+    std::vector<std::string> parsedFlags();
+
     std::string action;
     
     std::vector<Models::Flags> flags;

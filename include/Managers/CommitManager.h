@@ -55,6 +55,9 @@ private:
     void downloadSong();
     void retrieveObjects();
     void uploadSong();
+
+    Models::Token parseToken(Models::API);
+
     // Uploads a single song. The song is constructed from a metadata file that contains
     // information about the album the song is from. Also, the cover art of the song must
     // be present.
