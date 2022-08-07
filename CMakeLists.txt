@@ -1,41 +1,48 @@
-cmake_minimum_required(VERSION 3.14)
+cmake_minimum_required(VERSION 3.23.3)
+
+set(SOFTWARE_DESCRIPTION
+    "A music streaming Web API that provides a way for users to stream their personal music collection")
+set(SOFTWARE_VERSION
+    "0.3.0")
 
 
-project(IcarusDownloadManager)
+project(IcarusDownloadManager VERSION ${SOFTWARE_VERSION} DESCRIPTION ${SOFTWARE_DESCRIPTION} LANGUAGES CXX)
 
 
 
-message(STATUS "Checking compiler flags for C++17 support.")
-# Set C++17 support flags for various compilers
+message(STATUS "Checking compiler flags for C++20 support.")
+# Set C++20 support flags for various compilers
 include(CheckCXXCompilerFlag)
 
 if(WIN32)
-  message("Windows")
-  set(vs_ver 19.29.30138)
+  message("Windows environment")
 
-  if (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL ${vs_ver})
+  if (MSVC_VERSION GREATER_EQUAL "1900")
     message("Visual Studio version is at least ${vs_ver}")
 
-    set(CMAKE_CXX_STANDARD_COMPILE_OPTION "-std:c++latest")
-    set(CMAKE_CXX_EXTENSION_COMPILE_OPTION "-std:c++latest")
+    include(CheckCXXCompilerFlag)
+    CHECK_CXX_COMPILER_FLAG("/std:c++20" _cpp_latest_flag_supported)
+    if (_cpp_latest_flag_supported)
+        add_compile_options("/std:c++20")
+    endif()
 
-    set(CMAKE_CXX_STANDARD 17)
+    set(CMAKE_CXX_STANDARD 20)
     set(CMAKE_CXX_STANDARD_REQUIRED ON)
   endif()
 else()
-    check_cxx_compiler_flag("-std=c++17" COMPILER_SUPPORTS_CXX17)
+    check_cxx_compiler_flag("-std=c++20" COMPILER_SUPPORTS_CXX20)
     check_cxx_compiler_flag("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
 
-    if(COMPILER_SUPPORTS_CXX17)
-        message(STATUS "C++17 is supported.")
+    if(COMPILER_SUPPORTS_CXX20)
+        message(STATUS "C++20 is supported.")
 
-        set(CMAKE_CXX_STANDARD 17)
+        set(CMAKE_CXX_STANDARD 20)
         set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
         if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -stdlib=libc++")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20 -stdlib=libc++")
         else()
-            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+            set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
         endif()
     elseif(COMPILER_SUPPORTS_CXX0X)
         message(STATUS "C++0x is supported.")
@@ -45,7 +52,7 @@ else()
             set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
         endif()
     else()
-        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++17 support. Please use a different C++ compiler.")
+        message(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++20 support. Please use a different C++ compiler.")
     endif()
 endif()
 
