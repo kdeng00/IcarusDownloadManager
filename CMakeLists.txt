@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.23.3)
 
-set(VCPKG_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/icarus/3rdparty/vcpkg)
+set(VCPKG_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/3rdparty/vcpkg)
 
 message("The vcpkg root path ${VCPKG_ROOT_PATH}")
 
@@ -16,7 +16,7 @@ endif()
 
 
 set(SOFTWARE_DESCRIPTION
-    "A music streaming Web API that provides a way for users to stream their personal music collection")
+    "A tool to interact with the Icarus Music streaming API")
 set(SOFTWARE_VERSION
     "0.3.0")
 
@@ -99,11 +99,18 @@ set(IDM_INCLUDE_DIR
 # include(${CONAN_BUILDINFO})
 # conan_basic_setup()
 
+include_directories(${IDM_INCLUDE_DIR})
 # include_directories(${CPR_INCLUDE_DIRS} ${IDM_INCLUDE_DIR})
 
 set(USE_SYSTEM_CURL OFF)
 set(BUILD_CPR_TESTS OFF)
 
+find_package(nlohmann_json CONFIG REQUIRED)
+find_package(OpenSSL REQUIRED)
+find_package(CURL REQUIRED)
+find_package(cpr CONFIG REQUIRED)
+
 
 add_executable(icd ${SOURCES})
+target_link_libraries(icd PRIVATE nlohmann_json::nlohmann_json OpenSSL::SSL OpenSSL::Crypto CURL::libcurl cpr::cpr)
 # target_link_libraries(icd PUBLIC ${CONAN_LIBS})

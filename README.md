@@ -5,10 +5,10 @@ IcarusDownloadManager is a Linux CLI software client application that has the fe
 
 ## Built With
 
-* C++ with C++17 features
+* C++ with C++20 features
 * CMake
-* GCC >= 9 or Visual Studio >= 16 [2019]
-* [conan](https://github.com/conan-io/conan)
+* GCC >= 10 or Visual Studio >= 17 [2022]
+* [vcpkg](https://github.com/microsoft/vcpkg)
 * [json](https://github.com/nlohmann/json)
 * [openssl](https://github.com/openssl/openssl)
 * [curl](https://github.com/curl/curl)
@@ -16,6 +16,15 @@ IcarusDownloadManager is a Linux CLI software client application that has the fe
 
 
 ### Getting Started
+
+Install packages
+
+```
+vcpkg install nlohman-json
+vcpkg install openssl
+vcpkg install curl
+vcpkg install cpr
+```
 
 Build the project:
 
@@ -25,8 +34,6 @@ git clone --recursive https://github.com/kdeng00/IcarusDownloadManager
 
 mkdir build
 cd build
-
-conan install .. --build
 
 cmake ..
 cmake --build . --config release -j
