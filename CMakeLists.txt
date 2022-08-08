@@ -1,5 +1,20 @@
 cmake_minimum_required(VERSION 3.23.3)
 
+set(VCPKG_ROOT_PATH ${CMAKE_CURRENT_SOURCE_DIR}/icarus/3rdparty/vcpkg)
+
+message("The vcpkg root path ${VCPKG_ROOT_PATH}")
+
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    set(TOOLCHAIN_PATH ${VCPKG_ROOT_PATH}/scripts/buildsystems/vcpkg.cmake)
+
+    set(CMAKE_TOOLCHAIN_FILE
+        "${TOOLCHAIN_PATH}"
+        CACHE STRING "Vcpkg toolchain file")
+
+    message("Using default toolchain file")
+endif()
+
+
 set(SOFTWARE_DESCRIPTION
     "A music streaming Web API that provides a way for users to stream their personal music collection")
 set(SOFTWARE_VERSION
@@ -77,18 +92,18 @@ set(IDM_INCLUDE_DIR
     "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
 # conan
-set(CONAN_BUILDINFO
-${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+# set(CONAN_BUILDINFO
+# ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
-message("conan build info ${CONAN_BUILDINFO}")
-include(${CONAN_BUILDINFO})
-conan_basic_setup()
+# message("conan build info ${CONAN_BUILDINFO}")
+# include(${CONAN_BUILDINFO})
+# conan_basic_setup()
 
-include_directories(${CPR_INCLUDE_DIRS} ${IDM_INCLUDE_DIR})
+# include_directories(${CPR_INCLUDE_DIRS} ${IDM_INCLUDE_DIR})
 
 set(USE_SYSTEM_CURL OFF)
 set(BUILD_CPR_TESTS OFF)
 
 
 add_executable(icd ${SOURCES})
-target_link_libraries(icd PUBLIC ${CONAN_LIBS})
+# target_link_libraries(icd PUBLIC ${CONAN_LIBS})
