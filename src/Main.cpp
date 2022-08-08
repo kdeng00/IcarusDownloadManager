@@ -40,7 +40,7 @@ void printHelp()
     cout<<"-sr directory where to recursively search for songs to upload (Optional)\n";
     cout<<"-nc will not prompt the user when uploading from a directory\n\n";
 
-    cout<<"Required for upload\n";
+    cout<<"Required for upload with metadata\n";
     cout<<"-s path of song\n";
     cout<<"-t track number\n";
     cout<<"-m metadata filepath\n";
