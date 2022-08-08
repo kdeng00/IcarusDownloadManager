@@ -90,6 +90,7 @@ Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on the code of conduc
 
 ## Versioning
 
+[v0.3.0](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/v0.3.0)
 [v0.2.0](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/v0.2.0)  
 [v0.1.1](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/v0.1.1)  
 [v0.1.0](https://github.com/kdeng00/IcarusDownloadManager/releases/tag/0.1.0)
