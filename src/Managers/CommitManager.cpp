@@ -308,8 +308,8 @@ void CommitManager::singTargetUpload(const std::string &songPath, const std::str
     }
 
     song = *sng;
-    const auto p = fs::path(songPath);
-    song.directory = p.parent_path.string();
+    const auto p = filesystem::path(songPath);
+    song.directory = p.parent_path().string();
     song.generate_filename_from_track();
 
     Models::CoverArt cover;

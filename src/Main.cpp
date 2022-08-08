@@ -14,7 +14,7 @@ using Managers::CommitManager;
 
 constexpr static auto IcarusDownloadManager_version()
 {
-    return "v0.2.0";
+    return "v0.3.0";
 }
 
 void printHelp()
@@ -24,6 +24,7 @@ void printHelp()
     cout<<"Actions\n";
     cout<<"download\n";
     cout<<"upload\n";
+    cout<<"upload-meta\n";
     cout<<"retrieve\n";
     cout<<"delete\n\n";
 
@@ -38,6 +39,13 @@ void printHelp()
     cout<<"-sd directory where to search for songs to upload (Optional)\n";
     cout<<"-sr directory where to recursively search for songs to upload (Optional)\n";
     cout<<"-nc will not prompt the user when uploading from a directory\n\n";
+
+    cout<<"Required for upload with metadata\n";
+    cout<<"-s path of song\n";
+    cout<<"-t track number\n";
+    cout<<"-m metadata filepath\n";
+    cout<<"-ca coverart filepath\n";
+    cout<<"-scma directory where songs, metadata, and cover art exists and will be uploaded (Optional)\n\n";
 
     cout<<"Required for download\n";
     cout<<"-b song id\n";

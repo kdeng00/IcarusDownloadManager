@@ -48,7 +48,7 @@ void ActionManager::initialize()
 }
 void ActionManager::validateFlags()
 {
-        cout<<"Validating flags\n";
+    cout<<"Validating flags\n";
 
     const auto flagVals = parsedFlags();
 
