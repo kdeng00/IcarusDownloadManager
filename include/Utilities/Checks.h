@@ -2,6 +2,7 @@
 #define CHECKS_H_
 
 #include<algorithm>
+#include<string>
 #include<cstdlib>
 #include<ctype.h>
 
