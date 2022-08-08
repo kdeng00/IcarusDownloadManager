@@ -17,6 +17,12 @@ IcarusDownloadManager is a Linux CLI software client application that has the fe
 
 ### Getting Started
 
+Clone the repo
+
+```
+git clone --recursive https://github.com/kdeng00/IcarusDownloadManager
+```
+
 Install packages
 
 ```
@@ -26,12 +32,11 @@ vcpkg install curl
 vcpkg install cpr
 ```
 
+
 Build the project:
 
 ```
-git clone --recursive https://github.com/kdeng00/IcarusDownloadManager
-
-
+cd IcarusDownloadManager
 mkdir build
 cd build
 

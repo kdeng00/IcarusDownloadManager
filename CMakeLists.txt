@@ -24,8 +24,8 @@ set(SOFTWARE_VERSION
 project(IcarusDownloadManager VERSION ${SOFTWARE_VERSION} DESCRIPTION ${SOFTWARE_DESCRIPTION} LANGUAGES CXX)
 
 
-
 message(STATUS "Checking compiler flags for C++20 support.")
+
 # Set C++20 support flags for various compilers
 include(CheckCXXCompilerFlag)
 
@@ -91,16 +91,7 @@ set(SOURCES
 set(IDM_INCLUDE_DIR
     "${CMAKE_CURRENT_SOURCE_DIR}/include")
 
-# conan
-# set(CONAN_BUILDINFO
-# ${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-
-# message("conan build info ${CONAN_BUILDINFO}")
-# include(${CONAN_BUILDINFO})
-# conan_basic_setup()
-
 include_directories(${IDM_INCLUDE_DIR})
-# include_directories(${CPR_INCLUDE_DIRS} ${IDM_INCLUDE_DIR})
 
 set(USE_SYSTEM_CURL OFF)
 set(BUILD_CPR_TESTS OFF)
@@ -113,4 +104,3 @@ find_package(cpr CONFIG REQUIRED)
 
 add_executable(icd ${SOURCES})
 target_link_libraries(icd PRIVATE nlohmann_json::nlohmann_json OpenSSL::SSL OpenSSL::Crypto CURL::libcurl cpr::cpr)
-# target_link_libraries(icd PUBLIC ${CONAN_LIBS})
