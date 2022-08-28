@@ -44,16 +44,14 @@ namespace Utilities
         static auto itemIterInContainer(const Container &container, const Item &item, Func func)
         {
             auto result = false;
-            // std::cout<<container<<"\n";
+
             auto ii = std::find_if(container.begin(), container.end(), [&](Item i)
             {
-                // std::cout<<"iter "<<i<<" target "<<item<<"\n";
                 return func(i, item);
             });
 
             if (ii == container.end())
             {
-                // std::cout<<item<<" not found in container\n";
                 ii = container.end();
             }
 
