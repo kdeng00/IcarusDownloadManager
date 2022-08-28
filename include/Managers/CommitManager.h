@@ -3,6 +3,7 @@
 
 #include<map>
 #include<iostream>
+#include<filesystem>
 #include<string>
 #include<string_view>
 
@@ -92,6 +93,8 @@ private:
         // If 1 go with first standard, if 2 go with the second, if 0 then will default to 1 for disc and track
         auto mode = 0;
         const Str &songPath = song.songPath;
+        auto file = std::filesystem::path(songPath);
+        auto filename = file.filename().string();;
 
         auto trd = song.songPath.find("trackd");
         auto tr = song.songPath.find("track");
@@ -107,15 +110,16 @@ private:
         }
 
         auto dl = [](char c, char t){ return c == t; };
-        auto d = Utilities::Checks::itemIterInContainer<char, Str>(songPath, 'd', dl);
-        auto k = Utilities::Checks::itemIterInContainer<char, Str>(songPath, 'k', dl);
-        auto dot = Utilities::Checks::itemIterInContainer<char, Str>(songPath, '.', dl);
+        auto d = Utilities::Checks::itemIterInContainer<char, Str>(filename, 'd', dl);
+        auto k = Utilities::Checks::itemIterInContainer<char, Str>(filename, 'k', dl);
+        auto dot = Utilities::Checks::itemIterInContainer<char, Str>(filename, '.', dl);
 
         switch(mode)
         {
         case 1:
         {
-            if (k != songPath.end() && dot != songPath.end())
+            // if (k != songPath.end() && dot != songPath.end())
+            if (k != filename.end() && dot != filename.end())
             {
                 auto tStr = std::string(++k, dot);
                 std::cout << "TStr: " << tStr<<"\n";
@@ -129,7 +133,8 @@ private:
         }
         case 2:
         {
-            if (k != songPath.end() && dot != songPath.end() && d != songPath.end())
+            // if (k != songPath.end() && dot != songPath.end() && d != songPath.end())
+            if (k != filename.end() && dot != filename.end() && d != filename.end())
             {
                 auto tStr = std::string(++k, d);
                 auto dStr = std::string(++d, dot);

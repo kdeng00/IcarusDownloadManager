@@ -345,6 +345,17 @@ void CommitManager::multiTargetUpload(const std::string &sourcePath)
 
         cout<<"Stem "<<stem<<" Extension "<<extension<<"\n";
 
+        auto validImg = [](const std::string& ext)
+        {
+            std::vector<string> extensions;
+            extensions.reserve(3);
+            extensions.push_back(".jpg");
+            extensions.push_back(".jpeg");
+            extensions.push_back(".");
+
+            return ext.compare(extensions[0]) == 0 || ext.compare(extensions[1]) == 0 || ext.compare(extensions[2]) == 0;
+        };
+
         if (extension.compare(".mp3") == 0)
         {
             Song song;
@@ -354,7 +365,8 @@ void CommitManager::multiTargetUpload(const std::string &sourcePath)
 
             songs.emplace_back(std::move(song));
         }
-        else if (extension.compare(".jpg") == 0 || extension.compare(".png") == 0)
+        // else if (extension.compare(".jpg") == 0 || extension.compare(".png") == 0)
+        else if (validImg(extension.string()))
         {
             cover.path.assign(pp.string());
         }
