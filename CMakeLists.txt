@@ -18,7 +18,7 @@ endif()
 set(SOFTWARE_DESCRIPTION
     "A tool to interact with the Icarus Music streaming API")
 set(SOFTWARE_VERSION
-    "0.3.0")
+    "0.3.2")
 
 
 project(IcarusDownloadManager VERSION ${SOFTWARE_VERSION} DESCRIPTION ${SOFTWARE_DESCRIPTION} LANGUAGES CXX)
