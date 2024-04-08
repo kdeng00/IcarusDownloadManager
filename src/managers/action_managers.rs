@@ -1,19 +1,21 @@
 use serde::{Deserialize, Serialize};
 
-mod managers {
+use crate::models;
+
+// mod managers {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ActionManager {
-    action: String,
-    flags: Vec<models::Flags>,
-    params: Vec<String>,
-    param_count: i32,
+    pub action: String,
+    pub flags: Vec<models::flags::Flags>,
+    pub params: Vec<String>,
+    pub param_count: i32,
 }
 
 impl ActionManager {
     // TODO: Implement
-    pub fn retrieve_icarus_action(&self) -> models::IcarusAction {
-        return models::IcarusAction {
+    pub fn retrieve_icarus_action(&self) -> models::icarus_action::IcarusAction {
+        return models::icarus_action::IcarusAction {
             action: String::from(""),
             flags: Vec::new(),
         };
@@ -52,4 +54,4 @@ impl ActionManager {
         return Vec::new();
     }
 }
-}
+// }

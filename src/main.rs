@@ -4,11 +4,6 @@ mod models;
 use std::env;
 use std::process;
 
-// use managers::{ActionManager};
-use crate::src::managers::{ActionManager, CommitManager};
-// use models::{user, upload_form};
-
-// use models::
 
 
 fn exit_program(code: i32) {
@@ -65,19 +60,23 @@ fn main() {
         exit_program(-1);
     }
 
-    let act_mgr = ActionManager {
-    // let act_mgr = crate::src::managers::ActionManager {
+    let act_mgr = managers::action_managers::ActionManager {
         action: String::from(""),
         flags: Vec::new(),
         params: args,
-        param_count: args.len(),
+        param_count: 2,
     };
 
     let chosen_act = act_mgr.retrieve_icarus_action();
 
     chosen_act.print_action_and_flags();
 
-    let cmt_mgr = CommitManager {
+    let cmt_mgr = managers::commit_manager::CommitManager {
+        action: String::from(""),
+        flags: Vec::new(),
+        params: Vec::new(),
+        param_count: 1,
+        ica_action: chosen_act,
     };
 
     cmt_mgr.commit_action();

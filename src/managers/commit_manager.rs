@@ -2,15 +2,17 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-mod managers {
+use crate::models;
+
+// mod managers {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CommitManager {
-    action: String,
-    flags: Vec<models::Flags>,
-    params: Vec<String>,
-    param_count: i32,
-    ica_action: models::IcarusAction,
+    pub action: String,
+    pub flags: Vec<models::flags::Flags>,
+    pub params: Vec<String>,
+    pub param_count: i32,
+    pub ica_action: models::icarus_action::IcarusAction,
 }
 
 pub struct Album {
@@ -20,7 +22,7 @@ pub struct Album {
     pub year: i32,
     pub track_count: i32,
     pub disc_count: i32,
-    pub songs: Vec<models::Song>,
+    pub songs: Vec<models::song::Song>,
 
 }
 
@@ -53,7 +55,7 @@ impl CommitManager {
     }
 
     // TODO: Implement
-    fn parse_token(&self, api: &models::API) {
+    fn parse_token(&self, api: &models::api::API) {
     }
     // TODO: Implement
     fn upload_song_with_metadata(&self) {
@@ -66,17 +68,17 @@ impl CommitManager {
     fn multi_target_upload(&self, sourcepath: &String) {
     }
     // TODO: Implement
-    fn initialize_disc_and_track(&self, song: &Song) {
+    fn initialize_disc_and_track(&self, song: &models::song::Song) {
     }
     // TODO: Implement
-    fn parse_disc_and_track(&self, song: &Song, track_id: &String) {
+    fn parse_disc_and_track(&self, song: &models::song::Song, track_id: &String) {
     }
     // TODO: Implement
     fn check_for_no_confirm(&self) -> bool {
         return false;
     }
     // TODO: Implement
-    fn retrieve_metadata(&self, path: &String) -> models::Album {
+    fn retrieve_metadata(&self, path: &String) -> Album {
         return Album {
             title: String::from(""),
             album_artist: String::from(""),
@@ -92,4 +94,4 @@ impl CommitManager {
         return String::from("");
     }
 }
-}
+// }

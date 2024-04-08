@@ -1,11 +1,13 @@
 use serde::{Deserialize, Serialize};
 
-mod models {
+use crate::models;
+
+// mod models {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct IcarusAction {
     pub action: String,
-    pub flags: Vec<models::Flags>,
+    pub flags: Vec<models::flags::Flags>,
 }
 
 impl IcarusAction {
@@ -18,4 +20,4 @@ impl IcarusAction {
     pub fn print_action_and_flags(&self) {
     }
 }
-}
+// }

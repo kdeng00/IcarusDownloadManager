@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-mod utilities {
+// mod utilities {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Conversions {
@@ -20,4 +20,4 @@ impl Conversions {
     }
 }
 
-}
+// }

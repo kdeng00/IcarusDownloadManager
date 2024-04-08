@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-mod models {
+// mod models {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Song {
@@ -9,7 +9,7 @@ pub struct Song {
     pub artist: String,
     pub album: String,
     pub genre: String,
-    pub year: int,
+    pub year: i32,
     pub duration: f64,
     pub track: i32,
     pub disc: i32,
@@ -48,4 +48,4 @@ pub struct CoverArt {
     pub title: String,
     pub path: String,
 }
-}
+// }

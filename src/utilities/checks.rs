@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-mod utilities {
+// mod utilities {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Checks {
@@ -24,4 +24,4 @@ impl Checks {
         return String::from("");
     }
 }
-}
+// }

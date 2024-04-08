@@ -1,17 +1,19 @@
 use serde::{Deserialize, Serialize};
 
-mod managers {
+use crate::models;
+
+// mod managers {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct UserManager {
-    user: models::User,
-    ica_action: models::IcarusAction,
+    user: models::user::User,
+    ica_action: models::icarus_action::IcarusAction,
 }
 
 impl UserManager {
     // TODO: Implement
-    pub fn retrieve_user(&self) -> models::User {
-        return models::User {
+    pub fn retrieve_user(&self) -> models::user::User {
+        return models::user::User {
             username: String::from(""),
             password: String::from(""),
         };
@@ -21,4 +23,4 @@ impl UserManager {
     fn parse_user_from_actions(&self) {
     }
 }
-}
+// }
