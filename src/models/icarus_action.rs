@@ -21,11 +21,25 @@ impl Default for IcarusAction {
 }
 
 impl IcarusAction {
-    // TODO: Implement
     pub fn retrieve_flag_value(&self, flag: &String) -> String {
-        return String::from("");
+        let mut val: String = String::new();
+
+        for f in self.flags.iter() {
+            if f.flag == *flag {
+                val = flag.clone();
+                break;
+            }
+        }
+
+        return val;
     }
 
-    // TODO: Implement
-    pub fn print_action_and_flags(&self) {}
+    pub fn print_action_and_flags(&self) {
+        println!("Action: {}", self.action);
+        println!("Flag count: {}", self.flags.len());
+
+        for flag in self.flags.iter() {
+            println!("flag {} value {}", flag.flag, flag.value);
+        }
+    }
 }
