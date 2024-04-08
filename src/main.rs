@@ -62,12 +62,13 @@ fn main() {
 
     let args_len = args.len() as i32;
 
-    let act_mgr = managers::action_managers::ActionManager {
+    let mut act_mgr = managers::action_managers::ActionManager {
         action: String::from(""),
         flags: Vec::new(),
         params: args,
         param_count: args_len,
     };
+    act_mgr.initialize();
 
     let chosen_act = act_mgr.retrieve_icarus_action();
 
@@ -81,5 +82,5 @@ fn main() {
         ica_action: chosen_act,
     };
 
-    cmt_mgr.commit_action();
+    // cmt_mgr.commit_action();
 }
