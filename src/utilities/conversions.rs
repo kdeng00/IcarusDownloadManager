@@ -1,23 +1,22 @@
 use serde::{Deserialize, Serialize};
 
-// mod utilities {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Conversions {
 }
 
 impl Conversions {
-    // TODO: Implement
-    pub fn to_lower_char(val: &mut String) {
+    pub fn to_lower_char(val: &mut char) {
+        if val.is_alphabetic() {
+            val = val.to_lowercase();
+        }
     }
 
-    // TODO: Implement
     pub fn initialize_values(&self) {
     }
 
-    // TODO: Implement
-    pub fn print_value(&self, val: i32) {
+    pub fn print_value<T>(&self, val: T) {
+        println!("Going to print value");
+        println!("{}", val);
     }
 }
-
-// }

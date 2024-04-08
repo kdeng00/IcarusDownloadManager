@@ -1,15 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-// mod utilities {
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Checks {
 }
 
 impl Checks {
-    // TODO: Implement
     pub fn is_number(val: &String) -> bool {
-        return false;
+        return val.is_numeric();
     }
 
     // TODO: Implement
@@ -24,4 +21,3 @@ impl Checks {
         return String::from("");
     }
 }
-// }
