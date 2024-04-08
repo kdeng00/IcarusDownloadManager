@@ -1,3 +1,8 @@
 /.vs/*
 /build
 /x64
+
+
+# Added by cargo
+
+/target
