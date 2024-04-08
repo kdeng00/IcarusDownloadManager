@@ -22,8 +22,7 @@ pub struct Song {
 
 impl Song {
     // TODO: Implement
-    pub fn print_info(&self) {
-    }
+    pub fn print_info(&self) {}
 
     // TODO: Implement
     pub fn song_path(&self) -> String {
@@ -40,7 +39,6 @@ impl Song {
         return String::from("");
     }
 }
-
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CoverArt {

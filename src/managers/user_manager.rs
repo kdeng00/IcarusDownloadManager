@@ -20,7 +20,6 @@ impl UserManager {
     }
 
     // TODO: Implement
-    fn parse_user_from_actions(&self) {
-    }
+    fn parse_user_from_actions(&self) {}
 }
 // }

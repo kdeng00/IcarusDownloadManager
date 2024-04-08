@@ -4,14 +4,13 @@ mod models;
 use std::env;
 use std::process;
 
-
-
 fn exit_program(code: i32) {
     process::exit(code);
 }
 
 fn print_help() {
-    let msg: String = String::from(r#"icd [Action] [flag]
+    let msg: String = String::from(
+        r#"icd [Action] [flag]
 
         Actions
             download
@@ -47,7 +46,8 @@ fn print_help() {
             -rt retrieve type (songs is only accepted)
 
         Required for deleting a song
-            -D song id"#);
+            -D song id"#,
+    );
 
     println!("{}", msg);
 }

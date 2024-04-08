@@ -23,7 +23,6 @@ pub struct Album {
     pub track_count: i32,
     pub disc_count: i32,
     pub songs: Vec<models::song::Song>,
-
 }
 
 enum ActionValues {
@@ -35,19 +34,17 @@ enum ActionValues {
 }
 
 enum RetrieveTypes {
-    Songs
+    Songs,
 }
 
 impl Album {
     // TODO: Implement
-    pub fn print_info(&self) {
-    }
+    pub fn print_info(&self) {}
 }
 
 impl CommitManager {
     // TODO: Implement
-    pub fn commit_action(&self) {
-    }
+    pub fn commit_action(&self) {}
 
     // TODO: Implement
     fn map_actions(&self) -> HashMap<String, ActionValues> {
@@ -55,24 +52,24 @@ impl CommitManager {
     }
 
     // TODO: Implement
-    fn parse_token(&self, api: &models::api::API) {
+    fn parse_token(&self, api: &models::api::API) {}
+    // TODO: Implement
+    fn upload_song_with_metadata(&self) {}
+    // TODO: Implement
+    fn sing_target_upload(
+        &self,
+        songpath: &String,
+        track_id: &String,
+        meta_path: &String,
+        cover_path: &String,
+    ) {
     }
     // TODO: Implement
-    fn upload_song_with_metadata(&self) {
-    }
+    fn multi_target_upload(&self, sourcepath: &String) {}
     // TODO: Implement
-    fn sing_target_upload(&self, songpath: &String, track_id: &String,
-        meta_path: &String, cover_path: &String) {
-    }
+    fn initialize_disc_and_track(&self, song: &models::song::Song) {}
     // TODO: Implement
-    fn multi_target_upload(&self, sourcepath: &String) {
-    }
-    // TODO: Implement
-    fn initialize_disc_and_track(&self, song: &models::song::Song) {
-    }
-    // TODO: Implement
-    fn parse_disc_and_track(&self, song: &models::song::Song, track_id: &String) {
-    }
+    fn parse_disc_and_track(&self, song: &models::song::Song, track_id: &String) {}
     // TODO: Implement
     fn check_for_no_confirm(&self) -> bool {
         return false;

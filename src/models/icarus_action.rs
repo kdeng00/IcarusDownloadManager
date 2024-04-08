@@ -17,7 +17,6 @@ impl IcarusAction {
     }
 
     // TODO: Implement
-    pub fn print_action_and_flags(&self) {
-    }
+    pub fn print_action_and_flags(&self) {}
 }
 // }
