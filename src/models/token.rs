@@ -1,11 +1,21 @@
+use std::default::Default;
+
 use serde::{Deserialize, Serialize};
 
-// mod models {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Token {
-    pub access_token: String,
-    pub token_type: String,
-    pub expiration: i32,
+    pub access_token: Option<String>,
+    pub token_type: Option<String>,
+    pub expiration: Option<i32>,
 }
-// }
+
+impl Default for Token {
+    fn default() -> Self {
+        Token {
+            access_token: None,
+            token_type: None,
+            expiration: None,
+        }
+    }
+}

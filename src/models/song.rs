@@ -1,23 +1,43 @@
+use std::default::Default;
+
 use serde::{Deserialize, Serialize};
 
-// mod models {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Song {
-    pub id: i32,
-    pub title: String,
-    pub artist: String,
-    pub album: String,
-    pub genre: String,
-    pub year: i32,
-    pub duration: f64,
-    pub track: i32,
-    pub disc: i32,
-    pub data: String,
+    pub id: Option<i32>,
+    pub title: Option<String>,
+    pub artist: Option<String>,
+    pub album: Option<String>,
+    pub genre: Option<String>,
+    pub year: Option<i32>,
+    pub duration: Option<f64>,
+    pub track: Option<i32>,
+    pub disc: Option<i32>,
+    pub data: Option<String>,
     // use filepath instead
     // pub song_path: String,
-    pub filepath: String,
-    pub directory: String,
+    pub filepath: Option<String>,
+    pub directory: Option<String>,
+}
+
+impl Default for Song {
+    fn default() -> Self {
+        Song {
+            id: None,
+            title: None,
+            artist: None,
+            album: None,
+            genre: None,
+            year: None,
+            duration: None,
+            track: None,
+            disc: None,
+            data: None,
+            filepath: None,
+            directory: None,
+        }
+    }
 }
 
 impl Song {
@@ -42,8 +62,17 @@ impl Song {
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CoverArt {
-    pub id: i32,
-    pub title: String,
-    pub path: String,
+    pub id: Option<i32>,
+    pub title: Option<String>,
+    pub path: Option<String>,
 }
-// }
+
+impl Default for CoverArt {
+    fn default() -> Self {
+        CoverArt {
+            id: None,
+            title: None,
+            path: None,
+        }
+    }
+}
