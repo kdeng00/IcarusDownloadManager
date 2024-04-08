@@ -60,11 +60,13 @@ fn main() {
         exit_program(-1);
     }
 
+    let args_len = args.len() as i32;
+
     let act_mgr = managers::action_managers::ActionManager {
         action: String::from(""),
         flags: Vec::new(),
         params: args,
-        param_count: 2,
+        param_count: args_len,
     };
 
     let chosen_act = act_mgr.retrieve_icarus_action();
