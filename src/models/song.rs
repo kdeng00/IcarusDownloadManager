@@ -3,7 +3,7 @@ use std::default::Default;
 use serde::{Deserialize, Serialize};
 
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
     pub id: Option<i32>,
     pub title: Option<String>,
@@ -41,22 +41,51 @@ impl Default for Song {
 }
 
 impl Song {
-    // TODO: Implement
-    pub fn print_info(&self) {}
-
-    // TODO: Implement
-    pub fn song_path(&self) -> String {
-        return String::from("");
+    pub fn print_info(&self) {
+        println!("Title: {:?}", self.title);
     }
 
-    // TODO: Implement
-    pub fn generate_filename_from_track() -> i32 {
+    pub fn song_path(&self) -> String {
+        // let directory = &self.directory.unwrap();
+        let directory = &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
+
+        let mut buffer: String = directory.to_string();
+        let count = buffer.len();
+
+        if buffer.chars().nth(count-1) != Some('/') {
+            buffer += "/";
+        }
+
+        let filename = &<std::option::Option<std::string::String> as Clone>::clone(&self.filepath).unwrap();
+        buffer += filename;
+
+        return buffer;
+    }
+
+    // if 1 - wav, if 0 - mp3, anything else defaults to wav
+    pub fn generate_filename_from_track(&mut self, i_type: i32) -> i32 {
+        let mut filename: String = String::new();
+        if self.track.unwrap() < 10 {
+            filename += "0";
+        }
+
+        filename += &self.track.unwrap().to_string();
+
+        if i_type == 0 {
+            filename += ".mp3";
+        } else {
+            filename += ".wav";
+        }
+
+        // &mut self.filepath = Some(filename);
+        self.filepath = Some(filename);
+
         return 0;
     }
 
     // TODO: Implement
-    pub fn to_metadata_json() -> String {
-        return String::from("");
+    pub fn to_metadata_json(&self) -> Result<String, serde_json::Error> {
+        return serde_json::to_string_pretty(&self);
     }
 }
 
