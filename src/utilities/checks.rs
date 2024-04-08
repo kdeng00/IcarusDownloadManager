@@ -20,4 +20,20 @@ impl Checks {
         func: fn(a: &String, b: &String) -> String) -> String {
         return String::from("");
     }
+
+    // TODO: Implement
+    pub fn index_of_item_in_container(container: &String, item: &char, 
+        func: fn(a: &char, b: &char) -> bool) -> i32 {
+        let mut index = -1;
+
+        for c in container.chars() {
+            if func(&c, item) {
+                break;
+            }
+
+            index += 1;
+        }
+
+        return index;
+    }
 }

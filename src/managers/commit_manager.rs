@@ -1,3 +1,4 @@
+use std::default::Default;
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
@@ -14,6 +15,7 @@ pub struct CommitManager {
     pub ica_action: models::icarus_action::IcarusAction,
 }
 
+
 pub struct Album {
     pub title: String,
     pub album_artist: String,
@@ -22,6 +24,20 @@ pub struct Album {
     pub track_count: i32,
     pub disc_count: i32,
     pub songs: Vec<models::song::Song>,
+}
+
+impl Default for Album {
+    fn default() -> Self {
+        Album {
+            title: String::new(),
+            album_artist: String::new(),
+            genre: String::new(),
+            year: 0,
+            track_count: 0, 
+            disc_count: 0,
+            songs: Vec::new(),
+        }
+    }
 }
 
 enum ActionValues {
@@ -37,17 +53,53 @@ enum RetrieveTypes {
 }
 
 impl Album {
-    // TODO: Implement
-    pub fn print_info(&self) {}
+    pub fn print_info(&self) {
+        println!("Album: {}", self.title);
+        println!("Album Artist: {}", self.album_artist);
+        println!("Genre: {}", self.genre);
+        println!("Year: {}", self.year);
+        println!("Track Count: {}", self.track_count);
+        println!("Disc Count: {}", self.disc_count);
+    }
 }
 
 impl CommitManager {
-    // TODO: Implement
-    pub fn commit_action(&self) {}
+
+    pub fn commit_action(&self) {
+        let action = &self.ica_action.action;
+        println!("Committing {} action", action);
+
+        match self.map_actions()[action] {
+            ActionValues::DeleteAct => self.delete_song(),
+            ActionValues::DownloadAct => self.download_song(),
+            ActionValues::RetrieveAct => self.retrieve_object(),
+            ActionValues::UploadAct => self.upload_song(),
+            ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata(),
+            _ => {
+                println!("Nothing good here");
+            }
+        }
+    }
 
     // TODO: Implement
     fn map_actions(&self) -> HashMap<String, ActionValues> {
         return HashMap::new();
+    }
+
+    // TODO: Implement
+    fn delete_song(&self) {
+    }
+
+    // TODO: Implement
+    fn download_song(&self) {
+    }
+
+    // TODO: Implement
+    fn retrieve_object(&self) {
+    }
+
+    // TODO: Implement
+    fn upload_song(&self) {
     }
 
     // TODO: Implement
@@ -66,7 +118,52 @@ impl CommitManager {
     // TODO: Implement
     fn multi_target_upload(&self, sourcepath: &String) {}
     // TODO: Implement
-    fn initialize_disc_and_track(&self, song: &models::song::Song) {}
+    // Standards
+    // * track01.cdda.wav - Disc 1, Track 1
+    // * track02d02.cdda.wav - Disc 2, Track 2
+    fn initialize_disc_and_track(&mut self, song: &mut models::song::Song) {
+        let disc = 1;
+        let track = 1;
+        let mut mode = 0;
+        let songpath = song.song_path();
+        let filename = &<std::option::Option<std::string::String> as Clone>::clone(&song.filepath).unwrap();
+
+        // let directory = &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
+        let trd = filename.contains("trackd");
+        let tr = filename.contains("track");
+
+        if tr {
+            mode = 1;
+        }
+
+        if trd {
+            mode = 2;
+        }
+
+        let dl = |a: &char, b: &char| -> bool {
+            return a == b;
+        };
+        let d = utilities::checks::Checks::index_of_item_in_container(&filename, &'d', dl);
+        let k = utilities::checks::Checks::index_of_item_in_container(&filename, &'k', dl);
+        let dot = utilities::checks::Checks::index_of_item_in_container(&filename, &'.', dl);
+        let end = filename.len() as i32;
+
+        match mode {
+            1 => {
+                if k != end && dot != end {
+                    let st = k + 1;
+                    let ed = dot - 1;
+                    let t = &filename[&st..&ed];
+                }
+            },
+            2 => {
+            },
+            _ => println!(""),
+        }
+
+        song.disc = Some(disc);
+        song.track = Some(track);
+    }
     // TODO: Implement
     fn parse_disc_and_track(&self, song: &models::song::Song, track_id: &String) {}
     // TODO: Implement
