@@ -46,7 +46,6 @@ impl Song {
     }
 
     pub fn song_path(&self) -> String {
-        // let directory = &self.directory.unwrap();
         let directory = &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
 
         let mut buffer: String = directory.to_string();
@@ -77,13 +76,11 @@ impl Song {
             filename += ".wav";
         }
 
-        // &mut self.filepath = Some(filename);
         self.filepath = Some(filename);
 
         return 0;
     }
 
-    // TODO: Implement
     pub fn to_metadata_json(&self) -> Result<String, serde_json::Error> {
         return serde_json::to_string_pretty(&self);
     }

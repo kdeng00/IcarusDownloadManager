@@ -1,5 +1,8 @@
 mod managers;
 mod models;
+mod utilities;
+mod parsers;
+mod syncers;
 
 use std::env;
 use std::process;
@@ -75,12 +78,12 @@ fn main() {
     chosen_act.print_action_and_flags();
 
     let cmt_mgr = managers::commit_manager::CommitManager {
-        action: String::from(""),
-        flags: Vec::new(),
-        params: Vec::new(),
-        param_count: 1,
+//        action: String::from(""),
+//        flags: Vec::new(),
+//        params: Vec::new(),
+//        param_count: 1,
         ica_action: chosen_act,
     };
 
-    // cmt_mgr.commit_action();
+    cmt_mgr.commit_action();
 }

@@ -3,15 +3,14 @@ use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 
 use crate::models;
-
-// mod managers {
+use crate::utilities;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CommitManager {
-    pub action: String,
-    pub flags: Vec<models::flags::Flags>,
-    pub params: Vec<String>,
-    pub param_count: i32,
+    // pub action: String,
+    // pub flags: Vec<models::flags::Flags>,
+    // pub params: Vec<String>,
+    // pub param_count: i32,
     pub ica_action: models::icarus_action::IcarusAction,
 }
 
@@ -91,4 +90,3 @@ impl CommitManager {
         return String::from("");
     }
 }
-// }

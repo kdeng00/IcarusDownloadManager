@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::models;
 
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct IcarusAction {
     pub action: String,
     pub flags: Vec<models::flags::Flags>,

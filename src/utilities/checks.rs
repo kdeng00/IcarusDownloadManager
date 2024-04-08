@@ -5,8 +5,8 @@ pub struct Checks {
 }
 
 impl Checks {
-    pub fn is_number(val: &String) -> bool {
-        return val.is_numeric();
+    pub fn is_numeric(text: &String) -> bool {
+        text.parse::<f64>().is_ok()
     }
 
     // TODO: Implement
