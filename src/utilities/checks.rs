@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+mod utilities {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct Checks {
+pub struct Checks {
 }
 
 impl Checks {
@@ -21,4 +23,5 @@ impl Checks {
         func: fn(a: &String, b: &String) -> String) -> String {
         return String::from("");
     }
+}
 }

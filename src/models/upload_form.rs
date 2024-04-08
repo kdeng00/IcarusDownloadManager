@@ -1,7 +1,10 @@
 use serde::{Deserialize, Serialize};
 
+mod models {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct UploadForm {
+pub struct UploadForm {
     pub url: String,
     pub filepath: String,
+}
 }

@@ -4,7 +4,8 @@ mod models;
 use std::env;
 use std::process;
 
-// use managers::ActionManager;
+// use managers::{ActionManager};
+use crate::src::managers::{ActionManager, CommitManager};
 // use models::{user, upload_form};
 
 // use models::
@@ -64,7 +65,8 @@ fn main() {
         exit_program(-1);
     }
 
-    let act_mgr = managers::ActionManager {
+    let act_mgr = ActionManager {
+    // let act_mgr = crate::src::managers::ActionManager {
         action: String::from(""),
         flags: Vec::new(),
         params: args,
@@ -75,7 +77,7 @@ fn main() {
 
     chosen_act.print_action_and_flags();
 
-    let cmt_mgr = managers::CommitManager {
+    let cmt_mgr = CommitManager {
     };
 
     cmt_mgr.commit_action();

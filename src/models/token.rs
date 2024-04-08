@@ -1,8 +1,11 @@
 use serde::{Deserialize, Serialize};
 
+mod models {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct Token {
+pub struct Token {
     pub access_token: String,
     pub token_type: String,
     pub expiration: i32,
+}
 }

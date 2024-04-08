@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+mod managers {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct ActionManager {
+pub struct ActionManager {
     action: String,
     flags: Vec<models::Flags>,
     params: Vec<String>,
@@ -49,4 +51,5 @@ impl ActionManager {
     fn parsed_flags(&self) -> Vec<String> {
         return Vec::new();
     }
+}
 }

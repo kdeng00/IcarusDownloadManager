@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+mod managers {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct UserManager {
+pub struct UserManager {
     user: models::User,
     ica_action: models::IcarusAction,
 }
@@ -18,4 +20,5 @@ impl UserManager {
     // TODO: Implement
     fn parse_user_from_actions(&self) {
     }
+}
 }

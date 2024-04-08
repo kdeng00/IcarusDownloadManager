@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+mod utilities {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct Conversions {
+pub struct Conversions {
 }
 
 impl Conversions {
@@ -16,4 +18,6 @@ impl Conversions {
     // TODO: Implement
     pub fn print_value(&self, val: i32) {
     }
+}
+
 }

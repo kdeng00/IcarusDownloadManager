@@ -2,8 +2,10 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
+mod managers {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct CommitManager {
+pub struct CommitManager {
     action: String,
     flags: Vec<models::Flags>,
     params: Vec<String>,
@@ -11,7 +13,7 @@ struct CommitManager {
     ica_action: models::IcarusAction,
 }
 
-struct Album {
+pub struct Album {
     pub title: String,
     pub album_artist: String,
     pub genre: String,
@@ -89,4 +91,5 @@ impl CommitManager {
     fn retrieve_file_content(&self, path: &String) -> String {
         return String::from("");
     }
+}
 }

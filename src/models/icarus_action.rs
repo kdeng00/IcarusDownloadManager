@@ -1,7 +1,9 @@
 use serde::{Deserialize, Serialize};
 
+mod models {
+
 #[derive(Debug, Deserialize, Serialize)]
-struct IcarusAction {
+pub struct IcarusAction {
     pub action: String,
     pub flags: Vec<models::Flags>,
 }
@@ -15,4 +17,5 @@ impl IcarusAction {
     // TODO: Implement
     pub fn print_action_and_flags(&self) {
     }
+}
 }
