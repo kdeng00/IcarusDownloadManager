@@ -39,7 +39,9 @@ impl ActionManager {
     }
 
     // TODO: Implement
+    /**
     fn supported_actions(&self) {}
+    */
 
     pub fn initialize(&mut self) {
         self.validate_flags();

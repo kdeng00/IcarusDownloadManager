@@ -3,7 +3,9 @@ use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
+use crate::managers;
 use crate::models;
+use crate::parsers;
 use crate::utilities;
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -81,13 +83,30 @@ impl CommitManager {
         }
     }
 
-    // TODO: Implement
     fn map_actions(&self) -> HashMap<String, ActionValues> {
-        return HashMap::new();
+        let mut actions: HashMap<String, ActionValues> = HashMap::new();
+        actions.insert("download".to_string(), ActionValues::DownloadAct);
+        actions.insert("upload".to_string(), ActionValues::UploadAct);
+        actions.insert("upload-meta".to_string(), ActionValues::UploadSongWithMetadata);
+        actions.insert("retrieve".to_string(), ActionValues::RetrieveAct);
+        actions.insert("delete".to_string(), ActionValues::DeleteAct);
+
+        return actions;
     }
 
     // TODO: Implement
     fn delete_song(&self) {
+        let mut prsr = parsers::api_parser::APIParser {
+            ica_act: self.ica_action.clone(),
+            api: models::api::API::default(),
+        };
+
+        let api = prsr.retrieve_api();
+
+        let song = models::song::Song::default();
+
+        for arg in &self.ica_action.flags {
+        }
     }
 
     // TODO: Implement
@@ -102,8 +121,25 @@ impl CommitManager {
     fn upload_song(&self) {
     }
 
-    // TODO: Implement
-    fn parse_token(&self, api: &models::api::API) {}
+    fn parse_token(&self, api: &models::api::API) -> models::token::Token {
+        println!("Fetching token");
+
+        let mut usr_mgr: managers::user_manager::UserManager = managers::user_manager::UserManager {
+            user: models::user::User {
+                username: String::new(),
+                password: String::new(),
+            },
+            ica_action: self.ica_action.clone(),
+        };
+
+        let usr = usr_mgr.retrieve_user();
+        let tok_mgr = managers::token_manager::TokenManager {
+            user: usr,
+            api: api.clone(),
+        };
+
+        return tok_mgr.request_token();
+    }
     // TODO: Implement
     fn upload_song_with_metadata(&self) {}
     // TODO: Implement
@@ -153,7 +189,18 @@ impl CommitManager {
                 if k != end && dot != end {
                     let st = k + 1;
                     let ed = dot - 1;
-                    let t = &filename[&st..&ed];
+                    let mut t: String = String::new();
+                    let mut index = 0;
+                    for a in filename.chars() {
+                        if index <= ed {
+                            t.push(a);
+                        } else if index >= st {
+                            t.push(a);
+                        }
+
+                        index += 1;
+                    }
+                    // let t = &filename[1..5];
                 }
             },
             2 => {
