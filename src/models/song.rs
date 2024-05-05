@@ -2,7 +2,6 @@ use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
     pub id: Option<i32>,
@@ -46,16 +45,18 @@ impl Song {
     }
 
     pub fn song_path(&self) -> String {
-        let directory = &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
+        let directory =
+            &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
 
         let mut buffer: String = directory.to_string();
         let count = buffer.len();
 
-        if buffer.chars().nth(count-1) != Some('/') {
+        if buffer.chars().nth(count - 1) != Some('/') {
             buffer += "/";
         }
 
-        let filename = &<std::option::Option<std::string::String> as Clone>::clone(&self.filepath).unwrap();
+        let filename =
+            &<std::option::Option<std::string::String> as Clone>::clone(&self.filepath).unwrap();
         buffer += filename;
 
         return buffer;

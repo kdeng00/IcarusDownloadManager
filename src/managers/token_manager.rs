@@ -7,7 +7,6 @@ pub struct TokenManager {
     pub api: models::api::API,
 }
 
-
 impl TokenManager {
     pub fn request_token(&self) -> models::token::Token {
         let usr_json = self.user.to_json();

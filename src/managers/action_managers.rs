@@ -19,7 +19,8 @@ impl ActionManager {
     }
 
     fn supported_flags(&self) -> Vec<String> {
-        return vec![String::from("-u"),
+        return vec![
+            String::from("-u"),
             String::from("-p"),
             String::from("-t"),
             String::from("-h"),
@@ -45,6 +46,7 @@ impl ActionManager {
 
     pub fn initialize(&mut self) {
         self.validate_flags();
+        self.validate_action();
         self.action = self.action.to_lowercase();
     }
 
@@ -53,16 +55,22 @@ impl ActionManager {
 
         let flag_vals = self.parsed_flags();
 
-        for i in 0..flag_vals.len() {
+        let mut i = 0;
+        println!("Flag count: {}", flag_vals.len());
+        // for mut i in 0..flag_vals.len() {
+        while i < flag_vals.len() {
             let flag = &flag_vals[i];
-            println!("Value: {}", flag);
+            println!("Index: {} | Value: {}", i, flag);
 
             let mut flg = models::flags::Flags::default();
 
             if self.is_valid_flag(flag) && self.does_flag_have_value(flag) {
                 println!("Flag has value");
                 flg.flag = String::from(flag);
-                flg.value = String::from(&flag_vals[i+1]);
+                flg.value = String::from(&flag_vals[i + 1]);
+                // println!("Before change {}", i);
+                i = i + 1;
+                // println!("After change {}", i);
             } else if self.is_valid_flag(flag) {
                 println!("Flag does not have a value");
                 flg.flag = String::from(flag);
@@ -72,6 +80,15 @@ impl ActionManager {
             }
 
             self.flags.push(flg);
+            println!("");
+            i += 1;
+        }
+    }
+
+    fn validate_action(&self) {
+        if self.params.len() >= 2 {
+            let act = &self.params[1];
+            println!("The action {}", act);
         }
     }
 

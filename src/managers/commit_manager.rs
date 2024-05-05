@@ -1,5 +1,5 @@
-use std::default::Default;
 use std::collections::HashMap;
+use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
@@ -16,7 +16,6 @@ pub struct CommitManager {
     // pub param_count: i32,
     pub ica_action: models::icarus_action::IcarusAction,
 }
-
 
 pub struct Album {
     pub title: String,
@@ -35,19 +34,21 @@ impl Default for Album {
             album_artist: String::new(),
             genre: String::new(),
             year: 0,
-            track_count: 0, 
+            track_count: 0,
             disc_count: 0,
             songs: Vec::new(),
         }
     }
 }
 
+#[derive(Clone, Debug)]
 enum ActionValues {
     DeleteAct,
     DownloadAct,
     RetrieveAct,
     UploadAct,
     UploadSongWithMetadata,
+    None,
 }
 
 enum RetrieveTypes {
@@ -66,28 +67,38 @@ impl Album {
 }
 
 impl CommitManager {
-
     pub fn commit_action(&self) {
         let action = &self.ica_action.action;
         println!("Committing {} action", action);
 
-        match self.map_actions()[action] {
-            ActionValues::DeleteAct => self.delete_song(),
-            ActionValues::DownloadAct => self.download_song(),
-            ActionValues::RetrieveAct => self.retrieve_object(),
-            ActionValues::UploadAct => self.upload_song(),
-            ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata(),
-            _ => {
-                println!("Nothing good here");
+        let mapped_actions = self.map_actions();
+        let mapped_action = self.find_mapped_action(&mapped_actions, action);
+
+        println!("{:?}", mapped_action);
+    }
+
+    fn find_mapped_action(
+        &self,
+        actions: &HashMap<String, ActionValues>,
+        action: &String,
+    ) -> ActionValues {
+        for (key, act) in actions {
+            if key == action {
+                return act.clone();
             }
         }
+
+        return ActionValues::None;
     }
 
     fn map_actions(&self) -> HashMap<String, ActionValues> {
         let mut actions: HashMap<String, ActionValues> = HashMap::new();
         actions.insert("download".to_string(), ActionValues::DownloadAct);
-        actions.insert("upload".to_string(), ActionValues::UploadAct);
-        actions.insert("upload-meta".to_string(), ActionValues::UploadSongWithMetadata);
+        // actions.insert("upload".to_string(), ActionValues::UploadAct);
+        actions.insert(
+            "upload-meta".to_string(),
+            ActionValues::UploadSongWithMetadata,
+        );
         actions.insert("retrieve".to_string(), ActionValues::RetrieveAct);
         actions.insert("delete".to_string(), ActionValues::DeleteAct);
 
@@ -101,36 +112,42 @@ impl CommitManager {
             api: models::api::API::default(),
         };
 
+        println!("Deleting song");
+
         let api = prsr.retrieve_api();
 
         let song = models::song::Song::default();
 
-        for arg in &self.ica_action.flags {
-        }
+        for arg in &self.ica_action.flags {}
     }
 
     // TODO: Implement
     fn download_song(&self) {
+        println!("Deleting song");
     }
 
     // TODO: Implement
     fn retrieve_object(&self) {
+        println!("Deleting song");
     }
 
     // TODO: Implement
+    // NOTE: Might not need to implement. I will see how this goes
     fn upload_song(&self) {
+        println!("Deleting song");
     }
 
     fn parse_token(&self, api: &models::api::API) -> models::token::Token {
         println!("Fetching token");
 
-        let mut usr_mgr: managers::user_manager::UserManager = managers::user_manager::UserManager {
-            user: models::user::User {
-                username: String::new(),
-                password: String::new(),
-            },
-            ica_action: self.ica_action.clone(),
-        };
+        let mut usr_mgr: managers::user_manager::UserManager =
+            managers::user_manager::UserManager {
+                user: models::user::User {
+                    username: String::new(),
+                    password: String::new(),
+                },
+                ica_action: self.ica_action.clone(),
+            };
 
         let usr = usr_mgr.retrieve_user();
         let tok_mgr = managers::token_manager::TokenManager {
@@ -141,7 +158,9 @@ impl CommitManager {
         return tok_mgr.request_token();
     }
     // TODO: Implement
-    fn upload_song_with_metadata(&self) {}
+    fn upload_song_with_metadata(&self) {
+        println!("Deleting song");
+    }
     // TODO: Implement
     fn sing_target_upload(
         &self,
@@ -162,7 +181,8 @@ impl CommitManager {
         let track = 1;
         let mut mode = 0;
         let songpath = song.song_path();
-        let filename = &<std::option::Option<std::string::String> as Clone>::clone(&song.filepath).unwrap();
+        let filename =
+            &<std::option::Option<std::string::String> as Clone>::clone(&song.filepath).unwrap();
 
         // let directory = &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
         let trd = filename.contains("trackd");
@@ -202,9 +222,8 @@ impl CommitManager {
                     }
                     // let t = &filename[1..5];
                 }
-            },
-            2 => {
-            },
+            }
+            2 => {}
             _ => println!(""),
         }
 

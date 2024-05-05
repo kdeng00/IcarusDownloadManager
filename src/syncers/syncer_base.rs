@@ -1,8 +1,6 @@
-
 use crate::models;
 
-struct Syncer {
-}
+struct Syncer {}
 
 impl Syncer {
     pub fn retrieve_url(api: &models::api::API, song: &models::song::Song) -> String {

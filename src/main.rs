@@ -1,8 +1,8 @@
 mod managers;
 mod models;
-mod utilities;
 mod parsers;
 mod syncers;
+mod utilities;
 
 use std::env;
 use std::process;
@@ -17,7 +17,7 @@ fn print_help() {
 
         Actions
             download
-            upload
+            upload (Search NOTE)
             upload-meta
             retrieve
             delete
@@ -58,12 +58,14 @@ fn print_help() {
 fn main() {
     let args: Vec<String> = env::args().collect();
 
-    if args.len() == 0 {
+    if args.len() == 1 {
         print_help();
         exit_program(-1);
     }
 
     let args_len = args.len() as i32;
+
+    println!("Argument count: {}", args_len);
 
     let mut act_mgr = managers::action_managers::ActionManager {
         action: String::from(""),
@@ -78,10 +80,10 @@ fn main() {
     chosen_act.print_action_and_flags();
 
     let cmt_mgr = managers::commit_manager::CommitManager {
-//        action: String::from(""),
-//        flags: Vec::new(),
-//        params: Vec::new(),
-//        param_count: 1,
+        //        action: String::from(""),
+        //        flags: Vec::new(),
+        //        params: Vec::new(),
+        //        param_count: 1,
         ica_action: chosen_act,
     };
 

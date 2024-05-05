@@ -2,7 +2,6 @@ use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Token {
     pub access_token: Option<String>,

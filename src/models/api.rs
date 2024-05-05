@@ -2,7 +2,6 @@ use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct API {
     pub url: String,

@@ -1,9 +1,7 @@
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Debug, Deserialize, Serialize)]
-pub struct Conversions {
-}
+pub struct Conversions {}
 
 impl Conversions {
     pub fn to_lower_char(val: &mut char) {
@@ -12,8 +10,7 @@ impl Conversions {
         }
     }
 
-    pub fn initialize_values(&self) {
-    }
+    pub fn initialize_values(&self) {}
 
     pub fn print_value<T: std::fmt::Debug>(&self, val: T) {
         println!("Going to print value");

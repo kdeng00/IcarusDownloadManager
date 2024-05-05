@@ -4,7 +4,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::models;
 
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct IcarusAction {
     pub action: String,

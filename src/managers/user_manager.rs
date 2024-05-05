@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::models;
 
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct UserManager {
     pub user: models::user::User,
