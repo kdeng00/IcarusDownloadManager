@@ -39,10 +39,6 @@ impl ActionManager {
         ];
     }
 
-    // TODO: Implement
-    /**
-    fn supported_actions(&self) {}
-    */
 
     pub fn initialize(&mut self) {
         self.validate_flags();
@@ -57,7 +53,7 @@ impl ActionManager {
 
         let mut i = 0;
         println!("Flag count: {}", flag_vals.len());
-        // for mut i in 0..flag_vals.len() {
+
         while i < flag_vals.len() {
             let flag = &flag_vals[i];
             println!("Index: {} | Value: {}", i, flag);
@@ -68,9 +64,8 @@ impl ActionManager {
                 println!("Flag has value");
                 flg.flag = String::from(flag);
                 flg.value = String::from(&flag_vals[i + 1]);
-                // println!("Before change {}", i);
+
                 i = i + 1;
-                // println!("After change {}", i);
             } else if self.is_valid_flag(flag) {
                 println!("Flag does not have a value");
                 flg.flag = String::from(flag);
@@ -85,10 +80,10 @@ impl ActionManager {
         }
     }
 
-    fn validate_action(&self) {
+    fn validate_action(&mut self) {
         if self.params.len() >= 2 {
             let act = &self.params[1];
-            println!("The action {}", act);
+            self.action = String::from(act);
         }
     }
 

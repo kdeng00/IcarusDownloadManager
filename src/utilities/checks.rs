@@ -27,11 +27,13 @@ impl Checks {
     }
 
     // TODO: Implement
-    pub fn index_of_item_in_container(
+    pub fn index_of_item_in_container<F>(
         container: &String,
         item: &char,
-        func: fn(a: &char, b: &char) -> bool,
-    ) -> i32 {
+        func: F,
+    ) -> i32 
+    where F: Fn(&char, &char) -> bool,
+    {
         let mut index = -1;
 
         for c in container.chars() {

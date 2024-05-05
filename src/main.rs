@@ -80,10 +80,6 @@ fn main() {
     chosen_act.print_action_and_flags();
 
     let cmt_mgr = managers::commit_manager::CommitManager {
-        //        action: String::from(""),
-        //        flags: Vec::new(),
-        //        params: Vec::new(),
-        //        param_count: 1,
         ica_action: chosen_act,
     };
 
