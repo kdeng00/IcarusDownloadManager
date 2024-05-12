@@ -13,3 +13,14 @@ impl Default for Download {
         }
     }
 }
+
+impl Download {
+    pub async fn download_song(&self, token: &models::token::Token) {
+    }
+
+    fn retrieve_url(&self) -> String {
+        let mut url: String = String::new();
+
+        return url;
+    }
+}

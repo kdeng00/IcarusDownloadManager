@@ -1,24 +1,13 @@
-use crate::models;
+// use crate::models;
 
 pub struct Syncer {
+    // pub api: models::api::API,
     ok: i32,
     unauthorized: i32,
     not_found: i32,
 }
 
 impl Syncer {
-    pub fn retrieve_url(api: &models::api::API, song: &models::song::Song) -> String {
-        let mut url: String = String::from(&api.url);
-        url += &String::from("api/");
-        url += &String::from(&api.version);
-        url += &String::from("/");
-        url += &String::from(&api.endpoint);
-        url += &String::from("/");
-        url += &song.id.unwrap().to_string();
-
-        return url;
-    }
-
     pub fn ok() -> i32 {
         return 200;
     }

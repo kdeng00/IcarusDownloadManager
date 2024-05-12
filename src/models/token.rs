@@ -18,3 +18,19 @@ impl Default for Token {
         }
     }
 }
+
+impl Token {
+    pub fn bearer_token(&self) -> String {
+        let mut token: String = String::from("Bearer ");
+
+        match &self.access_token {
+            Some(tok) => {
+                token += tok;
+            }
+            None => {
+            }
+        }
+
+        return token;
+    }
+}
