@@ -2,7 +2,9 @@ use std::collections::HashMap;
 use std::default::Default;
 use std::fs::File;
 use std::io::{Read, Error};
+use tokio::runtime::Runtime;
 
+use futures::{FutureExt, TryFutureExt};
 use serde::{Deserialize, Serialize};
 
 use crate::{exit_program, managers};
@@ -184,7 +186,10 @@ impl CommitManager {
             api: api.clone(),
         };
 
-        return tok_mgr.request_token();
+        // let token = tok_mgr.request_token();
+        let token = Runtime::new().unwrap().block_on(tok_mgr.request_token());
+
+        return token.unwrap();
     }
     // TODO: Implement
     fn upload_song_with_metadata(&self) {

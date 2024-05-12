@@ -1,11 +1,22 @@
+use std::default::Default;
+
 use serde::{Deserialize, Serialize};
 
-use crate::models;
+use crate::models::{self, user::User};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct UserManager {
     pub user: models::user::User,
     pub ica_action: models::icarus_action::IcarusAction,
+}
+
+impl Default for UserManager {
+    fn default() -> Self {
+        UserManager {
+            user: models::user::User::default(),
+            ica_action: models::icarus_action::IcarusAction::default(),
+        }
+    }
 }
 
 impl UserManager {
