@@ -1,11 +1,12 @@
 use std::collections::HashMap;
 use std::default::Default;
-use std::fs::File;
-use std::io::{Error, Read};
-use tokio::runtime::Runtime;
+use std::fs::{read_dir, DirEntry};
+use std::io::{Error, Read, Result};
+use std::path::Path;
 
 use futures::{FutureExt, TryFutureExt};
 use serde::{Deserialize, Serialize};
+use tokio::runtime::Runtime;
 
 use crate::models;
 use crate::parsers;
@@ -55,6 +56,14 @@ enum ActionValues {
 
 enum RetrieveTypes {
     Songs,
+}
+
+#[derive(Clone, Debug)]
+enum En {
+    ImageFile,
+    SongFile,
+    MetadataFile,
+    Other,
 }
 
 impl Album {
@@ -190,6 +199,7 @@ impl CommitManager {
 
         return token.unwrap();
     }
+
     // TODO: Implement
     fn upload_song_with_metadata(&self) {
         println!("Uplodaring song with metadara");
@@ -237,7 +247,7 @@ impl CommitManager {
     ) {
     }
     // TODO: Implement
-    fn multi_target_upload(&self, sourcepath: &String) {
+    fn multi_target_upload(&self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
             api: models::api::API::default(),
             ica_act: self.ica_action.clone(),
@@ -258,6 +268,36 @@ impl CommitManager {
         let mut metadatapath: String = String::new();
 
         // iterate files in metadatapath
+        let path = std::path::Path::new(directory_path);
+        // let entries = std::fs::read_dir(path);
+
+        for entry in read_dir(path)? {
+            let entry = entry?;
+
+            let file_type = entry.file_type();
+            let file_name = entry.file_name();
+
+            println!("file type: {:?}", file_type);
+            println!("file name: {:?}", file_name);
+
+            // TODO: Write code to determine file extension by
+            // the file path. The result will determine what
+            // behavior will happen
+
+            match self.find_file_extension(&file_name) {
+                En::ImageFile => {}
+                En::MetadataFile => {}
+                En::SongFile => {}
+                _ => {}
+            }
+        }
+
+        Ok(())
+    }
+
+    // TODO: Implement
+    fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
+        return En::Other;
     }
 
     // Standards
@@ -428,7 +468,7 @@ impl CommitManager {
         return serde_json::from_str(&content.unwrap()).unwrap();
     }
 
-    fn retrieve_file_content(&self, path: &String) -> Result<String, Error> {
+    fn retrieve_file_content(&self, path: &String) -> Result<String> {
         /*
         let mut file = File::open(path)?;
         let mut buffer = Vec::new();
