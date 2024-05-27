@@ -25,7 +25,7 @@ impl IcarusAction {
 
         for f in self.flags.iter() {
             if f.flag == *flag {
-                val = flag.clone();
+                val = f.value.clone();
                 break;
             }
         }

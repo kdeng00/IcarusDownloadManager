@@ -181,10 +181,11 @@ impl CommitManager {
         usr_mgr.parse_user_from_actions();
 
         let usr = usr_mgr.retrieve_user();
-        let tok_mgr = managers::token_manager::TokenManager {
+        let mut tok_mgr = managers::token_manager::TokenManager {
             user: usr,
             api: api.clone(),
         };
+        tok_mgr.init();
 
         // let token = tok_mgr.request_token();
         let token = Runtime::new().unwrap().block_on(tok_mgr.request_token());
@@ -193,8 +194,40 @@ impl CommitManager {
     }
     // TODO: Implement
     fn upload_song_with_metadata(&self) {
-        println!("Deleting song");
+        println!("Uplodaring song with metadara");
+
+        let songpath = self.ica_action.retrieve_flag_value(&String::from("-s"));
+        let metadata_path = self.ica_action.retrieve_flag_value(&String::from("-m"));
+        let coverpath = self.ica_action.retrieve_flag_value(&String::from("-ca"));
+        let track_id = self.ica_action.retrieve_flag_value(&String::from("-t"));
+
+        let single_target = songpath.len() > 0 && metadata_path.len() > 0 && coverpath.len() > 0 &&
+            track_id.len() > 0;
+        // !songPath.empty() && !metadataPath.empty() && 
+        // !coverPath.empty() && !trackID.empty() ? true : false;
+
+        let uni = self.ica_action.retrieve_flag_value(&String::from("-smca"));
+        let multitarget = uni.len() > 0;
+
+        if single_target && multitarget {
+            println!("Cannot upload from source and directory");
+        }
+
+
+        if single_target {
+            println!("Song path: {}", songpath);
+            println!("Track ID: {}", track_id);
+            println!("metadata path: {}", coverpath);
+            println!("cover art path: {}", track_id);
+
+            self.sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath);
+        } else if multitarget {
+            self.multi_target_upload(&uni);
+        } else {
+            println!("Single or Multi target has not been chosen");
+        }
     }
+
     // TODO: Implement
     fn sing_target_upload(
         &self,
@@ -221,7 +254,11 @@ impl CommitManager {
             std::process::exit(-1);
         }
 
-        // let mut cover_art = models::
+        let mut cover_art = models::song::CoverArt::default();
+        let mut songs: Vec<models::song::Song> = Vec::new();
+        let mut metadatapath: String = String::new();
+
+        // iterate files in metadatapath
     }
 
     // Standards
