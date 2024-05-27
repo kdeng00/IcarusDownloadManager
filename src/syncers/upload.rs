@@ -22,12 +22,13 @@ impl Upload {
         let url = self.retrieve_url(&song);
         let client = reqwest::Client::new();
         let access_token = token.bearer_token();
-        let response = client.post(&url)
+        let response = client
+            .post(&url)
             .header(reqwest::header::AUTHORIZATION, access_token)
             .send()
             .await
             .unwrap();
-    
+
         match response.status() {
             reqwest::StatusCode::OK => {
                 println!("Success!");
@@ -37,7 +38,6 @@ impl Upload {
             }
         }
     }
-
 
     fn retrieve_url(&self, song: &models::song::Song) -> String {
         // let mut url: String = String::new();

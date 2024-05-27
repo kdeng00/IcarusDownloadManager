@@ -2,7 +2,7 @@ use std::default::Default;
 
 use crate::models;
 
-pub struct Download{
+pub struct Download {
     pub api: models::api::API,
 }
 
@@ -19,7 +19,8 @@ impl Download {
         let url = self.retrieve_url(&song);
         let access_token = token.bearer_token();
         let client = reqwest::Client::new();
-        let response = client.get(&url)
+        let response = client
+            .get(&url)
             .header(reqwest::header::AUTHORIZATION, &access_token)
             .send()
             .await

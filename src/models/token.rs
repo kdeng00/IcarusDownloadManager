@@ -39,8 +39,7 @@ impl Token {
             Some(tok) => {
                 token += tok;
             }
-            None => {
-            }
+            None => {}
         }
 
         return token;

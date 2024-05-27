@@ -26,5 +26,3 @@ pub enum Result {
     UNAUTHORIZED,
     NOTFOUND,
 }
-
-

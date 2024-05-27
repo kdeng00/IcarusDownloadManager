@@ -33,21 +33,17 @@ impl TokenManager {
         let mut token = models::token::Token::default();
 
         let client = reqwest::Client::new();
-        let response = client.post(&url)
-            .json(&self.user)
-            .send()
-            .await
-            .unwrap();
+        let response = client.post(&url).json(&self.user).send().await.unwrap();
 
         match response.status() {
             reqwest::StatusCode::OK => {
                 // on success, parse our JSON to an APIResponse
                 let s = response.json::<models::token::Token>().await;
                 match s {
-                    // 
+                    //
                     Ok(parsed) => {
-                            token = parsed;
-                        },
+                        token = parsed;
+                    }
                     Err(_) => println!("Hm, the response didn't match the shape we expected."),
                 };
             }

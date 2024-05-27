@@ -1,17 +1,17 @@
 use std::collections::HashMap;
 use std::default::Default;
 use std::fs::File;
-use std::io::{Read, Error};
+use std::io::{Error, Read};
 use tokio::runtime::Runtime;
 
 use futures::{FutureExt, TryFutureExt};
 use serde::{Deserialize, Serialize};
 
-use crate::{exit_program, managers};
 use crate::models;
 use crate::parsers;
 use crate::syncers;
 use crate::utilities;
+use crate::{exit_program, managers};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CommitManager {
@@ -86,7 +86,7 @@ impl CommitManager {
             ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata(),
             _ => {
                 println!("Nothing good here");
-            },
+            }
         }
     }
 
@@ -142,9 +142,7 @@ impl CommitManager {
             }
         }
 
-        let del = syncers::delete::Delete {
-            api: api,
-        };
+        let del = syncers::delete::Delete { api: api };
 
         println!("Deleting song..");
 
@@ -201,9 +199,11 @@ impl CommitManager {
         let coverpath = self.ica_action.retrieve_flag_value(&String::from("-ca"));
         let track_id = self.ica_action.retrieve_flag_value(&String::from("-t"));
 
-        let single_target = songpath.len() > 0 && metadata_path.len() > 0 && coverpath.len() > 0 &&
-            track_id.len() > 0;
-        // !songPath.empty() && !metadataPath.empty() && 
+        let single_target = songpath.len() > 0
+            && metadata_path.len() > 0
+            && coverpath.len() > 0
+            && track_id.len() > 0;
+        // !songPath.empty() && !metadataPath.empty() &&
         // !coverPath.empty() && !trackID.empty() ? true : false;
 
         let uni = self.ica_action.retrieve_flag_value(&String::from("-smca"));
@@ -212,7 +212,6 @@ impl CommitManager {
         if single_target && multitarget {
             println!("Cannot upload from source and directory");
         }
-
 
         if single_target {
             println!("Song path: {}", songpath);
@@ -417,13 +416,13 @@ impl CommitManager {
         let content = self.retrieve_file_content(&path);
         // let alb = serde_json::from_str(&content.unwrap());
 
-            /*
-            let mut file: std::fs::File = std::fs::File::open(filepath).unwrap();
-    let mut data = String::new();
-    file.read_to_string(&mut data).unwrap();
+        /*
+                let mut file: std::fs::File = std::fs::File::open(filepath).unwrap();
+        let mut data = String::new();
+        file.read_to_string(&mut data).unwrap();
 
-    return serde_json::from_str(&data).unwrap();
-    */
+        return serde_json::from_str(&data).unwrap();
+        */
 
         // return alb.unwrap();
         return serde_json::from_str(&content.unwrap()).unwrap();

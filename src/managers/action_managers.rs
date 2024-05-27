@@ -39,7 +39,6 @@ impl ActionManager {
         ];
     }
 
-
     pub fn initialize(&mut self) {
         self.validate_flags();
         self.validate_action();

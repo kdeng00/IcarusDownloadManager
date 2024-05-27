@@ -29,12 +29,13 @@ impl Delete {
         let url = self.retrieve_url(&song);
         let client = reqwest::Client::new();
         let access_token = token.bearer_token();
-        let response = client.delete(&url)
+        let response = client
+            .delete(&url)
             .header(reqwest::header::AUTHORIZATION, access_token)
             .send()
             .await
             .unwrap();
-    
+
         match response.status() {
             reqwest::StatusCode::OK => {
                 println!("Success!");
