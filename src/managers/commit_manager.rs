@@ -21,7 +21,6 @@ pub struct CommitManager {
     pub ica_action: models::icarus_action::IcarusAction,
 }
 
-
 #[derive(Clone, Debug)]
 enum ActionValues {
     DeleteAct,
@@ -283,7 +282,7 @@ impl CommitManager {
                             song.filepath = Some(s.clone());
                             song.directory = Some(sourcepath.clone());
                             self.initialize_disc_and_track(&mut song);
-                        },
+                        }
                         Err(er) => println!("Error: {:?}", er),
                     }
 
@@ -314,9 +313,13 @@ impl CommitManager {
         Ok(())
     }
 
-
     // Makes sure the elements in album.songs is populated
-    fn song_parsing(&self, album: &mut models::song::Album, directory: &String, filenames: &Vec<String>) {
+    fn song_parsing(
+        &self,
+        album: &mut models::song::Album,
+        directory: &String,
+        filenames: &Vec<String>,
+    ) {
         // Apply directory
         for song in &mut album.songs {
             // let bor = song.as_mut();
@@ -325,7 +328,7 @@ impl CommitManager {
                 Some(s) => println!("{}", s),
                 None => {
                     song.directory = Some(directory.clone());
-                },
+                }
             }
         }
 
@@ -339,24 +342,24 @@ impl CommitManager {
 
         for song in &mut album.songs {
             match &mut song.album {
-                Some(_) => {},
+                Some(_) => {}
                 None => {
                     song.album = Some(album.title.clone());
-                },
+                }
             }
 
             match &mut song.genre {
-                Some(_) => {},
+                Some(_) => {}
                 None => {
                     song.genre = Some(album.genre.clone());
-                },
+                }
             }
 
             match &mut song.year {
-                Some(_) => {},
+                Some(_) => {}
                 None => {
                     song.year = Some(album.year.clone());
-                },
+                }
             }
         }
     }

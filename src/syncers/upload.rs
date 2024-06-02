@@ -1,12 +1,12 @@
 use std::default::Default;
 
+use reqwest;
 use reqwest::blocking::multipart;
 use serde::{Deserialize, Serialize};
-use reqwest;
 // use reqwest::blocking::
-use reqwest::{Body, Client};
 use reqwest::multipart::{Form, Part};
 use reqwest::Response;
+use reqwest::{Body, Client};
 use tokio::fs::File;
 
 use crate::models;
@@ -14,7 +14,6 @@ use crate::models;
 pub struct Upload {
     pub api: models::api::API,
 }
-
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Song {
@@ -62,20 +61,24 @@ impl Upload {
     }
 
     // TODO: Implement
-    pub async fn upload_song_with_metadata(&mut self, token: &models::token::Token, song: &models::song::Song,
-        cover: &models::song::CoverArt, album: &models::song::Album) {
-            self.api.endpoint = String::from("song/data/upload/with/data");
-            let url = self.retrieve_url(&song);
-            let client = reqwest::Client::new();
-            let new_song = self.initialize_song(&song, &album);
-            let access_token = token.bearer_token();
-        
+    pub async fn upload_song_with_metadata(
+        &mut self,
+        token: &models::token::Token,
+        song: &models::song::Song,
+        cover: &models::song::CoverArt,
+        album: &models::song::Album,
+    ) {
+        self.api.endpoint = String::from("song/data/upload/with/data");
+        let url = self.retrieve_url(&song);
+        let client = reqwest::Client::new();
+        let new_song = self.initialize_song(&song, &album);
+        let access_token = token.bearer_token();
+
         let song_data = song.to_data();
         let cover_data = cover.to_data();
 
         match song_data {
-            Ok(sd) => {
-            },
+            Ok(sd) => {}
             Err(er) => {
                 println!("Error: {:?}", er);
                 std::process::exit(-1);
@@ -83,7 +86,7 @@ impl Upload {
         }
 
         match cover_data {
-            Ok(_) => {},
+            Ok(_) => {}
             Err(er) => {
                 println!("Error: {:?}", er);
                 std::process::exit(-1);
@@ -111,15 +114,13 @@ impl Upload {
 
         form = form.part("file", s_some_file)
             .part("cover", c_data);
-    
+
         let response = client.post(url).multipart(form).send();
         let result = response.text;
 
         return Ok(result);
         */
     }
-
-
 
     pub fn set_api(&mut self, host: &String) {
         let mut api = models::api::API::default();

@@ -93,7 +93,7 @@ impl Song {
     pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
         let path = self.song_path();
         // let content = std::fs::read_to_string(path);
-          let mut file = std::fs::File::open(path)?;
+        let mut file = std::fs::File::open(path)?;
         let mut buffer = Vec::new();
         file.read(&mut buffer)?;
         Ok(buffer)
@@ -147,10 +147,10 @@ impl CoverArt {
         match &self.path {
             Some(val) => {
                 path = String::from(val);
-            },
+            }
             None => {
                 ();
-            },
+            }
         }
 
         let mut file = std::fs::File::open(path)?;
