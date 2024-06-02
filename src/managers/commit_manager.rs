@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 use std::default::Default;
+use std::fmt::Display;
 use std::fs::{read_dir, DirEntry};
 use std::io::{Error, Read, Result};
 use std::path::Path;
@@ -78,11 +79,11 @@ impl Album {
 }
 
 impl CommitManager {
-    pub fn commit_action(&self) {
+    pub fn commit_action(&mut self) {
         let action = &self.ica_action.action;
         println!("Committing {} action", action);
 
-        let mapped_actions = self.map_actions();
+        let mapped_actions = &self.map_actions();
         let mapped_action = self.find_mapped_action(&mapped_actions, action);
 
         println!("{:?}", mapped_action);
@@ -201,7 +202,7 @@ impl CommitManager {
     }
 
     // TODO: Implement
-    fn upload_song_with_metadata(&self) {
+    fn upload_song_with_metadata(&mut self) {
         println!("Uplodaring song with metadara");
 
         let songpath = self.ica_action.retrieve_flag_value(&String::from("-s"));
@@ -213,8 +214,6 @@ impl CommitManager {
             && metadata_path.len() > 0
             && coverpath.len() > 0
             && track_id.len() > 0;
-        // !songPath.empty() && !metadataPath.empty() &&
-        // !coverPath.empty() && !trackID.empty() ? true : false;
 
         let uni = self.ica_action.retrieve_flag_value(&String::from("-smca"));
         let multitarget = uni.len() > 0;
@@ -247,7 +246,7 @@ impl CommitManager {
     ) {
     }
     // TODO: Implement
-    fn multi_target_upload(&self, sourcepath: &String) -> std::io::Result<()> {
+    fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
             api: models::api::API::default(),
             ica_act: self.ica_action.clone(),
@@ -285,11 +284,41 @@ impl CommitManager {
             // behavior will happen
 
             match self.find_file_extension(&file_name) {
-                En::ImageFile => {}
-                En::MetadataFile => {}
-                En::SongFile => {}
+                En::ImageFile => {
+                    let directory_part = sourcepath.clone();
+                    let fname = self.o_to_string(&file_name);
+                    let fullpath = directory_part + "/" + &fname.unwrap();
+                    cover_art.path = Some(fullpath);
+                }
+                En::MetadataFile => {
+                    let directory_part = sourcepath.clone();
+                    let fname = self.o_to_string(&file_name);
+                    metadatapath = directory_part + "/" + &fname.unwrap();
+                }
+                En::SongFile => {
+                    let mut song = models::song::Song::default();
+                    let fname = self.o_to_string(&file_name);
+                    song.filepath = Some(fname.unwrap());
+                    song.directory = Some(sourcepath.clone());
+                    // song.filepath = Some(
+                    self.initialize_disc_and_track(&mut song);
+
+                    songs.push(song)
+                }
                 _ => {}
             }
+        }
+
+        let album = self.retrieve_metadata(&metadatapath);
+        songs.clear();
+        songs = album.songs.clone();
+
+        let mut up = syncers::upload::Upload::default();
+
+        for _ in songs {
+            // Upload each song
+            // TODO: Add functions to Upload struct that uploads song
+            // with metadata and img
         }
 
         Ok(())
@@ -297,7 +326,53 @@ impl CommitManager {
 
     // TODO: Implement
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
+        let file_name_str = Some(file_name.clone().into_string());
+
+        match file_name_str {
+            Some(string) => {
+                let a = string.unwrap();
+                let mut split = a.split(".");
+                let mut last_index = 0;
+
+                for _ in split.clone() {
+                    last_index += 1;
+                }
+
+                let mut extension = String::new();
+                let mut index = 1;
+
+                for word in split {
+                    if index == last_index {
+                        extension = word.to_string();
+                        break;
+                    }
+
+                    index += 1;
+                }
+
+                if extension == "wav" || extension == "flac" {
+                    return En::SongFile;
+                } else if extension == "json" {
+                    return En::MetadataFile;
+                } else if extension == "jpg" || extension == "jpeg" || extension == "png" {
+                    return En::ImageFile;
+                }
+            }
+            // Err(err) => {
+            _ => {
+                return En::Other;
+            }
+        }
+
         return En::Other;
+    }
+
+    fn o_to_string(&self, val: &std::ffi::OsString) -> Result<std::string::String> {
+        let res = val.clone().into_string();
+        return match res {
+            Ok(sss) => Ok(sss),
+            Err(eee) => Ok(String::from("Error")),
+        };
     }
 
     // Standards
@@ -339,9 +414,7 @@ impl CommitManager {
                     let mut t: String = String::new();
                     let mut index = 0;
                     for a in filename.chars() {
-                        if index <= ed {
-                            t.push(a);
-                        } else if index >= st {
+                        if index >= st && index <= ed {
                             t.push(a);
                         }
 

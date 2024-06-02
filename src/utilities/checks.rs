@@ -35,6 +35,7 @@ impl Checks {
 
         for c in container.chars() {
             if func(&c, item) {
+                index += 1;
                 break;
             }
 

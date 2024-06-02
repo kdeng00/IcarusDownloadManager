@@ -79,7 +79,7 @@ fn main() {
 
     chosen_act.print_action_and_flags();
 
-    let cmt_mgr = managers::commit_manager::CommitManager {
+    let mut cmt_mgr = managers::commit_manager::CommitManager {
         ica_action: chosen_act,
     };
 
