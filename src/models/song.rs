@@ -1,4 +1,5 @@
 use std::default::Default;
+use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
@@ -18,6 +19,33 @@ pub struct Song {
     // pub song_path: String,
     pub filepath: Option<String>,
     pub directory: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct Album {
+    #[serde(alias = "album")]
+    pub title: String,
+    pub album_artist: String,
+    pub genre: String,
+    pub year: i32,
+    pub track_count: i32,
+    pub disc_count: i32,
+    #[serde(alias = "tracks")]
+    pub songs: Vec<Song>,
+}
+
+impl Default for Album {
+    fn default() -> Self {
+        Album {
+            title: String::new(),
+            album_artist: String::new(),
+            genre: String::new(),
+            year: 0,
+            track_count: 0,
+            disc_count: 0,
+            songs: Vec::new(),
+        }
+    }
 }
 
 impl Default for Song {
@@ -62,6 +90,15 @@ impl Song {
         return buffer;
     }
 
+    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
+        let path = self.song_path();
+        // let content = std::fs::read_to_string(path);
+          let mut file = std::fs::File::open(path)?;
+        let mut buffer = Vec::new();
+        file.read(&mut buffer)?;
+        Ok(buffer)
+        // return content;
+    }
     // if 1 - wav, if 0 - mp3, anything else defaults to wav
     pub fn generate_filename_from_track(&mut self, i_type: i32) -> i32 {
         let mut filename: String = String::new();
@@ -101,5 +138,24 @@ impl Default for CoverArt {
             title: None,
             path: None,
         }
+    }
+}
+
+impl CoverArt {
+    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
+        let mut path: String = String::new();
+        match &self.path {
+            Some(val) => {
+                path = String::from(val);
+            },
+            None => {
+                ();
+            },
+        }
+
+        let mut file = std::fs::File::open(path)?;
+        let mut buffer = Vec::new();
+        file.read(&mut buffer)?;
+        Ok(buffer)
     }
 }

@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 
 use crate::models;
+use crate::models::song::Album;
 use crate::parsers;
 use crate::syncers;
 use crate::utilities;
@@ -20,30 +21,6 @@ pub struct CommitManager {
     pub ica_action: models::icarus_action::IcarusAction,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
-pub struct Album {
-    pub title: String,
-    pub album_artist: String,
-    pub genre: String,
-    pub year: i32,
-    pub track_count: i32,
-    pub disc_count: i32,
-    pub songs: Vec<models::song::Song>,
-}
-
-impl Default for Album {
-    fn default() -> Self {
-        Album {
-            title: String::new(),
-            album_artist: String::new(),
-            genre: String::new(),
-            year: 0,
-            track_count: 0,
-            disc_count: 0,
-            songs: Vec::new(),
-        }
-    }
-}
 
 #[derive(Clone, Debug)]
 enum ActionValues {
@@ -264,6 +241,7 @@ impl CommitManager {
 
         let mut cover_art = models::song::CoverArt::default();
         let mut songs: Vec<models::song::Song> = Vec::new();
+        let mut filenames: Vec<String> = Vec::new();
         let mut metadatapath: String = String::new();
 
         // iterate files in metadatapath
@@ -298,10 +276,16 @@ impl CommitManager {
                 En::SongFile => {
                     let mut song = models::song::Song::default();
                     let fname = self.o_to_string(&file_name);
-                    song.filepath = Some(fname.unwrap());
-                    song.directory = Some(sourcepath.clone());
-                    // song.filepath = Some(
-                    self.initialize_disc_and_track(&mut song);
+
+                    match fname {
+                        Ok(s) => {
+                            filenames.push(s.clone());
+                            song.filepath = Some(s.clone());
+                            song.directory = Some(sourcepath.clone());
+                            self.initialize_disc_and_track(&mut song);
+                        },
+                        Err(er) => println!("Error: {:?}", er),
+                    }
 
                     songs.push(song)
                 }
@@ -309,22 +293,74 @@ impl CommitManager {
             }
         }
 
-        let album = self.retrieve_metadata(&metadatapath);
-        songs.clear();
-        songs = album.songs.clone();
+        let mut album = self.retrieve_metadata(&metadatapath);
+
+        self.song_parsing(&mut album, &sourcepath, &filenames);
+
+        // songs.clear();
+        // songs = album.songs;
 
         let mut up = syncers::upload::Upload::default();
+        let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
+        up.set_api(&host);
 
-        for _ in songs {
+        for song in &album.songs {
             // Upload each song
             // TODO: Add functions to Upload struct that uploads song
             // with metadata and img
+            up.upload_song_with_metadata(&token, &song, &cover_art, &album);
         }
 
         Ok(())
     }
 
-    // TODO: Implement
+
+    // Makes sure the elements in album.songs is populated
+    fn song_parsing(&self, album: &mut models::song::Album, directory: &String, filenames: &Vec<String>) {
+        // Apply directory
+        for song in &mut album.songs {
+            // let bor = song.as_mut();
+            let mut dir = &song.directory;
+            match dir {
+                Some(s) => println!("{}", s),
+                None => {
+                    song.directory = Some(directory.clone());
+                },
+            }
+        }
+
+        // Apply filename
+        let mut index = 0;
+        for song in &mut album.songs {
+            let filename = filenames[index].clone();
+            song.filepath = Some(filename);
+            index += 1;
+        }
+
+        for song in &mut album.songs {
+            match &mut song.album {
+                Some(_) => {},
+                None => {
+                    song.album = Some(album.title.clone());
+                },
+            }
+
+            match &mut song.genre {
+                Some(_) => {},
+                None => {
+                    song.genre = Some(album.genre.clone());
+                },
+            }
+
+            match &mut song.year {
+                Some(_) => {},
+                None => {
+                    song.year = Some(album.year.clone());
+                },
+            }
+        }
+    }
+
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
         let file_name_str = Some(file_name.clone().into_string());
 
@@ -528,26 +564,19 @@ impl CommitManager {
 
         let content = self.retrieve_file_content(&path);
         // let alb = serde_json::from_str(&content.unwrap());
-
-        /*
-                let mut file: std::fs::File = std::fs::File::open(filepath).unwrap();
-        let mut data = String::new();
-        file.read_to_string(&mut data).unwrap();
-
-        return serde_json::from_str(&data).unwrap();
-        */
+        let val = content.unwrap();
 
         // return alb.unwrap();
-        return serde_json::from_str(&content.unwrap()).unwrap();
+        let converted = serde_json::from_str(&val);
+
+        match &converted {
+            Ok(res) => println!("Good!"),
+            Err(er) => println!("Error {:?}", er),
+        }
+        return converted.unwrap();
     }
 
     fn retrieve_file_content(&self, path: &String) -> Result<String> {
-        /*
-        let mut file = File::open(path)?;
-        let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer)?;
-        */
-
         return std::fs::read_to_string(path);
     }
 }
