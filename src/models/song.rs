@@ -14,7 +14,7 @@ pub struct Song {
     pub duration: Option<f64>,
     pub track: Option<i32>,
     pub disc: Option<i32>,
-    pub data: Option<String>,
+    pub data: Option<Vec<u8>>,
     // use filepath instead
     // pub song_path: String,
     pub filepath: Option<String>,
@@ -135,6 +135,7 @@ pub struct CoverArt {
     pub id: Option<i32>,
     pub title: Option<String>,
     pub path: Option<String>,
+    pub data: Option<Vec<u8>>,
 }
 
 impl Default for CoverArt {
@@ -143,6 +144,7 @@ impl Default for CoverArt {
             id: None,
             title: None,
             path: None,
+            data: None,
         }
     }
 }

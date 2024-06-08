@@ -4,13 +4,14 @@ use std::fmt::Display;
 use std::fs::{read_dir, DirEntry};
 use std::io::{Error, Read, Result};
 use std::path::Path;
+use std::str::FromStr;
 
 use futures::{FutureExt, TryFutureExt};
 use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 
-use crate::models;
 use crate::models::song::Album;
+use crate::models::{self, song};
 use crate::parsers;
 use crate::syncers;
 use crate::utilities;
@@ -51,6 +52,27 @@ impl Album {
         println!("Year: {}", self.year);
         println!("Track Count: {}", self.track_count);
         println!("Disc Count: {}\n", self.disc_count);
+    }
+
+    pub fn retrieve_song(&self, track: i32, disc: i32) -> Result<models::song::Song> {
+        let mut found = false;
+        let mut song = models::song::Song::default();
+
+        for song_i in &self.songs {
+            if song_i.track.unwrap() == track && song_i.disc.unwrap() == disc {
+                song = song_i.clone();
+                found = true;
+            }
+        }
+
+        if found {
+            return Ok(song);
+        }
+
+        return Err(std::io::Error::new(
+            std::io::ErrorKind::NotFound,
+            "Song not found",
+        ));
     }
 }
 
@@ -195,13 +217,14 @@ impl CommitManager {
 
         if single_target && multitarget {
             println!("Cannot upload from source and directory");
+            panic!("What??");
         }
 
         if single_target {
             println!("Song path: {}", songpath);
             println!("Track ID: {}", track_id);
-            println!("metadata path: {}", coverpath);
-            println!("cover art path: {}", track_id);
+            println!("metadata path: {}", metadata_path);
+            println!("cover art path: {}", coverpath);
 
             self.sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath);
         } else if multitarget {
@@ -213,12 +236,112 @@ impl CommitManager {
 
     // TODO: Implement
     fn sing_target_upload(
-        &self,
+        &mut self,
         songpath: &String,
         track_id: &String,
         meta_path: &String,
         cover_path: &String,
-    ) {
+    ) -> Result<()> {
+        let mut prsr = parsers::api_parser::APIParser {
+            api: models::api::API::default(),
+            ica_act: self.ica_action.clone(),
+        };
+        prsr.parse_api();
+
+        let api = prsr.retrieve_api();
+        let token = self.parse_token(&api);
+
+        let song_file = std::path::Path::new(&songpath);
+
+        if !song_file.exists() {
+            println!("Song file does not exist");
+            panic!("Error");
+        }
+
+        let mut cover_art = models::song::CoverArt::default();
+        let mut song = models::song::Song::default();
+        let mut filenames = Vec::new();
+        let mut fp = String::new();
+        let mut dir = String::new();
+
+        // song_file.file_name();
+
+        // for entry in read_dir(song_file)? {
+        // for entry in read_file(song_file)? {
+        let entry = &song_file;
+
+        // let file_type = entry.file_type();
+        let file_name = std::ffi::OsString::from(entry.file_name().unwrap());
+
+        // println!("file type: {:?}", file_type);
+        println!("file name: {:?}", file_name);
+
+        match self.find_file_extension(&file_name) {
+            En::ImageFile => {
+                // let directory_part = sourcepath.clone();
+                // let fname = self.o_to_string(&file_name);
+                // let fullpath = directory_part + "/" + &fname.unwrap();
+                // cover_art.path = Some(fullpath);
+            }
+            En::MetadataFile => {
+                // let directory_part = sourcepath.clone();
+                // let fname = self.o_to_string(&file_name);
+                // metadatapath = directory_part + "/" + &fname.unwrap();
+            }
+            En::SongFile => {
+                // let mut song = models::song::Song::default();
+                let fname = self.o_to_string(&file_name);
+
+                match fname {
+                    Ok(s) => {
+                        filenames.push(s.clone());
+                        fp = s.clone();
+                        dir = song_file.parent().unwrap().display().to_string();
+                        song.filepath = Some(s.clone());
+                        song.directory = Some(dir.clone());
+                        self.initialize_disc_and_track(&mut song);
+                    }
+                    Err(er) => println!("Error: {:?}", er),
+                }
+
+                // songs.push(song)
+            }
+            _ => {}
+        }
+        // }
+
+        cover_art.path = Some(cover_path.clone());
+
+        let mut album = self.retrieve_metadata(&meta_path);
+        // self.song_parsing(&mut album, &song.directory.unwrap(), &filenames);
+        let trck = i32::from_str(track_id).unwrap();
+        let mut s = album.retrieve_song(trck, 1).unwrap();
+        s.filepath = Some(fp);
+        s.directory = Some(dir);
+        s.genre = Some(album.genre.clone());
+        s.year = Some(album.year.clone());
+        s.album = Some(album.title.clone());
+        s.data = Some(s.to_data().unwrap());
+
+        cover_art.data = Some(cover_art.to_data().unwrap());
+
+        let mut up = syncers::upload::Upload::default();
+        let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
+        up.set_api(&host);
+
+        let res = up.upload_song_with_metadata(&token, &s, &cover_art, &album);
+        let tken = Runtime::new().unwrap().block_on(res);
+
+        match &tken {
+            Ok(o) => {
+                println!("Successfully sent {:?}", o);
+            }
+            Err(er) => {
+                println!("Some error {:?}", er);
+            }
+        }
+
+        Ok(())
     }
     // TODO: Implement
     fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
@@ -254,7 +377,6 @@ impl CommitManager {
             println!("file type: {:?}", file_type);
             println!("file name: {:?}", file_name);
 
-
             match self.find_file_extension(&file_name) {
                 En::ImageFile => {
                     let directory_part = sourcepath.clone();
@@ -276,6 +398,7 @@ impl CommitManager {
                             filenames.push(s.clone());
                             song.filepath = Some(s.clone());
                             song.directory = Some(sourcepath.clone());
+                            song.data = Some(song.to_data().unwrap());
                             self.initialize_disc_and_track(&mut song);
                         }
                         Err(er) => println!("Error: {:?}", er),
@@ -293,10 +416,11 @@ impl CommitManager {
 
         self.song_parsing(&mut album, &sourcepath, &filenames);
 
-
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
+
+        cover_art.data = Some(cover_art.to_data().unwrap());
 
         println!("");
 
@@ -309,12 +433,12 @@ impl CommitManager {
             match &tken {
                 Ok(o) => {
                     println!("Successfully sent {:?}", o);
-                },
+                }
                 Err(er) => {
                     println!("Some error {:?}", er);
                 }
             }
-            
+
             println!("");
         }
 
