@@ -171,7 +171,6 @@ impl CommitManager {
         };
         tok_mgr.init();
 
-        // let token = tok_mgr.request_token();
         let token = Runtime::new().unwrap().block_on(tok_mgr.request_token());
 
         return token.unwrap();
@@ -245,7 +244,6 @@ impl CommitManager {
 
         // iterate files in metadatapath
         let path = std::path::Path::new(directory_path);
-        // let entries = std::fs::read_dir(path);
 
         for entry in read_dir(path)? {
             let entry = entry?;
@@ -256,9 +254,6 @@ impl CommitManager {
             println!("file type: {:?}", file_type);
             println!("file name: {:?}", file_name);
 
-            // TODO: Write code to determine file extension by
-            // the file path. The result will determine what
-            // behavior will happen
 
             match self.find_file_extension(&file_name) {
                 En::ImageFile => {
@@ -292,12 +287,12 @@ impl CommitManager {
             }
         }
 
+        filenames.sort();
+
         let mut album = self.retrieve_metadata(&metadatapath);
 
         self.song_parsing(&mut album, &sourcepath, &filenames);
 
-        // songs.clear();
-        // songs = album.songs;
 
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
@@ -307,13 +302,20 @@ impl CommitManager {
 
         for song in &album.songs {
             // Upload each song
-            // TODO: Add functions to Upload struct that uploads song
-            // with metadata and img
             println!("Sending song...");
             let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
             let tken = Runtime::new().unwrap().block_on(res);
-            // let data = futures::executor::block_on(res);
-            println!("{:?}", tken);
+
+            match &tken {
+                Ok(o) => {
+                    println!("Successfully sent {:?}", o);
+                },
+                Err(er) => {
+                    println!("Some error {:?}", er);
+                }
+            }
+            
+            println!("");
         }
 
         Ok(())
@@ -328,8 +330,7 @@ impl CommitManager {
     ) {
         // Apply directory
         for song in &mut album.songs {
-            // let bor = song.as_mut();
-            let mut dir = &song.directory;
+            let dir = &song.directory;
             match dir {
                 Some(s) => println!("{}", s),
                 None => {
@@ -376,7 +377,7 @@ impl CommitManager {
         match file_name_str {
             Some(string) => {
                 let a = string.unwrap();
-                let mut split = a.split(".");
+                let split = a.split(".");
                 let mut last_index = 0;
 
                 for _ in split.clone() {
@@ -403,7 +404,6 @@ impl CommitManager {
                     return En::ImageFile;
                 }
             }
-            // Err(err) => {
             _ => {
                 return En::Other;
             }
@@ -416,7 +416,7 @@ impl CommitManager {
         let res = val.clone().into_string();
         return match res {
             Ok(sss) => Ok(sss),
-            Err(eee) => Ok(String::from("Error")),
+            Err(_) => Ok(String::from("Error")),
         };
     }
 
@@ -427,11 +427,9 @@ impl CommitManager {
         let mut disc = 1;
         let mut track = 1;
         let mut mode = 0;
-        let songpath = song.song_path();
         let filename =
             &<std::option::Option<std::string::String> as Clone>::clone(&song.filepath).unwrap();
 
-        // let directory = &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
         let trd = filename.contains("trackd");
         let tr = filename.contains("track");
 
@@ -559,27 +557,13 @@ impl CommitManager {
     }
 
     fn retrieve_metadata(&self, path: &String) -> Album {
-        /*
-        let mut alb = Album {
-            title: String::from(""),
-            album_artist: String::from(""),
-            genre: String::from(""),
-            year: 0,
-            track_count: 0,
-            disc_count: 0,
-            songs: Vec::new(),
-        };
-        */
-
         let content = self.retrieve_file_content(&path);
-        // let alb = serde_json::from_str(&content.unwrap());
         let val = content.unwrap();
 
-        // return alb.unwrap();
         let converted = serde_json::from_str(&val);
 
         match &converted {
-            Ok(res) => println!("Good!"),
+            Ok(_) => println!("Good!"),
             Err(er) => println!("Error {:?}", er),
         }
         return converted.unwrap();

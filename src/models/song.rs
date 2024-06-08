@@ -70,6 +70,7 @@ impl Default for Song {
 impl Song {
     pub fn print_info(&self) {
         println!("Title: {:?}", self.title);
+        println!("Artist: {:?}", self.artist);
     }
 
     pub fn song_path(&self) -> String {
