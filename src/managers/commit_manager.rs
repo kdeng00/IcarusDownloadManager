@@ -303,11 +303,17 @@ impl CommitManager {
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
 
+        println!("");
+
         for song in &album.songs {
             // Upload each song
             // TODO: Add functions to Upload struct that uploads song
             // with metadata and img
-            up.upload_song_with_metadata(&token, &song, &cover_art, &album);
+            println!("Sending song...");
+            let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
+            let tken = Runtime::new().unwrap().block_on(res);
+            // let data = futures::executor::block_on(res);
+            println!("{:?}", tken);
         }
 
         Ok(())

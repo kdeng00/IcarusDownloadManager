@@ -92,12 +92,17 @@ impl Song {
 
     pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
         let path = self.song_path();
+        println!("Converting song to data");
+        println!("Path: {:?}", path);
         // let content = std::fs::read_to_string(path);
         let mut file = std::fs::File::open(path)?;
         let mut buffer = Vec::new();
-        file.read(&mut buffer)?;
+        file.read_to_end(&mut buffer)?;
+        if buffer.len() == 0 {
+            println!("Why is it empty?");
+        }
+
         Ok(buffer)
-        // return content;
     }
     // if 1 - wav, if 0 - mp3, anything else defaults to wav
     pub fn generate_filename_from_track(&mut self, i_type: i32) -> i32 {
@@ -155,7 +160,7 @@ impl CoverArt {
 
         let mut file = std::fs::File::open(path)?;
         let mut buffer = Vec::new();
-        file.read(&mut buffer)?;
+        file.read_to_end(&mut buffer)?;
         Ok(buffer)
     }
 }

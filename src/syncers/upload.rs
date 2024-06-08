@@ -1,5 +1,8 @@
 use std::default::Default;
 
+use http::header;
+use http::HeaderMap;
+use http::HeaderValue;
 use reqwest;
 use reqwest::blocking::multipart;
 use serde::{Deserialize, Serialize};
@@ -28,6 +31,12 @@ struct Song {
     track_count: i32,
     disc: i32,
     disc_count: i32,
+}
+
+impl Song {
+    pub fn to_metadata_json(&self) -> Result<String, serde_json::Error> {
+        return serde_json::to_string_pretty(&self);
+    }
 }
 
 impl Default for Upload {
@@ -67,7 +76,7 @@ impl Upload {
         song: &models::song::Song,
         cover: &models::song::CoverArt,
         album: &models::song::Album,
-    ) {
+    ) -> Result<reqwest::Response, std::io::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
         let url = self.retrieve_url(&song);
         let client = reqwest::Client::new();
@@ -76,9 +85,16 @@ impl Upload {
 
         let song_data = song.to_data();
         let cover_data = cover.to_data();
+        let song_detail = new_song.to_metadata_json().unwrap();
+
+        let mut song_raw_data: Vec<u8> = Vec::new();
+        let mut cover_raw_data: Vec<u8> = Vec::new();
 
         match song_data {
-            Ok(sd) => {}
+            Ok(sd) => {
+                println!("song converted to data. Length {:?}", sd.len());
+                song_raw_data = sd;
+            }
             Err(er) => {
                 println!("Error: {:?}", er);
                 std::process::exit(-1);
@@ -86,7 +102,9 @@ impl Upload {
         }
 
         match cover_data {
-            Ok(_) => {}
+            Ok(cv) => {
+                cover_raw_data = cv;
+            }
             Err(er) => {
                 println!("Error: {:?}", er);
                 std::process::exit(-1);
@@ -96,6 +114,67 @@ impl Upload {
         if url.is_empty() {
             println!("Url is empty");
         }
+
+        println!("Url: {}", url);
+
+        println!("Length: {:?}", song_raw_data.len());
+
+        // Adding text data
+        // form = form.text("metadata", song_detail);
+
+        // Adding a file
+        // let file_path = "path/to/your/file.txt";
+        // let file = reqwest::blocking::multipart::Part::file(file_path);
+        let mut headers = Vec::new();
+        headers.push("application/octet-stream");
+        headers.push("Content-type");
+
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            http::header::CONTENT_TYPE,
+            http::HeaderValue::from_static("application/octet-stream"),
+        );
+
+        let file = reqwest::multipart::Part::bytes(song_raw_data.clone()).headers(headers);
+        // headers.clear();
+        let mut headers_i = HeaderMap::new();
+        headers_i.insert(
+            http::header::CONTENT_TYPE,
+            http::HeaderValue::from_static("image/jpeg"),
+        );
+        let mut image_dis = String::new();
+        image_dis = "form-data; name='cover'; filename='audio.wav'".to_owned();
+        // headers_i.insert(http::header::CONTENT_DISPOSITION, HeaderValue::from_static("form-data; name=\"cover\"; filename=\"file.jpeg\""));
+
+        let cover = reqwest::multipart::Part::bytes(cover_raw_data.clone()).headers(headers_i);
+        let song_filepath = "ss";
+        let mut p = reqwest::multipart::Part::stream(song_raw_data.clone());
+        // p.file_name("file");
+        let mut q = reqwest::multipart::Part::stream(cover_raw_data.clone());
+        // q.file_name("cover");
+        // let ee = reqwest::multipart::Part::file_name(song_filepath);
+        // let content_type = http::header::ContentType::from_mime_type("audio/mpeg").unwrap();
+
+        // let mut disposition = http::header::ContentDisposition::form_data_binary();
+        // disposition.set_filename("my_file.mp3");
+
+        let mut form = Form::new();
+        form = form
+            .part("cover", cover.file_name("cover.jpeg"))
+            .text("metadata", song_detail)
+            .part("file", file.file_name("audio.wav"));
+
+        let response = client
+            .post(url)
+            .multipart(form)
+            .header(reqwest::header::AUTHORIZATION, access_token)
+            .send()
+            .await;
+        let response_text = response.unwrap();
+        println!("Something was sent");
+        println!("{:?}", response_text);
+
+        return Ok(response_text);
 
         /*
 
