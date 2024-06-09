@@ -167,10 +167,9 @@ impl CommitManager {
         println!("Deleting song");
     }
 
-    // TODO: Implement
-    // NOTE: Might not need to implement. I will see how this goes
     fn upload_song(&self) {
         println!("Deleting song");
+        panic!("Not supported");
     }
 
     fn parse_token(&self, api: &models::api::API) -> models::token::Token {
@@ -198,7 +197,6 @@ impl CommitManager {
         return token.unwrap();
     }
 
-    // TODO: Implement
     fn upload_song_with_metadata(&mut self) {
         println!("Uplodaring song with metadara");
 
@@ -234,7 +232,6 @@ impl CommitManager {
         }
     }
 
-    // TODO: Implement
     fn sing_target_upload(
         &mut self,
         songpath: &String,
@@ -264,32 +261,16 @@ impl CommitManager {
         let mut fp = String::new();
         let mut dir = String::new();
 
-        // song_file.file_name();
-
-        // for entry in read_dir(song_file)? {
-        // for entry in read_file(song_file)? {
         let entry = &song_file;
 
-        // let file_type = entry.file_type();
         let file_name = std::ffi::OsString::from(entry.file_name().unwrap());
 
-        // println!("file type: {:?}", file_type);
         println!("file name: {:?}", file_name);
 
         match self.find_file_extension(&file_name) {
-            En::ImageFile => {
-                // let directory_part = sourcepath.clone();
-                // let fname = self.o_to_string(&file_name);
-                // let fullpath = directory_part + "/" + &fname.unwrap();
-                // cover_art.path = Some(fullpath);
-            }
-            En::MetadataFile => {
-                // let directory_part = sourcepath.clone();
-                // let fname = self.o_to_string(&file_name);
-                // metadatapath = directory_part + "/" + &fname.unwrap();
-            }
+            En::ImageFile => {}
+            En::MetadataFile => {}
             En::SongFile => {
-                // let mut song = models::song::Song::default();
                 let fname = self.o_to_string(&file_name);
 
                 match fname {
@@ -303,17 +284,13 @@ impl CommitManager {
                     }
                     Err(er) => println!("Error: {:?}", er),
                 }
-
-                // songs.push(song)
             }
             _ => {}
         }
-        // }
 
         cover_art.path = Some(cover_path.clone());
 
-        let mut album = self.retrieve_metadata(&meta_path);
-        // self.song_parsing(&mut album, &song.directory.unwrap(), &filenames);
+        let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
         let mut s = album.retrieve_song(trck, 1).unwrap();
         s.filepath = Some(fp);
@@ -343,7 +320,7 @@ impl CommitManager {
 
         Ok(())
     }
-    // TODO: Implement
+
     fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
             api: models::api::API::default(),
@@ -356,8 +333,7 @@ impl CommitManager {
         let directory_path = std::path::Path::new(&sourcepath);
 
         if !directory_path.exists() {
-            println!("Directory does not exist");
-            std::process::exit(-1);
+            panic!("Directory does not exist");
         }
 
         let mut cover_art = models::song::CoverArt::default();
@@ -423,6 +399,15 @@ impl CommitManager {
         cover_art.data = Some(cover_art.to_data().unwrap());
 
         println!("");
+
+        for sng in &mut album.songs {
+            match sng.data {
+                Some(_) => {}
+                None => {
+                    sng.data = Some(sng.to_data().unwrap());
+                }
+            };
+        }
 
         for song in &album.songs {
             // Upload each song
