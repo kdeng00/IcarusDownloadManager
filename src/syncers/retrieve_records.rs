@@ -19,13 +19,25 @@ impl Default for RetrieveRecords {
 
 impl RetrieveRecords {
     pub async fn get_all_songs(
-        &self,
+        &mut self,
         token: &models::token::Token,
     ) -> Result<Vec<models::song::Song>, Error> {
+        self.api.endpoint = String::from("song");
         let mut songs: Vec<models::song::Song> = Vec::new();
         let url = self.retrieve_url();
         let access_token = token.bearer_token();
-        let client = reqwest::Client::new();
+
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            reqwest::header::AUTHORIZATION,
+            http::header::HeaderValue::from_str(&access_token.clone()).unwrap(),
+        );
+        headers.insert(
+            reqwest::header::CONTENT_TYPE,
+            http::header::HeaderValue::from_static("application/json"),
+        );
+
+        let client = reqwest::Client::builder().build().unwrap();
         let response = client
             .get(&url)
             .header(reqwest::header::AUTHORIZATION, access_token)
@@ -57,7 +69,6 @@ impl RetrieveRecords {
     }
 
     fn retrieve_url(&self) -> String {
-        // let mut url: String = String::new();
         let api = &self.api;
         let mut url: String = String::from(&api.url);
         url += &String::from("api/");
@@ -65,7 +76,6 @@ impl RetrieveRecords {
         url += &String::from("/");
         url += &String::from(&api.endpoint);
         url += &String::from("/");
-        // url += &song.id.unwrap().to_string();
 
         return url;
     }

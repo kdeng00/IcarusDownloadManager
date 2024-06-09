@@ -165,6 +165,34 @@ impl CommitManager {
     // TODO: Implement
     fn retrieve_object(&self) {
         println!("Deleting song");
+        let rt = self.ica_action.retrieve_flag_value(&String::from("-rt"));
+
+        if rt != "songs" {
+            panic!("Unsupported -rt: {}", rt);
+        }
+
+        let mut prsr = parsers::api_parser::APIParser {
+            api: models::api::API::default(),
+            ica_act: self.ica_action.clone(),
+        };
+        prsr.parse_api();
+
+        let api = prsr.retrieve_api();
+        let token = self.parse_token(&api);
+        let mut repo = syncers::retrieve_records::RetrieveRecords { api: api.clone() };
+        let result_fut = repo.get_all_songs(&token);
+
+        let result = Runtime::new().unwrap().block_on(result_fut);
+        match result {
+            Ok(o) => {
+                for song in o {
+                    println!("{:?} - {:?}", song.artist, song.title);
+                }
+            }
+            Err(er) => {
+                println!("Error: {:?}", er);
+            }
+        }
     }
 
     fn upload_song(&self) {
