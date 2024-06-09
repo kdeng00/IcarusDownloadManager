@@ -1,17 +1,13 @@
 use std::default::Default;
 
-use http::header;
 use http::HeaderMap;
 use http::HeaderValue;
 use reqwest;
-use reqwest::blocking::multipart;
+use reqwest::multipart::Form;
 use serde::{Deserialize, Serialize};
-// use reqwest::blocking::
-use reqwest::multipart::{Form, Part};
-use reqwest::Response;
-use reqwest::{Body, Client};
 use tokio::fs::File;
 
+use crate::constants;
 use crate::models;
 
 pub struct Upload {
@@ -48,6 +44,7 @@ impl Default for Upload {
 }
 
 impl Upload {
+    /*
     pub async fn upload_song(&self, token: &models::token::Token, song: &models::song::Song) {
         let url = self.retrieve_url();
         let client = reqwest::Client::new();
@@ -68,6 +65,7 @@ impl Upload {
             }
         }
     }
+    */
 
     // TODO: Implement
     pub async fn upload_song_with_metadata(
@@ -91,29 +89,6 @@ impl Upload {
         let song_raw_data = song_raw_data_as.await;
         let cover_raw_data: Vec<u8> = cover_raw_data_as.await;
 
-        /*
-        match song_data {
-            Ok(sd) => {
-                println!("song converted to data. Length {:?}", sd.len());
-                song_raw_data = sd;
-            }
-            Err(er) => {
-                println!("Error: {:?}", er);
-                std::process::exit(-1);
-            }
-        }
-
-        match cover_data {
-            Ok(cv) => {
-                cover_raw_data = cv;
-            }
-            Err(er) => {
-                println!("Error: {:?}", er);
-                std::process::exit(-1);
-            }
-        }
-        */
-
         if url.is_empty() {
             println!("Url is empty");
         }
@@ -122,6 +97,7 @@ impl Upload {
         println!("Length: {:?}", song_raw_data.len());
         println!("Token: {}", access_token);
 
+        /*
         let form_as = async {
             self.initialize_form(
                 song_raw_data.clone(),
@@ -129,18 +105,47 @@ impl Upload {
                 song_detail.clone(),
             )
         };
+        */
 
         // let form = self.initialize_form(song_raw_data, cover_raw_data, song_detail.clone());
-        let form = form_as.await;
+        // let form = form_as.await;
+
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            reqwest::header::AUTHORIZATION,
+            HeaderValue::from_str(&access_token.clone()).unwrap(),
+        );
+        headers.insert(reqwest::header::ACCEPT, HeaderValue::from_static("*/*"));
+
+        let songpath = song.song_path();
+        let coverpath = cover.path.clone().unwrap();
+
+        println!("\n{}\n", song_detail);
+
+        let mut song_filename = String::from("audio");
+        song_filename += constants::file_extensions::WAV_FILE_EXTENSION;
+        let mut cover_filename = String::from("cover");
+        cover_filename += constants::file_extensions::JPG_FILE_EXTENSION;
+
+        let form = reqwest::multipart::Form::new()
+            .part(
+                "file",
+                reqwest::multipart::Part::bytes(std::fs::read(songpath)?).file_name(song_filename),
+            )
+            .part(
+                "cover",
+                reqwest::multipart::Part::bytes(std::fs::read(coverpath)?)
+                    .file_name(cover_filename),
+            )
+            .text("metadata", song_detail);
 
         println!("Form: {:?}", form);
 
-        // let mut client = reqwest::Client::new();
-        let response = reqwest::Client::new()
+        let client = reqwest::Client::builder().build().unwrap();
+        let response = client
             .post(url)
+            .headers(headers)
             .multipart(form)
-            .header(reqwest::header::AUTHORIZATION, access_token)
-            .header(reqwest::header::CONTENT_TYPE, "multipart/form-data")
             .send()
             .await;
         let response_text = response.unwrap();
@@ -172,10 +177,15 @@ impl Upload {
 
         let mut cover = reqwest::multipart::Part::bytes(cover_raw_data).headers(headers_i);
 
+        let mut song_filename = String::from("audio");
+        song_filename += constants::file_extensions::WAV_FILE_EXTENSION;
+        let mut cover_filename = String::from("cover");
+        cover_filename += constants::file_extensions::JPG_FILE_EXTENSION;
+
         return reqwest::multipart::Form::new()
-            .part("cover", cover.file_name("cover.jpeg"))
+            .part("cover", cover.file_name(cover_filename))
             .text("metadata", song_detail)
-            .part("file", file.file_name("audio.wav"));
+            .part("file", file.file_name(song_filename));
     }
 
     pub fn set_api(&mut self, host: &String) {

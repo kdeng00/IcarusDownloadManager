@@ -3,6 +3,10 @@ use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
+use crate::constants;
+
+// use crate::constants;
+
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
     pub id: Option<i32>,
@@ -95,7 +99,7 @@ impl Song {
         let path = self.song_path();
         println!("Converting song to data");
         println!("Path: {:?}", path);
-        // let content = std::fs::read_to_string(path);
+
         let mut file = std::fs::File::open(path)?;
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer)?;
@@ -105,6 +109,7 @@ impl Song {
 
         Ok(buffer)
     }
+
     // if 1 - wav, if 0 - mp3, anything else defaults to wav
     pub fn generate_filename_from_track(&mut self, i_type: i32) -> i32 {
         let mut filename: String = String::new();
@@ -115,9 +120,9 @@ impl Song {
         filename += &self.track.unwrap().to_string();
 
         if i_type == 0 {
-            filename += ".mp3";
+            filename += constants::file_extensions::MP3_FILE_EXTENSION;
         } else {
-            filename += ".wav";
+            filename += constants::file_extensions::WAV_FILE_EXTENSION;
         }
 
         self.filepath = Some(filename);
