@@ -14,11 +14,29 @@ impl Default for Download {
     }
 }
 
+#[derive(Debug)]
+pub enum MyError {
+    Request(reqwest::Error),
+    Other(String),
+}
+
 impl Download {
-    pub async fn download_song(&self, token: &models::token::Token, song: &models::song::Song) {
+    pub async fn download_song(
+        &mut self,
+        token: &models::token::Token,
+        song: &models::song::Song,
+    ) -> Result<String, MyError> {
+        self.api.endpoint = String::from("song/data/download");
         let url = self.retrieve_url(&song);
         let access_token = token.bearer_token();
-        let client = reqwest::Client::new();
+
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            reqwest::header::AUTHORIZATION,
+            http::header::HeaderValue::from_str(&access_token.clone()).unwrap(),
+        );
+
+        let client = reqwest::Client::builder().build().unwrap();
         let response = client
             .get(&url)
             .header(reqwest::header::AUTHORIZATION, &access_token)
@@ -28,16 +46,15 @@ impl Download {
 
         match response.status() {
             reqwest::StatusCode::OK => {
-                // on success, parse our JSON to an APIResponse
-                /*
-                let s = response.json::<Vec<Track>>().await;
-                match s {
-                    Ok(parsed) => {
-                        println!("\nSuccess!");
+                let data = response.text();
+                match data.await {
+                    Ok(e) => {
+                        return Ok(e);
                     }
-                    Err(_) => println!("Hm, the response didn't match the shape we expected."),
-                };
-                */
+                    Err(er) => {
+                        println!("Error {:?}", er);
+                    }
+                }
             }
             reqwest::StatusCode::UNAUTHORIZED => {
                 println!("Need to grab a new token");
@@ -46,10 +63,11 @@ impl Download {
                 panic!("Uh oh! Something unexpected happened: {:?}", other);
             }
         }
+
+        return Err(MyError::Other(String::from("Error downloading")));
     }
 
     fn retrieve_url(&self, song: &models::song::Song) -> String {
-        // let mut url: String = String::new();
         let api = &self.api;
         let mut url: String = String::from(&api.url);
         url += &String::from("api/");

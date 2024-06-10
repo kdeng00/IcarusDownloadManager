@@ -2,7 +2,7 @@ use std::collections::HashMap;
 use std::default::Default;
 use std::fmt::Display;
 use std::fs::{read_dir, DirEntry};
-use std::io::{Error, Read, Result};
+use std::io::{Error, Read, Result, Write};
 use std::path::Path;
 use std::str::FromStr;
 
@@ -12,9 +12,9 @@ use tokio::runtime::Runtime;
 
 use crate::models::song::Album;
 use crate::models::{self, song};
-use crate::parsers;
 use crate::syncers;
 use crate::utilities;
+use crate::{constants, parsers};
 use crate::{exit_program, managers};
 
 #[derive(Debug, Deserialize, Serialize)]
@@ -157,12 +157,40 @@ impl CommitManager {
         del.delete_song(&token, &song);
     }
 
-    // TODO: Implement
     fn download_song(&self) {
         println!("Deleting song");
+        let dwn = self.ica_action.retrieve_flag_value(&String::from("-b"));
+        let num: i32 = dwn.parse::<i32>().unwrap();
+
+        let mut prsr = parsers::api_parser::APIParser {
+            api: models::api::API::default(),
+            ica_act: self.ica_action.clone(),
+        };
+        prsr.parse_api();
+
+        let api = prsr.retrieve_api();
+        let token = self.parse_token(&api);
+
+        let mut dwn_loader = syncers::download::Download { api: api.clone() };
+        let mut song = models::song::Song::default();
+        song.id = Some(num);
+        let result_fut = dwn_loader.download_song(&token, &song);
+        let result = Runtime::new().unwrap().block_on(result_fut);
+        match result {
+            Ok(o) => {
+                println!("Success");
+                let mut filename = String::from("audio");
+                filename += constants::file_extensions::WAV_FILE_EXTENSION;
+                let data = o.as_bytes();
+                let mut file = std::fs::File::create(filename).expect("Failed to save");
+                file.write_all(&data).expect("ff");
+            }
+            Err(er) => {
+                println!("Error {:?}", er);
+            }
+        }
     }
 
-    // TODO: Implement
     fn retrieve_object(&self) {
         println!("Deleting song");
         let rt = self.ica_action.retrieve_flag_value(&String::from("-rt"));
