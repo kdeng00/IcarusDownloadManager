@@ -9,6 +9,7 @@ use crate::constants;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
+    #[serde(alias = "song_id")]
     pub id: Option<i32>,
     pub title: Option<String>,
     pub artist: Option<String>,
@@ -111,7 +112,7 @@ impl Song {
     }
 
     // if 1 - wav, if 0 - mp3, anything else defaults to wav
-    pub fn generate_filename_from_track(&mut self, i_type: i32) -> i32 {
+    pub fn _generate_filename_from_track(&mut self, i_type: i32) -> i32 {
         let mut filename: String = String::new();
         if self.track.unwrap() < 10 {
             filename += "0";
@@ -120,7 +121,7 @@ impl Song {
         filename += &self.track.unwrap().to_string();
 
         if i_type == 0 {
-            filename += constants::file_extensions::MP3_FILE_EXTENSION;
+            filename += constants::file_extensions::_MP3_FILE_EXTENSION;
         } else {
             filename += constants::file_extensions::WAV_FILE_EXTENSION;
         }
@@ -130,7 +131,7 @@ impl Song {
         return 0;
     }
 
-    pub fn to_metadata_json(&self) -> Result<String, serde_json::Error> {
+    pub fn _to_metadata_json(&self) -> Result<String, serde_json::Error> {
         return serde_json::to_string_pretty(&self);
     }
 }

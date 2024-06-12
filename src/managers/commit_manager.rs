@@ -1,21 +1,18 @@
 use std::collections::HashMap;
 use std::default::Default;
-use std::fmt::Display;
-use std::fs::{read_dir, DirEntry};
-use std::io::{Error, Read, Result, Write};
-use std::path::Path;
+use std::fs::read_dir;
+use std::io::{Result, Write};
 use std::str::FromStr;
 
-use futures::{FutureExt, TryFutureExt};
 use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 
+use crate::managers;
 use crate::models::song::Album;
-use crate::models::{self, song};
+use crate::models::{self};
 use crate::syncers;
 use crate::utilities;
 use crate::{constants, parsers};
-use crate::{exit_program, managers};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CommitManager {
@@ -32,7 +29,7 @@ enum ActionValues {
     None,
 }
 
-enum RetrieveTypes {
+enum _RetrieveTypes {
     Songs,
 }
 
@@ -45,7 +42,7 @@ enum En {
 }
 
 impl Album {
-    pub fn print_info(&self) {
+    pub fn _print_info(&self) {
         println!("Album: {}", self.title);
         println!("Album Artist: {}", self.album_artist);
         println!("Genre: {}", self.genre);
@@ -126,7 +123,6 @@ impl CommitManager {
         return actions;
     }
 
-    // TODO: Implement
     fn delete_song(&self) {
         let mut prsr = parsers::api_parser::APIParser {
             ica_act: self.ica_action.clone(),
@@ -150,11 +146,20 @@ impl CommitManager {
             }
         }
 
-        let del = syncers::delete::Delete { api: api };
+        let mut del = syncers::delete::Delete { api: api.clone() };
 
         println!("Deleting song..");
 
-        del.delete_song(&token, &song);
+        let res_fut = del.delete_song(&token, &song);
+        let result = Runtime::new().unwrap().block_on(res_fut);
+        match result {
+            Ok(o) => {
+                println!("Song (Id {:?}) has been successfully deleted", o.id);
+            }
+            Err(er) => {
+                println!("Error {:?}", er);
+            }
+        }
     }
 
     fn download_song(&self) {
@@ -213,8 +218,8 @@ impl CommitManager {
         let result = Runtime::new().unwrap().block_on(result_fut);
         match result {
             Ok(o) => {
-                for song in o {
-                    println!("{:?} - {:?}", song.artist, song.title);
+                for son in o {
+                    son.print_info();
                 }
             }
             Err(er) => {
@@ -280,9 +285,9 @@ impl CommitManager {
             println!("metadata path: {}", metadata_path);
             println!("cover art path: {}", coverpath);
 
-            self.sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath);
+            let _ = self.sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath);
         } else if multitarget {
-            self.multi_target_upload(&uni);
+            let _ = self.multi_target_upload(&uni);
         } else {
             println!("Single or Multi target has not been chosen");
         }
@@ -681,8 +686,8 @@ impl CommitManager {
         song.track = Some(track);
     }
 
-    fn parse_disc_and_track(&self, song: &mut models::song::Song, track_id: &String) {
-        let sep = |a: &char, b: &char| -> bool {
+    fn _parse_disc_and_track(&self, song: &mut models::song::Song, track_id: &String) {
+        let sep = |_a: &char, _b: &char| -> bool {
             return false;
         };
 
@@ -690,7 +695,7 @@ impl CommitManager {
 
         if index == -1 {
             let mut d_str: String = String::new();
-            let mut t_str = String::new();
+            let t_str = String::new();
 
             for c in track_id.chars().skip(0).take(index as usize) {
                 d_str.push(c);
@@ -712,7 +717,7 @@ impl CommitManager {
         }
     }
 
-    fn check_for_no_confirm(&self) -> bool {
+    fn _check_for_no_confirm(&self) -> bool {
         for flag in self.ica_action.flags.iter() {
             if flag.flag == "-nc" {
                 return true;

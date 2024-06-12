@@ -5,7 +5,6 @@ use http::HeaderValue;
 use reqwest;
 use reqwest::multipart::Form;
 use serde::{Deserialize, Serialize};
-use tokio::fs::File;
 
 use crate::constants;
 use crate::models;
@@ -112,7 +111,7 @@ impl Upload {
         return Ok(response_text);
     }
 
-    fn initialize_form(
+    fn _initialize_form(
         &self,
         song_raw_data: Vec<u8>,
         cover_raw_data: Vec<u8>,
@@ -124,14 +123,14 @@ impl Upload {
             http::HeaderValue::from_static("application/octet-stream"),
         );
 
-        let mut file = reqwest::multipart::Part::bytes(song_raw_data).headers(headers);
+        let file = reqwest::multipart::Part::bytes(song_raw_data).headers(headers);
         let mut headers_i = HeaderMap::new();
         headers_i.insert(
             http::header::CONTENT_TYPE,
             http::HeaderValue::from_static("image/jpeg"),
         );
 
-        let mut cover = reqwest::multipart::Part::bytes(cover_raw_data).headers(headers_i);
+        let cover = reqwest::multipart::Part::bytes(cover_raw_data).headers(headers_i);
 
         let mut song_filename = String::from("audio");
         song_filename += constants::file_extensions::WAV_FILE_EXTENSION;

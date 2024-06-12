@@ -18,7 +18,7 @@ impl Default for User {
 }
 
 impl User {
-    pub fn to_json(&self) -> Result<String, serde_json::Error> {
+    pub fn _to_json(&self) -> Result<String, serde_json::Error> {
         return serde_json::to_string_pretty(&self);
     }
 }

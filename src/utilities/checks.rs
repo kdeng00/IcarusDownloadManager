@@ -9,24 +9,23 @@ impl Checks {
     }
 
     // TODO: Implement
-    pub fn item_in_container(
-        container: &Vec<String>,
-        item: &String,
-        func: fn(a: &String, b: &String) -> String,
+    pub fn _item_in_container(
+        _container: &Vec<String>,
+        _item: &String,
+        _func: fn(a: &String, b: &String) -> String,
     ) -> String {
         return String::from("");
     }
 
     // TODO: Implement
-    pub fn item_iter_in_container(
-        container: &Vec<String>,
-        item: &String,
-        func: fn(a: &String, b: &String) -> String,
+    pub fn _item_iter_in_container(
+        _container: &Vec<String>,
+        _item: &String,
+        _func: fn(a: &String, b: &String) -> String,
     ) -> String {
         return String::from("");
     }
 
-    // TODO: Implement
     pub fn index_of_item_in_container<F>(container: &String, item: &char, func: F) -> i32
     where
         F: Fn(&char, &char) -> bool,

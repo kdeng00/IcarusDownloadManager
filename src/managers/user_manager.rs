@@ -2,7 +2,7 @@ use std::default::Default;
 
 use serde::{Deserialize, Serialize};
 
-use crate::models::{self, user::User};
+use crate::models::{self};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct UserManager {

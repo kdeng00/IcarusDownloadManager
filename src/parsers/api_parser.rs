@@ -15,22 +15,18 @@ impl APIParser {
         let flags = self.ica_act.flags.clone();
         println!("Parsing api");
 
-        let mut i = 0;
-        // for (i, elem) in flags {
         for elem in flags {
             let arg = elem.flag;
             let value = elem.value;
 
             if arg == "-h" {
-                if value.chars().nth((value.len() - 1)) == Some('/') {
+                if value.chars().nth(value.len() - 1) == Some('/') {
                     self.api.url = value;
                 } else {
                     self.api.url = value + "/";
                 }
                 break;
             }
-
-            i += 1;
         }
 
         self.api.version = "v1".to_string();

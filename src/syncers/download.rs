@@ -16,7 +16,7 @@ impl Default for Download {
 
 #[derive(Debug)]
 pub enum MyError {
-    Request(reqwest::Error),
+    _Request(reqwest::Error),
     Other(String),
 }
 

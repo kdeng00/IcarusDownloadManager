@@ -124,7 +124,7 @@ impl ActionManager {
         }
     }
 
-    fn print_action(&self) {
+    fn _print_action(&self) {
         if self.action.len() == 0 {
             println!("Action is empty");
         } else {
@@ -132,7 +132,7 @@ impl ActionManager {
         }
     }
 
-    fn print_flags(&self) {
+    fn _print_flags(&self) {
         println!("Printing flags...");
         for flag in &self.flags {
             println!("Flag {}", flag.flag);

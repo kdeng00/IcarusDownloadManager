@@ -3,8 +3,6 @@ use std::io::Error;
 
 use crate::models;
 
-// use super::syncer_base::Result;
-
 pub struct RetrieveRecords {
     pub api: models::api::API,
 }

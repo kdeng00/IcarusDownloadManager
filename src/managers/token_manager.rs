@@ -24,9 +24,7 @@ impl TokenManager {
     pub async fn request_token(&self) -> Result<models::token::Token, std::io::Error> {
         println!("Sending request for a token");
 
-        // let endpoint = self.construct_endpoint();
-        let mut url = self.retrieve_url();
-        // url += &endpoint;
+        let url = self.retrieve_url();
 
         println!("URL: {}", url);
 
@@ -59,7 +57,7 @@ impl TokenManager {
     }
 
     pub fn init(&mut self) {
-        let mut api = &mut self.api;
+        let api = &mut self.api;
         api.version = String::from("v1");
         api.endpoint = String::from(format!("api/{}/login", api.version));
     }
@@ -67,9 +65,6 @@ impl TokenManager {
     pub fn retrieve_url(&self) -> String {
         let api = &self.api;
         let mut url = String::from(&api.url);
-        // url += &String::from("api/");
-        // url += &String::from(&api.version);
-        // url += &String::from("/");
         url += &String::from(&api.endpoint);
         url += &String::from("/");
 
@@ -77,7 +72,7 @@ impl TokenManager {
     }
 
     // NOTE: This can get deleted. Redundant
-    fn construct_endpoint(&self) -> String {
+    fn _construct_endpoint(&self) -> String {
         let mut endpoint: String = String::from("api/");
         endpoint += &self.api.version;
         endpoint += "/login";

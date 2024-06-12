@@ -18,7 +18,6 @@ fn print_help() {
 
         Actions
             download
-            upload (Search NOTE)
             upload-meta
             retrieve
             delete
@@ -28,12 +27,6 @@ fn print_help() {
             -u username
             -p password
             -h host
-
-        Required for upload
-            -s path of song
-            -sd directory where to search for songs to upload (Optional)
-            -sr directory where to recursively search for songs to upload (Optional)
-            -nc will not prompt the user when uploading from a directory
 
         Required for upload with metadata
             -s path of song
