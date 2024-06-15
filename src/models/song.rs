@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::constants;
 
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
     #[serde(alias = "song_id")]
