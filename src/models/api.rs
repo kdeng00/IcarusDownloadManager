@@ -12,9 +12,9 @@ pub struct API {
 impl Default for API {
     fn default() -> Self {
         API {
-            url: String::from(""),
-            endpoint: String::from(""),
-            version: String::from(""),
+            url: String::new(),
+            endpoint: String::new(),
+            version: String::new(),
         }
     }
 }

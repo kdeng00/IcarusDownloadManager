@@ -62,7 +62,7 @@ fn main() {
     println!("Argument count: {}", args_len);
 
     let mut act_mgr = managers::action_managers::ActionManager {
-        action: String::from(""),
+        action: String::new(),
         flags: Vec::new(),
         params: args,
         param_count: args_len,

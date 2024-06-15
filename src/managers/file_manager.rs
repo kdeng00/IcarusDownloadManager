@@ -21,21 +21,23 @@ impl Default for FileManager {
 
 
 impl FileManager {
-// TODO: Implement
-pub fn init(&mut self) {
-    self.read_file()
-}
+    // TODO: Implement
+    pub fn init(&mut self) {
+        self.read_file()
+    }
+
     pub fn save_file(&mut self, filepath: &String) {
         if !self.file_read {
             self.read_file();
         }
 
-            let mut file = File::open(filepath)?;
-    let mut buffer = Vec::new();
-    file.read_to_end(&mut buffer)?;
+        let mut file = File::open(filepath)?;
+        let mut buffer = Vec::new();
+        file.read_to_end(&mut buffer)?;
         self.file_buffer_length = buffer.len();
-    self.filebuffer = String::from_utf8(buffer); // Assuming UTF-8 encoding
+        self.filebuffer = String::from_utf8(buffer); // Assuming UTF-8 encoding
     }
+
     pub fn modify_file_path(&mut self, file: &String) {
         self.filepath = file;
     }
@@ -48,12 +50,15 @@ pub fn init(&mut self) {
         self.file_buffer_length;
     }
 
-    fn read_file(&mut self) {
+    fn read_file(&mut self) -> Vec<u8> {
         let mut file = File::open(self.filepath)?;
         let mut buffer = Vec::new();
         file.read_to_end(&mut buffer)?;
         self.file_buffer_length = buffer.len();
         self.filebuffer = String::from_utf8(buffer); // Assuming UTF-8 encoding
         self.file_read = true;
+
+        return buffer;
     }
 }
+

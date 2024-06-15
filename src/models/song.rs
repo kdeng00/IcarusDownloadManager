@@ -5,7 +5,6 @@ use serde::{Deserialize, Serialize};
 
 use crate::constants;
 
-// use crate::constants;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
@@ -20,8 +19,6 @@ pub struct Song {
     pub track: Option<i32>,
     pub disc: Option<i32>,
     pub data: Option<Vec<u8>>,
-    // use filepath instead
-    // pub song_path: String,
     pub filepath: Option<String>,
     pub directory: Option<String>,
 }

@@ -70,13 +70,4 @@ impl TokenManager {
 
         return url;
     }
-
-    // NOTE: This can get deleted. Redundant
-    fn _construct_endpoint(&self) -> String {
-        let mut endpoint: String = String::from("api/");
-        endpoint += &self.api.version;
-        endpoint += "/login";
-
-        return endpoint;
-    }
 }
