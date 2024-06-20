@@ -7,7 +7,7 @@ use crate::constants;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
-    #[serde(alias = "song_id")]
+    #[serde(alias = "id")]
     pub id: Option<i32>,
     pub title: Option<String>,
     pub artist: Option<String>,

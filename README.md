@@ -43,7 +43,7 @@ icarus-dm download -u spacecadet -p stellar40 -h https://icarus.com -b 15
 ### Uploading Song with metadata
 
 ```BASH
-icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.mp3 -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
+icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.wav -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
 ```
 
 ### Uploading Song with metadata from directory
