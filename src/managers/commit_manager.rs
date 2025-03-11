@@ -339,7 +339,7 @@ impl CommitManager {
                         filenames.push(s.clone());
                         fp = s.clone();
                         dir = song_file.parent().unwrap().display().to_string();
-                        song.filepath = Some(s.clone());
+                        song.filename = Some(s.clone());
                         song.directory = Some(dir.clone());
                         self.initialize_disc_and_track(&mut song);
                     }
@@ -354,7 +354,7 @@ impl CommitManager {
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
         let mut s = album.retrieve_song(trck, 1).unwrap();
-        s.filepath = Some(fp);
+        s.filename = Some(fp);
         s.directory = Some(dir);
         s.genre = Some(album.genre.clone());
         s.year = Some(album.year.clone());
@@ -433,7 +433,7 @@ impl CommitManager {
                     match fname {
                         Ok(s) => {
                             filenames.push(s.clone());
-                            song.filepath = Some(s.clone());
+                            song.filename = Some(s.clone());
                             song.directory = Some(sourcepath.clone());
                             song.data = Some(song.to_data().unwrap());
                             self.initialize_disc_and_track(&mut song);
@@ -513,7 +513,7 @@ impl CommitManager {
         let mut index = 0;
         for song in &mut album.songs {
             let filename = filenames[index].clone();
-            song.filepath = Some(filename);
+            song.filename = Some(filename);
             index += 1;
         }
 
@@ -598,7 +598,7 @@ impl CommitManager {
         let mut track = 1;
         let mut mode = 0;
         let filename =
-            &<std::option::Option<std::string::String> as Clone>::clone(&song.filepath).unwrap();
+            &<std::option::Option<std::string::String> as Clone>::clone(&song.filename).unwrap();
 
         let trd = filename.contains("trackd");
         let tr = filename.contains("track");
