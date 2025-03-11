@@ -24,7 +24,6 @@ pub struct Song {
     pub filename: Option<String>,
     pub user_id: Option<i32>,
     pub data: Option<Vec<u8>>,
-    pub filepath: Option<String>,
     pub directory: Option<String>,
 }
 
@@ -74,7 +73,6 @@ impl Default for Song {
             filename: None,
             user_id: None,
             data: None,
-            filepath: None,
             directory: None,
         }
     }
@@ -98,7 +96,7 @@ impl Song {
         }
 
         let filename =
-            &<std::option::Option<std::string::String> as Clone>::clone(&self.filepath).unwrap();
+            &<std::option::Option<std::string::String> as Clone>::clone(&self.filename).unwrap();
         buffer += filename;
 
         return buffer;
@@ -134,7 +132,7 @@ impl Song {
             filename += constants::file_extensions::WAV_FILE_EXTENSION;
         }
 
-        self.filepath = Some(filename);
+        self.filename = Some(filename);
 
         return 0;
     }
