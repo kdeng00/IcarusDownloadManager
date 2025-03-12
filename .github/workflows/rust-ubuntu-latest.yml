@@ -26,8 +26,8 @@ jobs:
         # 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         eval $(ssh-agent -s)
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
-        echo $SECRET_TEST
-        echo $SSH_PRIVATE_KEY > gitlab_deploy_key
+        echo {{ secrets.SECRET_TEST }}
+        echo {{ secrets.SSH_PRIVATE_KEY }} > gitlab_deploy_key
         chmod 600 gitlab_deploy_key
         ssh-add gitlab_deploy_key
         mkdir -p ~/.ssh
