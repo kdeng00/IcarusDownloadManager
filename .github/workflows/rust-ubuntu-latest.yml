@@ -25,6 +25,8 @@ jobs:
         sudo apt update -y
         # 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         eval $(ssh-agent -s)
+        echo $NO_VEIL
+        echo "Look before"
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
         if [[ -z "$PRV_KEY" ]]; then echo "PRV_KEY is empty!"; exit 1; else echo "PRV_KEY is set."; fi
         echo ${{ secrets.SECRET_TEST }}
