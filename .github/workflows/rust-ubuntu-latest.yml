@@ -1,9 +1,5 @@
 name: Rust
 
-before_script:
-  - echo "This is a test"
-  # Add SSH_PRIVATE_KEY
-
 on:
   push:
     branches: [ "master" ]
@@ -20,7 +16,29 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install Rust version
+      run: rustup install 1.85.0 && rustup default 1.85.0
+
+    - name: Add SSH Keys
+      run: |
+        'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        eval $(ssh-agent -s)
+        # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
+        echo $SSH_PRIVATE_KEY > gitlab_deploy_key
+        chmod 600 gitlab_deploy_key
+        ssh-add gitlab_deploy_key
+        mkdir -p ~/.ssh
+        '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+
     - name: Build
       run: cargo build --verbose
+
+    - name: Echo Test Start Message
+      run: echo "Starting Rust tests..."
+
     - name: Run tests
       run: cargo test --verbose
+
+    - name: Echo End Message
+      run: echo "Rust build and test process completed."
