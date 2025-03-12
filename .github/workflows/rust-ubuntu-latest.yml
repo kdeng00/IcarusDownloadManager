@@ -1,5 +1,9 @@
 name: Rust
 
+before_script:
+  - echo "This is a test"
+  # Add SSH_PRIVATE_KEY
+
 on:
   push:
     branches: [ "master" ]
