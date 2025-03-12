@@ -21,14 +21,16 @@ jobs:
 
     - name: Add SSH Keys
       run: |
-        'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+        echo "Starting"
+        apt update -y
+        # 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         eval $(ssh-agent -s)
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
         echo $SSH_PRIVATE_KEY > gitlab_deploy_key
-        chmod 600 gitlab_deploy_key
-        ssh-add gitlab_deploy_key
-        mkdir -p ~/.ssh
-        '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+        # chmod 600 gitlab_deploy_key
+        # ssh-add gitlab_deploy_key
+        # mkdir -p ~/.ssh
+        # '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
 
     - name: Build
