@@ -22,7 +22,7 @@ jobs:
     - name: Add SSH Keys
       run: |
         echo "Starting"
-        apt update -y
+        sudo apt update -y
         # 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         eval $(ssh-agent -s)
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
