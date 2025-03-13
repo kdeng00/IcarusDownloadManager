@@ -19,25 +19,26 @@ jobs:
     - name: Install Rust version
       run: rustup install 1.85.0 && rustup default 1.85.0
 
-    - name: Add SSH Keys
-      run: |
-        echo "Starting"
-        sudo apt update -y
         # 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-        eval $(ssh-agent -s)
-        echo $THIS_IS
-        echo "Look before"
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
         # if [[ -z "$PRV_KEY" ]]; then echo "PRV_KEY is empty!"; exit 1; else echo "PRV_KEY is set."; fi
         # if [[ -z "$O_KEY" ]]; then echo "O_KEY is empty!"; exit 1; else echo "O_KEY is set."; fi
         # echo "${{ secrets.GITLAB_TOKEN }}" > some_file
         # du -sk some_file
         # ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+        # mkdir -p ~/.ssh
+        # '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+
+    - name: Add SSH Keys
+      run: |
+        echo "Starting"
+        sudo apt update -y
+        eval $(ssh-agent -s)
+        echo ${{ env.THIS_IS }}
+        echo "Look before"
         echo "${{ secrets.GITLAB_TOKEN }}" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
         ssh-add ~/.ssh/gitlab_deploy_key
-        # mkdir -p ~/.ssh
-        # '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
       env:
         # PRV_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         O_KEY: ${{ secrets.GITLAB_TOKEN }}
