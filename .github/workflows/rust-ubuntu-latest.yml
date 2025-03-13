@@ -19,52 +19,21 @@ jobs:
     - name: Install Rust version
       run: rustup install 1.85.0 && rustup default 1.85.0
 
-        # 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
-        # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
-        # if [[ -z "$PRV_KEY" ]]; then echo "PRV_KEY is empty!"; exit 1; else echo "PRV_KEY is set."; fi
-        # if [[ -z "$O_KEY" ]]; then echo "O_KEY is empty!"; exit 1; else echo "O_KEY is set."; fi
-        # echo "${{ secrets.GITLAB_TOKEN }}" > some_file
-        # du -sk some_file
-        # ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-        # mkdir -p ~/.ssh
-        # '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
-        # echo "${{ secrets.GITLAB_TOKEN }}" > ~/.ssh/gitlab_deploy_key
-        # chmod 600 ~/.ssh/gitlab_deploy_key
-        # echo "gitlab.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=" > ~/.ssh/known_hosts
-        # ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-        # eval $(ssh-agent -s)
-        # ssh-add -v ~/.ssh/gitlab_deploy_key
-        # ssh-add -l
-
     - name: Debug secret
-      run: echo "${{ secrets.GITLAB_TOKEN }}" | head -c 20 ; echo "..."
+      run: echo "${{ secrets.GITLAB_TOKEN }}" | head -c 10 ; echo "..."
     
-    - name: Add SSH Keys
-      run: |
-        echo "Starting"
-        echo ${{ env.THIS_IS }}
-        echo "Look before"
-        mkdir -p ~/.ssh
-      env:
-        # PRV_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-        O_KEY: ${{ secrets.GITLAB_TOKEN }}
-        # SOME_SECR: ${{ secrets.SECRET_TEST }}
-
-
     - name: Build
       run: |
-        echo "Starting"
         echo ${{ env.THIS_IS }}
-        echo "Look before"
         mkdir -p ~/.ssh
-        echo "${{ secrets.GITLAB_TOKEN }}" > ~/.ssh/gitlab_deploy_key
+        echo "$EXTREPO_KEY" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
-        echo "gitlab.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBFSMqzJeV9rUzU4kWitGjeR4PWSa29SPqJ1fVkhtj3Hw9xjLVXVYrU9QlYWrOLXBpQ6KWjbjTDTdDkoohFzgbEY=" > ~/.ssh/known_hosts
         ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
         eval $(ssh-agent -s)
         ssh-add -v ~/.ssh/gitlab_deploy_key
-        ssh-add -l
-        cargo build --verbose
+        cargo build --release --verbose
+      env:
+        EXTREPO_KEY: ${{ secrets.GITLAB_TOKEN }}
 
     - name: Echo Test Start Message
       run: echo "Starting Rust tests..."
