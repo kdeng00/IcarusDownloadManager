@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models;
+use crate::{models, utilities};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ActionManager {
@@ -86,7 +86,7 @@ impl ActionManager {
                 flg.flag = String::from(flag);
             } else {
                 println!("Flag {} is not valid", flag);
-                std::process::exit(-1);
+                utilities::checks::exit_program(-1);
             }
 
             self.flags.push(flg);
