@@ -31,6 +31,9 @@ jobs:
 
     - name: Debug secret
       run: echo "${{ secrets.GITLAB_TOKEN }}" | head -c 20 ; echo "..."
+    
+    - name: Debug SSH Connection
+      run: ssh -ddd -T git@gitlab.com
 
     - name: Add SSH Keys
       run: |
