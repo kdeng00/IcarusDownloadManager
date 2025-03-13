@@ -32,7 +32,7 @@ jobs:
         # if [[ -z "$O_KEY" ]]; then echo "O_KEY is empty!"; exit 1; else echo "O_KEY is set."; fi
         # echo "${{ secrets.GITLAB_TOKEN }}" > some_file
         # du -sk some_file
-        ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+        # ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
         echo "${{ secrets.GITLAB_TOKEN }}" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
         ssh-add ~/.ssh/gitlab_deploy_key
