@@ -24,22 +24,15 @@ jobs:
     
     - name: Build
       run: |
-        echo ${{ env.THIS_IS }}
         mkdir -p ~/.ssh
         echo "$EXTREPO_KEY" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
         ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
         eval $(ssh-agent -s)
         ssh-add -v ~/.ssh/gitlab_deploy_key
-        cargo build --release --verbose
+        cargo build --release
       env:
         EXTREPO_KEY: ${{ secrets.GITLAB_TOKEN }}
 
-    - name: Echo Test Start Message
-      run: echo "Starting Rust tests..."
-
     - name: Run tests
       run: cargo test --verbose
-
-    - name: Echo End Message
-      run: echo "Rust build and test process completed."
