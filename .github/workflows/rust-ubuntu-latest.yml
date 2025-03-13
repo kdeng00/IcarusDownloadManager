@@ -25,23 +25,23 @@ jobs:
         sudo apt update -y
         # 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
         eval $(ssh-agent -s)
-        echo $NO_VEIL
+        echo $THIS_IS
         echo "Look before"
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
-        if [[ -z "$PRV_KEY" ]]; then echo "PRV_KEY is empty!"; exit 1; else echo "PRV_KEY is set."; fi
+        # if [[ -z "$PRV_KEY" ]]; then echo "PRV_KEY is empty!"; exit 1; else echo "PRV_KEY is set."; fi
         # if [[ -z "$O_KEY" ]]; then echo "O_KEY is empty!"; exit 1; else echo "O_KEY is set."; fi
-        echo "${{ secrets.GITLAB_TOKEN }}" > some_file
-        du -sk some_file
+        # echo "${{ secrets.GITLAB_TOKEN }}" > some_file
+        # du -sk some_file
         ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/gitlab_deploy_key
+        echo "${{ secrets.GITLAB_TOKEN }}" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
         ssh-add ~/.ssh/gitlab_deploy_key
         # mkdir -p ~/.ssh
         # '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
       env:
-        PRV_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        # PRV_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         O_KEY: ${{ secrets.GITLAB_TOKEN }}
-        SOME_SECR: ${{ secrets.SECRET_TEST }}
+        # SOME_SECR: ${{ secrets.SECRET_TEST }}
 
 
     - name: Build
