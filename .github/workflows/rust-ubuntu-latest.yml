@@ -36,6 +36,7 @@ jobs:
         eval $(ssh-agent -s)
         echo ${{ env.THIS_IS }}
         echo "Look before"
+        mkdir -p ~/.ssh
         echo "${{ secrets.GITLAB_TOKEN }}" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
         ssh-add ~/.ssh/gitlab_deploy_key
