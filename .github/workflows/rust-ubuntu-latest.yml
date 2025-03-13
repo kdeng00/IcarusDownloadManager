@@ -29,6 +29,7 @@ jobs:
         echo "Look before"
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
         if [[ -z "$PRV_KEY" ]]; then echo "PRV_KEY is empty!"; exit 1; else echo "PRV_KEY is set."; fi
+        if [[ -z "$O_KEY" ]]; then echo "O_KEY is empty!"; exit 1; else echo "O_KEY is set."; fi
         echo "${{ secrets.SECRET_TEST }}" > some_file
         cat some_file
         ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
@@ -39,6 +40,7 @@ jobs:
         # '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
       env:
         PRV_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        O_KEY: ${{ secrets.GITLAB_TOKEN }}
         SOME_SECR: ${{ secrets.SECRET_TEST }}
 
 
