@@ -1,5 +1,3 @@
-
-
 pub fn print_help() {
     let msg: String = String::from(
         r#"icd [Action] [flag]
