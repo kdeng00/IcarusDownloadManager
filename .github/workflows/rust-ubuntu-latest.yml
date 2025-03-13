@@ -29,9 +29,9 @@ jobs:
         echo "Look before"
         # mv "$SSH_DEPLOY_KEY" gitlab_deploy_key # copies the file from the variable.
         if [[ -z "$PRV_KEY" ]]; then echo "PRV_KEY is empty!"; exit 1; else echo "PRV_KEY is set."; fi
-        if [[ -z "$O_KEY" ]]; then echo "O_KEY is empty!"; exit 1; else echo "O_KEY is set."; fi
-        echo "${{ secrets.SECRET_TEST }}" > some_file
-        cat some_file
+        # if [[ -z "$O_KEY" ]]; then echo "O_KEY is empty!"; exit 1; else echo "O_KEY is set."; fi
+        echo "${{ secrets.GITLAB_TOKEN }}" > some_file
+        du -sk some_file
         ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
