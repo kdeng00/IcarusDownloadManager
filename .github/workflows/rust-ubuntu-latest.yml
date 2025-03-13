@@ -32,7 +32,7 @@ jobs:
     - name: Add SSH Keys
       run: |
         echo "Starting"
-        sudo apt update -y
+        # sudo apt update -y
         eval $(ssh-agent -s)
         echo ${{ env.THIS_IS }}
         echo "Look before"
