@@ -3,14 +3,14 @@ use std::default::Default;
 use crate::models;
 
 pub struct TokenManager {
-    pub user: models::user::User,
+    pub user: icarus_models::user::User,
     pub api: models::api::API,
 }
 
 impl Default for TokenManager {
     fn default() -> Self {
         let mut token = TokenManager {
-            user: models::user::User::default(),
+            user: icarus_models::user::User::default(),
             api: models::api::API::default(),
         };
 

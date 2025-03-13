@@ -238,13 +238,16 @@ impl CommitManager {
 
         let mut usr_mgr: managers::user_manager::UserManager =
             managers::user_manager::UserManager {
-                user: models::user::User {
-                    username: String::new(),
-                    password: String::new(),
-                },
+                user: icarus_models::user::User::default(),
                 ica_action: self.ica_action.clone(),
             };
         usr_mgr.parse_user_from_actions();
+
+        // let mut new_usr = icarus_models::user::User::default();
+        // new_usr.username = usr_mgr.user.username.clone();
+        // new_usr.password = usr_mgr.user.password.clone();
+
+        println!("Username: {}", usr_mgr.user.username);
 
         let usr = usr_mgr.retrieve_user();
         let mut tok_mgr = managers::token_manager::TokenManager {

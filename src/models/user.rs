@@ -1,3 +1,4 @@
+/* 
 use std::default::Default;
 
 use serde::{Deserialize, Serialize};
@@ -22,3 +23,4 @@ impl User {
         return serde_json::to_string_pretty(&self);
     }
 }
+*/
