@@ -29,6 +29,9 @@ jobs:
         # mkdir -p ~/.ssh
         # '[[ -f /.dockerenv ]] && echo -e "Host gitlab.com\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
 
+    - name: Debug secret
+      run: echo "${{ secrets.GITLAB_TOKEN }}" | head -c 20 ; echo "..."
+
     - name: Add SSH Keys
       run: |
         echo "Starting"
@@ -40,7 +43,7 @@ jobs:
         echo "${{ secrets.GITLAB_TOKEN }}" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
         eval $(ssh-agent -s)
-        ssh-add ~/.ssh/gitlab_deploy_key
+        ssh-add -v ~/.ssh/gitlab_deploy_key
       env:
         # PRV_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         O_KEY: ${{ secrets.GITLAB_TOKEN }}
