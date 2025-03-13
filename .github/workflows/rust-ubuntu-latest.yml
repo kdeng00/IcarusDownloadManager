@@ -16,7 +16,23 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Install Rust version
+      run: rustup install 1.85.0 && rustup default 1.85.0
+
+    - name: Debug secret
+      run: echo "${{ secrets.GITLAB_TOKEN }}" | head -c 10 ; echo "..."
+    
     - name: Build
-      run: cargo build --verbose
+      run: |
+        mkdir -p ~/.ssh
+        echo "$EXTREPO_KEY" > ~/.ssh/gitlab_deploy_key
+        chmod 600 ~/.ssh/gitlab_deploy_key
+        ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+        eval $(ssh-agent -s)
+        ssh-add -v ~/.ssh/gitlab_deploy_key
+        cargo build --release
+      env:
+        EXTREPO_KEY: ${{ secrets.GITLAB_TOKEN }}
+
     - name: Run tests
       run: cargo test --verbose
