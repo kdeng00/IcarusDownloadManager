@@ -10,6 +10,17 @@ pub struct ActionManager {
     pub param_count: i32,
 }
 
+impl Default for ActionManager {
+    fn default() -> Self {
+        ActionManager {
+            action: String::new(),
+            flags: Vec::new(),
+            params: Vec::new(),
+            param_count: -1,
+        }
+    }
+}
+
 impl ActionManager {
     pub fn retrieve_icarus_action(&self) -> models::icarus_action::IcarusAction {
         return models::icarus_action::IcarusAction {
@@ -43,6 +54,11 @@ impl ActionManager {
         self.validate_flags();
         self.validate_action();
         self.action = self.action.to_lowercase();
+    }
+
+    pub fn set_params(&mut self, args: &Vec<String>) {
+        self.params = args.clone();
+        self.param_count = self.params.len() as i32;
     }
 
     fn validate_flags(&mut self) {
@@ -102,7 +118,6 @@ impl ActionManager {
 
     fn does_flag_have_value(&self, flag: &String) -> bool {
         let flags_tmp = self.parsed_flags();
-
         let mut i_found: i32 = -1;
 
         for i in 0..flags_tmp.len() {
