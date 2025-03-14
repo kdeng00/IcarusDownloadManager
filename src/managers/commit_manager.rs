@@ -175,7 +175,7 @@ impl CommitManager {
 
         let api = prsr.retrieve_api();
         let token = self.parse_token(&api);
-        println!("Message: {}", token.message.clone().unwrap());
+        println!("Message: {}", token.message);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
         let mut song = models::song::Song::default();
@@ -234,7 +234,7 @@ impl CommitManager {
         panic!("Not supported");
     }
 
-    fn parse_token(&self, api: &models::api::API) -> models::token::Token {
+    fn parse_token(&self, api: &models::api::API) -> icarus_models::token::AccessToken {
         println!("Fetching token");
 
         let mut usr_mgr: managers::user_manager::UserManager =

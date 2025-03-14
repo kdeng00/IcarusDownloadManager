@@ -18,7 +18,7 @@ impl Default for RetrieveRecords {
 impl RetrieveRecords {
     pub async fn get_all_songs(
         &mut self,
-        token: &models::token::Token,
+        token: &icarus_models::token::AccessToken,
     ) -> Result<Vec<models::song::Song>, Error> {
         self.api.endpoint = String::from("song");
         let mut songs: Vec<models::song::Song> = Vec::new();

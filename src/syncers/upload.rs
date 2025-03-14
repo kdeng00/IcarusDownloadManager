@@ -46,7 +46,7 @@ impl Default for Upload {
 impl Upload {
     pub async fn upload_song_with_metadata(
         &mut self,
-        token: &models::token::Token,
+        token: &icarus_models::token::AccessToken,
         song: &models::song::Song,
         cover: &models::song::CoverArt,
         album: &models::song::Album,
