@@ -12,7 +12,7 @@ use crate::models::song::Album;
 use crate::models::{self};
 use crate::syncers;
 use crate::utilities;
-use crate::{constants, parsers};
+use crate::parsers;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CommitManager {
@@ -186,7 +186,7 @@ impl CommitManager {
             Ok(o) => {
                 println!("Success");
                 let mut filename = String::from("audio");
-                filename += constants::file_extensions::WAV_FILE_EXTENSION;
+                filename += icarus_models::constants::WAV_EXTENSION;
                 let data = o.as_bytes();
                 let mut file = std::fs::File::create(filename).expect("Failed to save");
                 file.write_all(&data).expect("ff");

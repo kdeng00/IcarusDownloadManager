@@ -3,8 +3,6 @@ use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
-use crate::constants;
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
     #[serde(alias = "id")]
@@ -127,9 +125,9 @@ impl Song {
         filename += &self.track.unwrap().to_string();
 
         if i_type == 0 {
-            filename += constants::file_extensions::_MP3_FILE_EXTENSION;
+            filename += icarus_models::constants::MPTHREE_EXTENSION;
         } else {
-            filename += constants::file_extensions::WAV_FILE_EXTENSION;
+            filename += icarus_models::constants::WAV_EXTENSION;
         }
 
         self.filename = Some(filename);
