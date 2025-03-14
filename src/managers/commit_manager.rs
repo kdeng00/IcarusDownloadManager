@@ -244,13 +244,6 @@ impl CommitManager {
             };
         usr_mgr.parse_user_from_actions();
 
-        // let mut new_usr = icarus_models::user::User::default();
-        // new_usr.username = usr_mgr.user.username.clone();
-        // new_usr.password = usr_mgr.user.password.clone();
-
-        println!("Username: {}", usr_mgr.user.username);
-        println!("Other: {}", usr_mgr.user.id);
-
         let usr = usr_mgr.retrieve_user();
         let mut tok_mgr = managers::token_manager::TokenManager {
             user: usr,
