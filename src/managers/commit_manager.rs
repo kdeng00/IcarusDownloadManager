@@ -10,9 +10,9 @@ use tokio::runtime::Runtime;
 use crate::managers;
 use crate::models::song::Album;
 use crate::models::{self};
+use crate::parsers;
 use crate::syncers;
 use crate::utilities;
-use crate::{constants, parsers};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CommitManager {
@@ -175,6 +175,7 @@ impl CommitManager {
 
         let api = prsr.retrieve_api();
         let token = self.parse_token(&api);
+        println!("Message: {}", token.message);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
         let mut song = models::song::Song::default();
@@ -185,7 +186,7 @@ impl CommitManager {
             Ok(o) => {
                 println!("Success");
                 let mut filename = String::from("audio");
-                filename += constants::file_extensions::WAV_FILE_EXTENSION;
+                filename += icarus_models::constants::WAV_EXTENSION;
                 let data = o.as_bytes();
                 let mut file = std::fs::File::create(filename).expect("Failed to save");
                 file.write_all(&data).expect("ff");
@@ -233,15 +234,12 @@ impl CommitManager {
         panic!("Not supported");
     }
 
-    fn parse_token(&self, api: &models::api::API) -> models::token::Token {
+    fn parse_token(&self, api: &models::api::API) -> icarus_models::token::AccessToken {
         println!("Fetching token");
 
         let mut usr_mgr: managers::user_manager::UserManager =
             managers::user_manager::UserManager {
-                user: models::user::User {
-                    username: String::new(),
-                    password: String::new(),
-                },
+                user: icarus_models::user::User::default(),
                 ica_action: self.ica_action.clone(),
             };
         usr_mgr.parse_user_from_actions();

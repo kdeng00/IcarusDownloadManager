@@ -20,7 +20,7 @@ impl Default for Delete {
 impl Delete {
     pub async fn delete_song(
         &mut self,
-        token: &models::token::Token,
+        token: &icarus_models::token::AccessToken,
         song: &models::song::Song,
     ) -> Result<models::song::Song, std::io::Error> {
         self.api.endpoint = "song/data/delete".to_owned();

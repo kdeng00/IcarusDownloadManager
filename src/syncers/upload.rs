@@ -6,7 +6,6 @@ use reqwest;
 use reqwest::multipart::Form;
 use serde::{Deserialize, Serialize};
 
-use crate::constants;
 use crate::models;
 
 pub struct Upload {
@@ -47,7 +46,7 @@ impl Default for Upload {
 impl Upload {
     pub async fn upload_song_with_metadata(
         &mut self,
-        token: &models::token::Token,
+        token: &icarus_models::token::AccessToken,
         song: &models::song::Song,
         cover: &models::song::CoverArt,
         album: &models::song::Album,
@@ -110,9 +109,9 @@ impl Upload {
         let cover = reqwest::multipart::Part::bytes(cover_raw_data).headers(headers_i);
 
         let mut song_filename = String::from("audio");
-        song_filename += constants::file_extensions::WAV_FILE_EXTENSION;
+        song_filename += icarus_models::constants::WAV_EXTENSION;
         let mut cover_filename = String::from("cover");
-        cover_filename += constants::file_extensions::JPG_FILE_EXTENSION;
+        cover_filename += icarus_models::constants::JPG_EXTENSION;
 
         return reqwest::multipart::Form::new()
             .part("cover", cover.file_name(cover_filename))
@@ -128,9 +127,9 @@ impl Upload {
         println!("\n{}\n", song_detail);
 
         let mut song_filename = String::from("audio");
-        song_filename += constants::file_extensions::WAV_FILE_EXTENSION;
+        song_filename += icarus_models::constants::WAV_EXTENSION;
         let mut cover_filename = String::from("cover");
-        cover_filename += constants::file_extensions::JPG_FILE_EXTENSION;
+        cover_filename += icarus_models::constants::JPG_EXTENSION;
 
         let form = reqwest::multipart::Form::new()
             .part(

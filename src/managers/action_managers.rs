@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models;
+use crate::{models, utilities};
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct ActionManager {
@@ -8,6 +8,17 @@ pub struct ActionManager {
     pub flags: Vec<models::flags::Flags>,
     pub params: Vec<String>,
     pub param_count: i32,
+}
+
+impl Default for ActionManager {
+    fn default() -> Self {
+        ActionManager {
+            action: String::new(),
+            flags: Vec::new(),
+            params: Vec::new(),
+            param_count: -1,
+        }
+    }
 }
 
 impl ActionManager {
@@ -45,6 +56,11 @@ impl ActionManager {
         self.action = self.action.to_lowercase();
     }
 
+    pub fn set_params(&mut self, args: &Vec<String>) {
+        self.params = args.clone();
+        self.param_count = self.params.len() as i32;
+    }
+
     fn validate_flags(&mut self) {
         println!("Validating flags");
 
@@ -70,7 +86,7 @@ impl ActionManager {
                 flg.flag = String::from(flag);
             } else {
                 println!("Flag {} is not valid", flag);
-                std::process::exit(-1);
+                utilities::checks::exit_program(-1);
             }
 
             self.flags.push(flg);
@@ -102,7 +118,6 @@ impl ActionManager {
 
     fn does_flag_have_value(&self, flag: &String) -> bool {
         let flags_tmp = self.parsed_flags();
-
         let mut i_found: i32 = -1;
 
         for i in 0..flags_tmp.len() {

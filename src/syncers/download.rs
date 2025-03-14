@@ -23,7 +23,7 @@ pub enum MyError {
 impl Download {
     pub async fn download_song(
         &mut self,
-        token: &models::token::Token,
+        token: &icarus_models::token::AccessToken,
         song: &models::song::Song,
     ) -> Result<String, MyError> {
         self.api.endpoint = String::from("song/data/download");

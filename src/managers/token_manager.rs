@@ -3,14 +3,14 @@ use std::default::Default;
 use crate::models;
 
 pub struct TokenManager {
-    pub user: models::user::User,
+    pub user: icarus_models::user::User,
     pub api: models::api::API,
 }
 
 impl Default for TokenManager {
     fn default() -> Self {
         let mut token = TokenManager {
-            user: models::user::User::default(),
+            user: icarus_models::user::User::default(),
             api: models::api::API::default(),
         };
 
@@ -21,14 +21,21 @@ impl Default for TokenManager {
 }
 
 impl TokenManager {
-    pub async fn request_token(&self) -> Result<models::token::Token, std::io::Error> {
+    pub async fn request_token(&self) -> Result<icarus_models::token::AccessToken, std::io::Error> {
         println!("Sending request for a token");
 
         let url = self.retrieve_url();
 
         println!("URL: {}", url);
 
-        let mut token = models::token::Token::default();
+        let mut token = icarus_models::token::AccessToken {
+            user_id: -1,
+            username: String::new(),
+            token: String::new(),
+            token_type: String::new(),
+            expiration: -1,
+            message: String::new(),
+        };
 
         let client = reqwest::Client::new();
         let response = client.post(&url).json(&self.user).send().await.unwrap();
@@ -36,7 +43,7 @@ impl TokenManager {
         match response.status() {
             reqwest::StatusCode::OK => {
                 // on success, parse our JSON to an APIResponse
-                let s = response.json::<models::token::Token>().await;
+                let s = response.json::<icarus_models::token::AccessToken>().await;
                 match s {
                     //
                     Ok(parsed) => {
@@ -66,7 +73,6 @@ impl TokenManager {
         let api = &self.api;
         let mut url = String::from(&api.url);
         url += &String::from(&api.endpoint);
-        url += &String::from("/");
 
         return url;
     }
