@@ -111,7 +111,7 @@ impl Upload {
         let mut song_filename = String::from("audio");
         song_filename += icarus_models::constants::WAV_EXTENSION;
         let mut cover_filename = String::from("cover");
-        cover_filename += ".jpg";
+        cover_filename += icarus_models::constants::JPG_EXTENSION;
 
         return reqwest::multipart::Form::new()
             .part("cover", cover.file_name(cover_filename))
@@ -129,7 +129,7 @@ impl Upload {
         let mut song_filename = String::from("audio");
         song_filename += icarus_models::constants::WAV_EXTENSION;
         let mut cover_filename = String::from("cover");
-        cover_filename += ".jpg";
+        cover_filename += icarus_models::constants::JPG_EXTENSION;
 
         let form = reqwest::multipart::Form::new()
             .part(
