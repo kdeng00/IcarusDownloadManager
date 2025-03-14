@@ -175,6 +175,7 @@ impl CommitManager {
 
         let api = prsr.retrieve_api();
         let token = self.parse_token(&api);
+        println!("Message: {}", token.message.clone().unwrap());
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
         let mut song = models::song::Song::default();
@@ -248,6 +249,7 @@ impl CommitManager {
         // new_usr.password = usr_mgr.user.password.clone();
 
         println!("Username: {}", usr_mgr.user.username);
+        println!("Other: {}", usr_mgr.user.id);
 
         let usr = usr_mgr.retrieve_user();
         let mut tok_mgr = managers::token_manager::TokenManager {

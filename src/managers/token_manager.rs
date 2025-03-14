@@ -66,7 +66,7 @@ impl TokenManager {
         let api = &self.api;
         let mut url = String::from(&api.url);
         url += &String::from(&api.endpoint);
-        url += &String::from("/");
+        // url += &String::from("/");
 
         return url;
     }
