@@ -10,9 +10,9 @@ use tokio::runtime::Runtime;
 use crate::managers;
 use crate::models::song::Album;
 use crate::models::{self};
+use crate::parsers;
 use crate::syncers;
 use crate::utilities;
-use crate::parsers;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CommitManager {
