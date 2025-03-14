@@ -1,4 +1,3 @@
-mod constants;
 mod help;
 mod managers;
 mod models;
