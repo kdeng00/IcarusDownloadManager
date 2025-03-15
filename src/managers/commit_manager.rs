@@ -193,6 +193,14 @@ impl CommitManager {
             }
             Err(er) => {
                 println!("Error {:?}", er);
+                match er {
+                    syncers::download::MyError::Request(r) => {
+                        println!("Error {:?}", r)
+                    }
+                    syncers::download::MyError::Other(ot) => {
+                        println!("Error {:?}", ot)
+                    }
+                }
             }
         }
     }
