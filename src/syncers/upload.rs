@@ -47,14 +47,21 @@ impl Upload {
     pub async fn upload_song_with_metadata(
         &mut self,
         token: &icarus_models::token::AccessToken,
-        song: &models::song::Song,
+        song: &icarus_models::song::Song,
         cover: &models::song::CoverArt,
         album: &models::song::Album,
     ) -> Result<reqwest::Response, std::io::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
         let url = self.retrieve_url();
         let mut new_song = self.initialize_song(&song, &album);
-        new_song.songpath = song.song_path();
+        match song.song_path() {
+            Ok(p) => {
+        new_song.songpath = p;
+            }
+            Err(er) => {
+                return Err(std::io::Error::new(std::io::ErrorKind::Other, "Error with song path"));
+            }
+        }
         let access_token = token.bearer_token();
 
         if url.is_empty() {
@@ -172,21 +179,22 @@ impl Upload {
         return url;
     }
 
-    fn initialize_song(&self, song: &models::song::Song, album: &models::song::Album) -> Song {
-        let dur = song.duration.clone().unwrap();
+    fn initialize_song(&self, song: &icarus_models::song::Song, album: &models::song::Album) -> Song {
+        let dur = song.duration.clone();
         println!("Duration: {}", dur);
 
         return Song {
-            title: String::from(&song.title.clone().unwrap()),
+            title: String::from(&song.title.clone()),
             album: album.title.clone(),
-            artist: String::from(&song.artist.clone().unwrap().clone()),
+            artist: String::from(&song.artist.clone().clone()),
             album_artist: album.album_artist.clone(),
             year: album.year.clone(),
             genre: album.genre.clone(),
-            duration: f64::round(dur) as i32,
-            track: (song.track.clone().unwrap()),
+            // duration: f64::round(dur) as i32,
+            duration: dur,
+            track: (song.track.clone()),
             track_count: album.track_count.clone(),
-            disc: song.disc.clone().unwrap(),
+            disc: song.disc.clone(),
             disc_count: album.disc_count.clone(),
             songpath: String::new(),
         };

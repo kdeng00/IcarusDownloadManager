@@ -24,7 +24,7 @@ impl Download {
     pub async fn download_song(
         &mut self,
         token: &icarus_models::token::AccessToken,
-        song: &models::song::Song,
+        song: &icarus_models::song::Song,
     ) -> Result<String, MyError> {
         self.api.endpoint = String::from("song/data/download");
         let url = self.retrieve_url(&song);
@@ -67,7 +67,7 @@ impl Download {
         return Err(MyError::Other(String::from("Error downloading")));
     }
 
-    fn retrieve_url(&self, song: &models::song::Song) -> String {
+    fn retrieve_url(&self, song: &icarus_models::song::Song) -> String {
         let api = &self.api;
         let mut url: String = String::from(&api.url);
         url += &String::from("api/");
@@ -75,7 +75,7 @@ impl Download {
         url += &String::from("/");
         url += &String::from(&api.endpoint);
         url += &String::from("/");
-        url += &song.id.unwrap().to_string();
+        url += &song.id.to_string();
 
         return url;
     }

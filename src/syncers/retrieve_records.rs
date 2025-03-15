@@ -19,9 +19,9 @@ impl RetrieveRecords {
     pub async fn get_all_songs(
         &mut self,
         token: &icarus_models::token::AccessToken,
-    ) -> Result<Vec<models::song::Song>, Error> {
+    ) -> Result<Vec<icarus_models::song::Song>, Error> {
         self.api.endpoint = String::from("song");
-        let mut songs: Vec<models::song::Song> = Vec::new();
+        let mut songs: Vec<icarus_models::song::Song> = Vec::new();
         let url = self.retrieve_url();
         let access_token = token.bearer_token();
 
@@ -46,7 +46,7 @@ impl RetrieveRecords {
         match response.status() {
             reqwest::StatusCode::OK => {
                 // on success, parse our JSON to an APIResponse
-                let s = response.json::<Vec<models::song::Song>>().await;
+                let s = response.json::<Vec<icarus_models::song::Song>>().await;
                 match s {
                     //
                     Ok(parsed) => {

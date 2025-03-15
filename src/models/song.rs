@@ -3,6 +3,7 @@ use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
+/*
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Song {
     #[serde(alias = "id")]
@@ -24,6 +25,7 @@ pub struct Song {
     pub data: Option<Vec<u8>>,
     pub directory: Option<String>,
 }
+*/
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Album {
@@ -35,7 +37,7 @@ pub struct Album {
     pub track_count: i32,
     pub disc_count: i32,
     #[serde(alias = "tracks")]
-    pub songs: Vec<Song>,
+    pub songs: Vec<icarus_models::song::Song>,
 }
 
 impl Default for Album {
@@ -52,6 +54,7 @@ impl Default for Album {
     }
 }
 
+/* 
 impl Default for Song {
     fn default() -> Self {
         Song {
@@ -139,6 +142,7 @@ impl Song {
         return serde_json::to_string_pretty(&self);
     }
 }
+*/
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct CoverArt {

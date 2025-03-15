@@ -51,12 +51,12 @@ impl Album {
         println!("Disc Count: {}\n", self.disc_count);
     }
 
-    pub fn retrieve_song(&self, track: i32, disc: i32) -> Result<models::song::Song> {
+    pub fn retrieve_song(&self, track: i32, disc: i32) -> Result<icarus_models::song::Song> {
         let mut found = false;
-        let mut song = models::song::Song::default();
+        let mut song = icarus_models::song::Song::default();
 
         for song_i in &self.songs {
-            if song_i.track.unwrap() == track && song_i.disc.unwrap() == disc {
+            if song_i.track == track && song_i.disc == disc {
                 song = song_i.clone();
                 found = true;
             }
@@ -135,14 +135,14 @@ impl CommitManager {
 
         println!("Deleting song");
 
-        let mut song = models::song::Song::default();
+        let mut song = icarus_models::song::Song::default();
 
         for arg in &self.ica_action.flags {
             let flag = &arg.flag;
             let value = &arg.value;
 
             if flag == "-D" {
-                song.id = Some(value.parse::<i32>().unwrap());
+                song.id = value.parse::<i32>().unwrap();
             }
         }
 
@@ -178,8 +178,8 @@ impl CommitManager {
         println!("Message: {}", token.message);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
-        let mut song = models::song::Song::default();
-        song.id = Some(num);
+        let mut song = icarus_models::song::Song::default();
+        song.id = num;
         let result_fut = dwn_loader.download_song(&token, &song);
         let result = Runtime::new().unwrap().block_on(result_fut);
         match result {
@@ -220,7 +220,7 @@ impl CommitManager {
         match result {
             Ok(o) => {
                 for son in o {
-                    son.print_info();
+                    // son.print_info();
                 }
             }
             Err(er) => {
@@ -315,7 +315,7 @@ impl CommitManager {
         }
 
         let mut cover_art = models::song::CoverArt::default();
-        let mut song = models::song::Song::default();
+        let mut song = icarus_models::song::Song::default();
         let mut filenames = Vec::new();
         let mut fp = String::new();
         let mut dir = String::new();
@@ -337,8 +337,8 @@ impl CommitManager {
                         filenames.push(s.clone());
                         fp = s.clone();
                         dir = song_file.parent().unwrap().display().to_string();
-                        song.filename = Some(s.clone());
-                        song.directory = Some(dir.clone());
+                        song.filename = s.clone();
+                        song.directory = dir.clone();
                         self.initialize_disc_and_track(&mut song);
                     }
                     Err(er) => println!("Error: {:?}", er),
@@ -352,12 +352,12 @@ impl CommitManager {
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
         let mut s = album.retrieve_song(trck, 1).unwrap();
-        s.filename = Some(fp);
-        s.directory = Some(dir);
-        s.genre = Some(album.genre.clone());
-        s.year = Some(album.year.clone());
-        s.album = Some(album.title.clone());
-        s.data = Some(s.to_data().unwrap());
+        s.filename = (fp);
+        s.directory = (dir);
+        s.genre = (album.genre.clone());
+        s.year = (album.year.clone());
+        s.album = (album.title.clone());
+        s.data = (s.to_data().unwrap());
 
         cover_art.data = Some(cover_art.to_data().unwrap());
 
@@ -396,7 +396,7 @@ impl CommitManager {
         }
 
         let mut cover_art = models::song::CoverArt::default();
-        let mut songs: Vec<models::song::Song> = Vec::new();
+        let mut songs: Vec<icarus_models::song::Song> = Vec::new();
         let mut filenames: Vec<String> = Vec::new();
         let mut metadatapath: String = String::new();
 
@@ -425,15 +425,15 @@ impl CommitManager {
                     metadatapath = directory_part + "/" + &fname.unwrap();
                 }
                 En::SongFile => {
-                    let mut song = models::song::Song::default();
+                    let mut song = icarus_models::song::Song::default();
                     let fname = self.o_to_string(&file_name);
 
                     match fname {
                         Ok(s) => {
                             filenames.push(s.clone());
-                            song.filename = Some(s.clone());
-                            song.directory = Some(sourcepath.clone());
-                            song.data = Some(song.to_data().unwrap());
+                            song.filename = (s.clone());
+                            song.directory = (sourcepath.clone());
+                            song.data = (song.to_data().unwrap());
                             self.initialize_disc_and_track(&mut song);
                         }
                         Err(er) => println!("Error: {:?}", er),
@@ -460,10 +460,12 @@ impl CommitManager {
         println!("");
 
         for sng in &mut album.songs {
-            match sng.data {
-                Some(_) => {}
-                None => {
-                    sng.data = Some(sng.to_data().unwrap());
+            match sng.to_data() {
+                Ok(data) => {
+                    sng.data = data;
+                }
+                Err(err) => {
+                    return Err(err);
                 }
             };
         }
@@ -499,43 +501,21 @@ impl CommitManager {
         // Apply directory
         for song in &mut album.songs {
             let dir = &song.directory;
-            match dir {
-                Some(s) => println!("{}", s),
-                None => {
-                    song.directory = Some(directory.clone());
-                }
-            }
+                    song.directory = directory.clone();
         }
 
         // Apply filename
         let mut index = 0;
         for song in &mut album.songs {
             let filename = filenames[index].clone();
-            song.filename = Some(filename);
+            song.filename = filename.clone();
             index += 1;
         }
 
         for song in &mut album.songs {
-            match &mut song.album {
-                Some(_) => {}
-                None => {
-                    song.album = Some(album.title.clone());
-                }
-            }
-
-            match &mut song.genre {
-                Some(_) => {}
-                None => {
-                    song.genre = Some(album.genre.clone());
-                }
-            }
-
-            match &mut song.year {
-                Some(_) => {}
-                None => {
-                    song.year = Some(album.year.clone());
-                }
-            }
+                song.album = album.title.clone();
+                    song.genre = (album.genre.clone());
+                    song.year = (album.year.clone());
         }
     }
 
@@ -591,12 +571,11 @@ impl CommitManager {
     // Standards
     // * track01.cdda.wav - Disc 1, Track 1
     // * track02d02.cdda.wav - Disc 2, Track 2
-    fn initialize_disc_and_track(&mut self, song: &mut models::song::Song) {
+    fn initialize_disc_and_track(&mut self, song: &mut icarus_models::song::Song) {
         let mut disc = 1;
         let mut track = 1;
         let mut mode = 0;
-        let filename =
-            &<std::option::Option<std::string::String> as Clone>::clone(&song.filename).unwrap();
+        let filename = &song.filename;
 
         let trd = filename.contains("trackd");
         let tr = filename.contains("track");
@@ -680,11 +659,11 @@ impl CommitManager {
             _ => println!(""),
         }
 
-        song.disc = Some(disc);
-        song.track = Some(track);
+        song.disc = (disc);
+        song.track = (track);
     }
 
-    fn _parse_disc_and_track(&self, song: &mut models::song::Song, track_id: &String) {
+    fn _parse_disc_and_track(&self, song: &mut icarus_models::song::Song, track_id: &String) {
         let sep = |_a: &char, _b: &char| -> bool {
             return false;
         };
@@ -706,11 +685,11 @@ impl CommitManager {
                 d_str.push(c);
             }
 
-            song.disc = Some(d_str.parse::<i32>().unwrap());
-            song.track = Some(t_str.parse::<i32>().unwrap());
+            song.disc = (d_str.parse::<i32>().unwrap());
+            song.track = (t_str.parse::<i32>().unwrap());
         } else {
             if utilities::checks::Checks::is_numeric(track_id) {
-                song.track = Some(track_id.parse::<i32>().unwrap());
+                song.track = (track_id.parse::<i32>().unwrap());
             }
         }
     }
