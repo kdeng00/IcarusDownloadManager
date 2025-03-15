@@ -56,10 +56,13 @@ impl Upload {
         let mut new_song = self.initialize_song(&song, &album);
         match song.song_path() {
             Ok(p) => {
-        new_song.songpath = p;
+                new_song.songpath = p;
             }
             Err(er) => {
-                return Err(std::io::Error::new(std::io::ErrorKind::Other, "Error with song path"));
+                return Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    "Error with song path",
+                ));
             }
         }
         let access_token = token.bearer_token();
@@ -179,7 +182,11 @@ impl Upload {
         return url;
     }
 
-    fn initialize_song(&self, song: &icarus_models::song::Song, album: &models::song::Album) -> Song {
+    fn initialize_song(
+        &self,
+        song: &icarus_models::song::Song,
+        album: &models::song::Album,
+    ) -> Song {
         let dur = song.duration.clone();
         println!("Duration: {}", dur);
 

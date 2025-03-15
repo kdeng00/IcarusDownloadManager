@@ -501,7 +501,7 @@ impl CommitManager {
         // Apply directory
         for song in &mut album.songs {
             let dir = &song.directory;
-                    song.directory = directory.clone();
+            song.directory = directory.clone();
         }
 
         // Apply filename
@@ -513,9 +513,9 @@ impl CommitManager {
         }
 
         for song in &mut album.songs {
-                song.album = album.title.clone();
-                    song.genre = (album.genre.clone());
-                    song.year = (album.year.clone());
+            song.album = album.title.clone();
+            song.genre = (album.genre.clone());
+            song.year = (album.year.clone());
         }
     }
 
