@@ -3,30 +3,6 @@ use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
-/*
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub struct Song {
-    #[serde(alias = "id")]
-    pub id: Option<i32>,
-    pub title: Option<String>,
-    pub artist: Option<String>,
-    pub album: Option<String>,
-    pub album_artist: Option<String>,
-    pub genre: Option<String>,
-    pub year: Option<i32>,
-    pub duration: Option<f64>,
-    pub track: Option<i32>,
-    pub disc: Option<i32>,
-    pub disc_count: Option<i32>,
-    pub track_count: Option<i32>,
-    pub date_created: Option<String>,
-    pub filename: Option<String>,
-    pub user_id: Option<i32>,
-    pub data: Option<Vec<u8>>,
-    pub directory: Option<String>,
-}
-*/
-
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Album {
     #[serde(alias = "album")]
@@ -55,68 +31,6 @@ impl Default for Album {
 }
 
 /*
-impl Default for Song {
-    fn default() -> Self {
-        Song {
-            id: None,
-            title: None,
-            artist: None,
-            album: None,
-            album_artist: None,
-            genre: None,
-            year: None,
-            duration: None,
-            track: None,
-            disc: None,
-            disc_count: None,
-            track_count: None,
-            date_created: None,
-            filename: None,
-            user_id: None,
-            data: None,
-            directory: None,
-        }
-    }
-}
-
-impl Song {
-    pub fn print_info(&self) {
-        println!("Title: {:?}", self.title);
-        println!("Artist: {:?}", self.artist);
-    }
-
-    pub fn song_path(&self) -> String {
-        let directory =
-            &<std::option::Option<std::string::String> as Clone>::clone(&self.directory).unwrap();
-
-        let mut buffer: String = directory.to_string();
-        let count = buffer.len();
-
-        if buffer.chars().nth(count - 1) != Some('/') {
-            buffer += "/";
-        }
-
-        let filename =
-            &<std::option::Option<std::string::String> as Clone>::clone(&self.filename).unwrap();
-        buffer += filename;
-
-        return buffer;
-    }
-
-    pub fn to_data(&self) -> Result<Vec<u8>, std::io::Error> {
-        let path = self.song_path();
-        println!("Converting song to data");
-        println!("Path: {:?}", path);
-
-        let mut file = std::fs::File::open(path)?;
-        let mut buffer = Vec::new();
-        file.read_to_end(&mut buffer)?;
-        if buffer.len() == 0 {
-            println!("Why is it empty?");
-        }
-
-        Ok(buffer)
-    }
 
     // if 1 - wav, if 0 - mp3, anything else defaults to wav
     pub fn _generate_filename_from_track(&mut self, i_type: i32) -> i32 {
