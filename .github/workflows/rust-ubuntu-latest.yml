@@ -27,7 +27,8 @@ jobs:
         mkdir -p ~/.ssh
         echo "$EXTREPO_KEY" > ~/.ssh/gitlab_deploy_key
         chmod 600 ~/.ssh/gitlab_deploy_key
-        ssh-keyscan gitlab.com >> ~/.ssh/known_hosts
+        ssh-keyscan git.kundeng.us ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLl/OZiKVDxwnyvMxa+rjKvDpKqTxH1GWuGuDPLmENGQMbTVulajZWr9x8Q1cotoJiHZkt7DA5vczcjB/4lwgWA= >> ~/.ssh/known_hosts
+
         eval $(ssh-agent -s)
         ssh-add -v ~/.ssh/gitlab_deploy_key
         cargo build --release
