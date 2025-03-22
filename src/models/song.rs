@@ -3,6 +3,7 @@ use std::io::Read;
 
 use serde::{Deserialize, Serialize};
 
+/*
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Album {
     #[serde(alias = "album")]
@@ -29,6 +30,7 @@ impl Default for Album {
         }
     }
 }
+*/
 
 /*
 

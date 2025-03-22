@@ -8,7 +8,7 @@ use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 
 use crate::managers;
-use crate::models::song::Album;
+// use crate::models::song::Album;
 use crate::models::{self};
 use crate::parsers;
 use crate::syncers;
@@ -41,6 +41,46 @@ enum En {
     Other,
 }
 
+pub fn retrieve_song(
+    album: &icarus_models::album::collection::Album,
+    track: i32,
+    disc: i32,
+) -> Result<icarus_models::song::Song> {
+    let mut found = false;
+    let mut song = icarus_models::song::Song::default();
+
+    for song_i in &album.tracks {
+        if song_i.track == track && song_i.disc == disc {
+            let track = song_i.clone();
+            song.album = album.title.clone();
+            song.album_artist = album.artist.clone();
+            song.artist = track.artist.clone();
+            song.audio_type = String::from(icarus_models::constants::DEFAULTMUSICEXTENSION);
+            song.disc = track.disc.clone();
+            song.disc_count = album.disc_count.clone();
+            song.duration = track.duration as i32;
+            song.genre = album.genre.clone();
+            song.title = track.title.clone();
+            song.year = album.year.clone();
+            song.track = track.track.clone();
+            song.track_count = album.track_count.clone();
+
+            found = true;
+            break;
+        }
+    }
+
+    if found {
+        return Ok(song);
+    }
+
+    return Err(std::io::Error::new(
+        std::io::ErrorKind::NotFound,
+        "Song not found",
+    ));
+}
+
+/*
 impl Album {
     pub fn _print_info(&self) {
         println!("Album: {}", self.title);
@@ -72,6 +112,7 @@ impl Album {
         ));
     }
 }
+    */
 
 impl CommitManager {
     pub fn commit_action(&mut self) {
@@ -359,7 +400,7 @@ impl CommitManager {
 
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
-        let mut s = album.retrieve_song(trck, 1).unwrap();
+        let mut s = retrieve_song(&album, trck, 1).unwrap();
         s.filename = fp;
         s.directory = dir;
         s.genre = album.genre.clone();
@@ -467,7 +508,7 @@ impl CommitManager {
 
         println!("");
 
-        for sng in &mut album.songs {
+        for sng in &mut album.tracks {
             match sng.to_data() {
                 Ok(data) => {
                     sng.data = data;
@@ -478,7 +519,7 @@ impl CommitManager {
             };
         }
 
-        for song in &album.songs {
+        for song in &album.tracks {
             // Upload each song
             println!("Sending song...");
             let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
@@ -502,12 +543,12 @@ impl CommitManager {
     // Makes sure the elements in album.songs is populated
     fn song_parsing(
         &self,
-        album: &mut models::song::Album,
+        album: &mut icarus_models::album::collection::Album,
         directory: &String,
         filenames: &Vec<String>,
     ) {
         // Apply directory
-        for song in &mut album.songs {
+        for song in &mut album.tracks {
             // let dir = &song.directory;
             song.directory = directory.clone();
         }
@@ -711,7 +752,7 @@ impl CommitManager {
         return false;
     }
 
-    fn retrieve_metadata(&self, path: &String) -> Album {
+    fn retrieve_metadata(&self, path: &String) -> icarus_models::album::collection::Album {
         let content = self.retrieve_file_content(&path);
         let val = content.unwrap();
 

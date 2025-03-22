@@ -49,7 +49,7 @@ impl Upload {
         token: &icarus_models::token::AccessToken,
         song: &icarus_models::song::Song,
         cover: &models::song::CoverArt,
-        album: &models::song::Album,
+        album: &icarus_models::album::collection::Album,
     ) -> Result<reqwest::Response, std::io::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
         let url = self.retrieve_url();
@@ -188,7 +188,7 @@ impl Upload {
     fn initialize_song(
         &self,
         song: &icarus_models::song::Song,
-        album: &models::song::Album,
+        album: &icarus_models::album::collection::Album,
     ) -> Song {
         let dur = song.duration.clone();
         println!("Duration: {}", dur);
@@ -197,7 +197,7 @@ impl Upload {
             title: String::from(&song.title.clone()),
             album: album.title.clone(),
             artist: String::from(&song.artist.clone().clone()),
-            album_artist: album.album_artist.clone(),
+            album_artist: album.artist.clone(),
             year: album.year.clone(),
             genre: album.genre.clone(),
             // duration: f64::round(dur) as i32,
