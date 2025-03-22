@@ -229,10 +229,12 @@ impl CommitManager {
         match Runtime::new().unwrap().block_on(result_fut) {
             Ok(o) => {
                 println!("Success");
-                let filename = String::from("audio") + icarus_models::constants::DEFAULTMUSICEXTENSION;
+                let filename =
+                    String::from("audio") + icarus_models::constants::DEFAULTMUSICEXTENSION;
                 let data = o.as_bytes();
                 let mut file = std::fs::File::create(filename).expect("Failed to save");
-                file.write_all(&data).expect("Failed to save downloaded song");
+                file.write_all(&data)
+                    .expect("Failed to save downloaded song");
             }
             Err(er) => {
                 println!("Error {:?}", er);
@@ -365,7 +367,12 @@ impl CommitManager {
             panic!("Error");
         }
 
-        let mut cover_art = models::song::CoverArt::default();
+        let mut cover_art = icarus_models::coverart::CoverArt {
+            id: 0,
+            title: String::new(),
+            path: String::new(),
+            data: Vec::new(),
+        };
         let mut song = icarus_models::song::Song::default();
         let mut filenames = Vec::new();
         let mut fp = String::new();
@@ -398,7 +405,7 @@ impl CommitManager {
             _ => {}
         }
 
-        cover_art.path = Some(cover_path.clone());
+        cover_art.path = cover_path.clone();
 
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
@@ -410,7 +417,7 @@ impl CommitManager {
         // s.album = album.title.clone();
         s.data = s.to_data().unwrap();
 
-        cover_art.data = Some(cover_art.to_data().unwrap());
+        cover_art.data = cover_art.to_data().unwrap();
 
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
@@ -464,7 +471,12 @@ impl CommitManager {
             panic!("Directory does not exist");
         }
 
-        let mut cover_art = models::song::CoverArt::default();
+        let mut cover_art = icarus_models::coverart::CoverArt {
+            id: 0,
+            title: String::new(),
+            path: String::new(),
+            data: Vec::new(),
+        };
         let mut songs: Vec<icarus_models::song::Song> = Vec::new();
         let mut filenames: Vec<String> = Vec::new();
         let mut metadatapath: String = String::new();
@@ -486,7 +498,7 @@ impl CommitManager {
                     let directory_part = sourcepath.clone();
                     let fname = self.o_to_string(&file_name);
                     let fullpath = directory_part + "/" + &fname.unwrap();
-                    cover_art.path = Some(fullpath);
+                    cover_art.path = fullpath;
                 }
                 En::MetadataFile => {
                     let directory_part = sourcepath.clone();
@@ -525,7 +537,7 @@ impl CommitManager {
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
 
-        cover_art.data = Some(cover_art.to_data().unwrap());
+        cover_art.data = cover_art.to_data().unwrap();
 
         println!("");
 

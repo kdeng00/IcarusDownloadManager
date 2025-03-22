@@ -48,7 +48,7 @@ impl Upload {
         &mut self,
         token: &icarus_models::token::AccessToken,
         song: &icarus_models::song::Song,
-        cover: &models::song::CoverArt,
+        cover: &icarus_models::coverart::CoverArt,
         album: &icarus_models::album::collection::Album,
     ) -> Result<reqwest::Response, std::io::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
@@ -132,9 +132,13 @@ impl Upload {
             .part("file", file.file_name(song_filename));
     }
 
-    fn init_form(&self, song: &Song, cover: &models::song::CoverArt) -> reqwest::multipart::Form {
+    fn init_form(
+        &self,
+        song: &Song,
+        cover: &icarus_models::coverart::CoverArt,
+    ) -> reqwest::multipart::Form {
         let songpath = song.songpath.clone();
-        let coverpath = cover.path.clone().unwrap();
+        let coverpath = cover.path.clone();
         let song_detail = song.to_metadata_json().unwrap();
 
         println!("\n{}\n", song_detail);
