@@ -16,7 +16,7 @@ impl Default for Download {
 
 #[derive(Debug)]
 pub enum MyError {
-    _Request(reqwest::Error),
+    Request(reqwest::Error),
     Other(String),
 }
 
@@ -41,12 +41,13 @@ impl Download {
             .get(&url)
             .header(reqwest::header::AUTHORIZATION, &access_token)
             .send()
-            .await
-            .unwrap();
+            .await;
 
-        match response.status() {
+        match response {
+            Ok(rep) => {
+        match rep.status() {
             reqwest::StatusCode::OK => {
-                let data = response.text();
+                let data = rep.text();
                 match data.await {
                     Ok(e) => {
                         return Ok(e);
@@ -61,6 +62,11 @@ impl Download {
             }
             other => {
                 panic!("Uh oh! Something unexpected happened: {:?}", other);
+            }
+        }
+            }
+            Err(er) => {
+                return Err(MyError::Request(er));
             }
         }
 
