@@ -210,7 +210,7 @@ impl CommitManager {
     fn download_song(&self) {
         println!("Deleting song");
         let dwn = self.ica_action.retrieve_flag_value(&String::from("-b"));
-        let num: i32 = dwn.parse::<i32>().unwrap();
+        let id: i32 = dwn.parse::<i32>().unwrap();
 
         let mut prsr = parsers::api_parser::APIParser {
             api: models::api::API::default(),
@@ -224,17 +224,15 @@ impl CommitManager {
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
         let mut song = icarus_models::song::Song::default();
-        song.id = num;
+        song.id = id;
         let result_fut = dwn_loader.download_song(&token, &song);
-        let result = Runtime::new().unwrap().block_on(result_fut);
-        match result {
+        match Runtime::new().unwrap().block_on(result_fut) {
             Ok(o) => {
                 println!("Success");
-                let mut filename = String::from("audio");
-                filename += icarus_models::constants::WAVEXTENSION;
+                let filename = String::from("audio") + icarus_models::constants::DEFAULTMUSICEXTENSION;
                 let data = o.as_bytes();
                 let mut file = std::fs::File::create(filename).expect("Failed to save");
-                file.write_all(&data).expect("ff");
+                file.write_all(&data).expect("Failed to save downloaded song");
             }
             Err(er) => {
                 println!("Error {:?}", er);
