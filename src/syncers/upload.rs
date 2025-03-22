@@ -59,10 +59,13 @@ impl Upload {
                 new_song.songpath = p;
             }
             Err(er) => {
+                /*
                 return Err(std::io::Error::new(
                     std::io::ErrorKind::Other,
                     "Error with song path",
                 ));
+                */
+                return Err(er);
             }
         }
         let access_token = token.bearer_token();

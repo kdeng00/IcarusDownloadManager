@@ -193,6 +193,14 @@ impl CommitManager {
             }
             Err(er) => {
                 println!("Error {:?}", er);
+                match er {
+                    syncers::download::MyError::_Request(error) => {
+                        println!("Error: {:?}", error);
+                    }
+                    syncers::download::MyError::Other(ss) => {
+                        println!("Error: {:?}", ss);
+                    }
+                }
             }
         }
     }
@@ -219,7 +227,7 @@ impl CommitManager {
         let result = Runtime::new().unwrap().block_on(result_fut);
         match result {
             Ok(o) => {
-                for son in o {
+                for _son in o {
                     // son.print_info();
                 }
             }
@@ -352,12 +360,12 @@ impl CommitManager {
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
         let mut s = album.retrieve_song(trck, 1).unwrap();
-        s.filename = (fp);
-        s.directory = (dir);
-        s.genre = (album.genre.clone());
-        s.year = (album.year.clone());
-        s.album = (album.title.clone());
-        s.data = (s.to_data().unwrap());
+        s.filename = fp;
+        s.directory = dir;
+        s.genre = album.genre.clone();
+        s.year = album.year.clone();
+        s.album = album.title.clone();
+        s.data = s.to_data().unwrap();
 
         cover_art.data = Some(cover_art.to_data().unwrap());
 
@@ -431,9 +439,9 @@ impl CommitManager {
                     match fname {
                         Ok(s) => {
                             filenames.push(s.clone());
-                            song.filename = (s.clone());
-                            song.directory = (sourcepath.clone());
-                            song.data = (song.to_data().unwrap());
+                            song.filename = s.clone();
+                            song.directory = sourcepath.clone();
+                            song.data = song.to_data().unwrap();
                             self.initialize_disc_and_track(&mut song);
                         }
                         Err(er) => println!("Error: {:?}", er),
@@ -500,7 +508,7 @@ impl CommitManager {
     ) {
         // Apply directory
         for song in &mut album.songs {
-            let dir = &song.directory;
+            // let dir = &song.directory;
             song.directory = directory.clone();
         }
 
@@ -514,8 +522,8 @@ impl CommitManager {
 
         for song in &mut album.songs {
             song.album = album.title.clone();
-            song.genre = (album.genre.clone());
-            song.year = (album.year.clone());
+            song.genre = album.genre.clone();
+            song.year = album.year.clone();
         }
     }
 
@@ -659,8 +667,8 @@ impl CommitManager {
             _ => println!(""),
         }
 
-        song.disc = (disc);
-        song.track = (track);
+        song.disc = disc;
+        song.track = track;
     }
 
     fn _parse_disc_and_track(&self, song: &mut icarus_models::song::Song, track_id: &String) {
@@ -685,11 +693,11 @@ impl CommitManager {
                 d_str.push(c);
             }
 
-            song.disc = (d_str.parse::<i32>().unwrap());
-            song.track = (t_str.parse::<i32>().unwrap());
+            song.disc = d_str.parse::<i32>().unwrap();
+            song.track = t_str.parse::<i32>().unwrap();
         } else {
             if utilities::checks::Checks::is_numeric(track_id) {
-                song.track = (track_id.parse::<i32>().unwrap());
+                song.track = track_id.parse::<i32>().unwrap();
             }
         }
     }
