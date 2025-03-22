@@ -251,7 +251,7 @@ impl CommitManager {
     }
 
     fn retrieve_object(&self) {
-        println!("Deleting song");
+        println!("Retrieving song");
         let rt = self.ica_action.retrieve_flag_value(&String::from("-rt"));
 
         if rt != "songs" {
@@ -272,8 +272,11 @@ impl CommitManager {
         let result = Runtime::new().unwrap().block_on(result_fut);
         match result {
             Ok(o) => {
-                for _son in o {
-                    // son.print_info();
+                for song in o {
+                    println!("Title: {:?}", song.title);
+                    println!("Artist: {:?}", song.artist);
+                    println!("Album: {:?}", song.album);
+                    println!("Year: {:?}", song.year);
                 }
             }
             Err(er) => {
