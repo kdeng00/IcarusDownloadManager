@@ -119,9 +119,9 @@ impl Upload {
         let cover = reqwest::multipart::Part::bytes(cover_raw_data).headers(headers_i);
 
         let mut song_filename = String::from("audio");
-        song_filename += icarus_models::constants::WAV_EXTENSION;
+        song_filename += icarus_models::constants::WAVEXTENSION;
         let mut cover_filename = String::from("cover");
-        cover_filename += icarus_models::constants::JPG_EXTENSION;
+        cover_filename += icarus_models::constants::JPGEXTENSION;
 
         return reqwest::multipart::Form::new()
             .part("cover", cover.file_name(cover_filename))
@@ -137,9 +137,9 @@ impl Upload {
         println!("\n{}\n", song_detail);
 
         let mut song_filename = String::from("audio");
-        song_filename += icarus_models::constants::WAV_EXTENSION;
+        song_filename += icarus_models::constants::WAVEXTENSION;
         let mut cover_filename = String::from("cover");
-        cover_filename += icarus_models::constants::JPG_EXTENSION;
+        cover_filename += icarus_models::constants::JPGEXTENSION;
 
         let form = reqwest::multipart::Form::new()
             .part(

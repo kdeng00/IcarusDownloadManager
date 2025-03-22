@@ -186,7 +186,7 @@ impl CommitManager {
             Ok(o) => {
                 println!("Success");
                 let mut filename = String::from("audio");
-                filename += icarus_models::constants::WAV_EXTENSION;
+                filename += icarus_models::constants::WAVEXTENSION;
                 let data = o.as_bytes();
                 let mut file = std::fs::File::create(filename).expect("Failed to save");
                 file.write_all(&data).expect("ff");
