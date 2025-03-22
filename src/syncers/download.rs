@@ -44,27 +44,25 @@ impl Download {
             .await;
 
         match response {
-            Ok(rep) => {
-        match rep.status() {
-            reqwest::StatusCode::OK => {
-                let data = rep.text();
-                match data.await {
-                    Ok(e) => {
-                        return Ok(e);
-                    }
-                    Err(er) => {
-                        println!("Error {:?}", er);
+            Ok(rep) => match rep.status() {
+                reqwest::StatusCode::OK => {
+                    let data = rep.text();
+                    match data.await {
+                        Ok(e) => {
+                            return Ok(e);
+                        }
+                        Err(er) => {
+                            println!("Error {:?}", er);
+                        }
                     }
                 }
-            }
-            reqwest::StatusCode::UNAUTHORIZED => {
-                println!("Need to grab a new token");
-            }
-            other => {
-                panic!("Uh oh! Something unexpected happened: {:?}", other);
-            }
-        }
-            }
+                reqwest::StatusCode::UNAUTHORIZED => {
+                    println!("Need to grab a new token");
+                }
+                other => {
+                    panic!("Uh oh! Something unexpected happened: {:?}", other);
+                }
+            },
             Err(er) => {
                 return Err(MyError::Request(er));
             }
