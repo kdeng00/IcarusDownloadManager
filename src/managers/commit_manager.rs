@@ -84,40 +84,6 @@ pub fn retrieve_song(
     ));
 }
 
-/*
-impl Album {
-    pub fn _print_info(&self) {
-        println!("Album: {}", self.title);
-        println!("Album Artist: {}", self.album_artist);
-        println!("Genre: {}", self.genre);
-        println!("Year: {}", self.year);
-        println!("Track Count: {}", self.track_count);
-        println!("Disc Count: {}\n", self.disc_count);
-    }
-
-    pub fn retrieve_song(&self, track: i32, disc: i32) -> Result<icarus_models::song::Song> {
-        let mut found = false;
-        let mut song = icarus_models::song::Song::default();
-
-        for song_i in &self.songs {
-            if song_i.track == track && song_i.disc == disc {
-                song = song_i.clone();
-                found = true;
-            }
-        }
-
-        if found {
-            return Ok(song);
-        }
-
-        return Err(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "Song not found",
-        ));
-    }
-}
-    */
-
 impl CommitManager {
     pub fn commit_action(&mut self) {
         let action = &self.ica_action.action;
@@ -380,33 +346,21 @@ impl CommitManager {
         };
         let mut song = icarus_models::song::Song::default();
         let mut filenames = Vec::new();
-        let mut fp = String::new();
-        let mut dir = String::new();
-
-        let entry = &song_file;
-
-        let file_name = std::ffi::OsString::from(entry.file_name().unwrap());
-
-        println!("file name: {:?}", file_name);
+        let file_name = std::ffi::OsString::from(&song_file.file_name().unwrap());
 
         match self.find_file_extension(&file_name) {
             En::ImageFile => {}
             En::MetadataFile => {}
-            En::SongFile => {
-                let fname = self.o_to_string(&file_name);
-
-                match fname {
-                    Ok(s) => {
-                        filenames.push(s.clone());
-                        fp = s.clone();
-                        dir = song_file.parent().unwrap().display().to_string();
-                        song.filename = s.clone();
-                        song.directory = dir.clone();
-                        self.initialize_disc_and_track(&mut song);
-                    }
-                    Err(er) => println!("Error: {:?}", er),
+            En::SongFile => match self.o_to_string(&file_name) {
+                Ok(s) => {
+                    println!("file name: {:?}", file_name);
+                    filenames.push(s.clone());
+                    song.filename = s.clone();
+                    song.directory = song_file.parent().unwrap().display().to_string();
+                    self.initialize_disc_and_track(&mut song);
                 }
-            }
+                Err(er) => println!("Error: {:?}", er),
+            },
             _ => {}
         }
 
@@ -414,15 +368,10 @@ impl CommitManager {
 
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
-        let mut s = retrieve_song(&album, trck, 1, &&dir, &fp).unwrap();
+        let mut s = retrieve_song(&album, trck, 1, &song.directory, &song.filename).unwrap();
         println!("Directory: {:?}", s.directory);
         println!("Filename: {:?}", s.filename);
         println!("Path: {:?}", s.song_path());
-        // s.filename = fp;
-        // s.directory = dir;
-        // s.genre = album.genre.clone();
-        // s.year = album.year.clone();
-        // s.album = album.title.clone();
         s.data = s.to_data().unwrap();
 
         cover_art.data = cover_art.to_data().unwrap();
