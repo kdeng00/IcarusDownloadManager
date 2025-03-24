@@ -340,9 +340,10 @@ impl CommitManager {
             path: String::new(),
             data: Vec::new(),
         };
-        let mut song = icarus_models::song::Song::default();
         let mut filenames = Vec::new();
         let file_name = std::ffi::OsString::from(&song_file.file_name().unwrap());
+        let mut directory: String = String::new();
+        let mut filename: String = String::new();
 
         match self.find_file_extension(&file_name) {
             En::ImageFile => {}
@@ -351,9 +352,8 @@ impl CommitManager {
                 Ok(s) => {
                     println!("file name: {:?}", file_name);
                     filenames.push(s.clone());
-                    song.filename = s.clone();
-                    song.directory = song_file.parent().unwrap().display().to_string();
-                    self.initialize_disc_and_track(&mut song);
+                    filename = s.clone();
+                    directory = song_file.parent().unwrap().display().to_string();
                 }
                 Err(er) => println!("Error: {:?}", er),
             },
@@ -364,7 +364,7 @@ impl CommitManager {
 
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
-        let mut s = retrieve_song(&album, trck, 1, &song.directory, &song.filename).unwrap();
+        let mut s = retrieve_song(&album, trck, 1, &directory, &filename).unwrap();
         println!("Directory: {:?}", s.directory);
         println!("Filename: {:?}", s.filename);
         println!("Path: {:?}", s.song_path());
@@ -554,11 +554,16 @@ impl CommitManager {
                     index += 1;
                 }
 
-                if extension == "wav" || extension == "flac" {
+                if extension == icarus_models::constants::WAVEXTENSION[1..]
+                    || extension == icarus_models::constants::FLACEXTENSION[1..]
+                {
                     return En::SongFile;
                 } else if extension == "json" {
                     return En::MetadataFile;
-                } else if extension == "jpg" || extension == "jpeg" || extension == "png" {
+                } else if extension == icarus_models::constants::JPGEXTENSION[1..]
+                    || extension == "jpeg"
+                    || extension == "png"
+                {
                     return En::ImageFile;
                 }
             }
@@ -568,132 +573,6 @@ impl CommitManager {
         }
 
         return En::Other;
-    }
-
-    // Standards
-    // * track01.cdda.wav - Disc 1, Track 1
-    // * track02d02.cdda.wav - Disc 2, Track 2
-    fn initialize_disc_and_track(&mut self, song: &mut icarus_models::song::Song) {
-        let mut disc = 1;
-        let mut track = 1;
-        let mut mode = 0;
-        let filename = &song.filename;
-
-        let trd = filename.contains("trackd");
-        let tr = filename.contains("track");
-
-        if tr {
-            mode = 1;
-        }
-
-        if trd {
-            mode = 2;
-        }
-
-        let dl = |a: &char, b: &char| -> bool {
-            return a == b;
-        };
-        let d = utilities::checks::Checks::index_of_item_in_container(&filename, &'d', dl);
-        let k = utilities::checks::Checks::index_of_item_in_container(&filename, &'k', dl);
-        let dot = utilities::checks::Checks::index_of_item_in_container(&filename, &'.', dl);
-        let end = filename.len() as i32;
-
-        match mode {
-            1 => {
-                if k != end && dot != end {
-                    let st = k + 1;
-                    let ed = dot - 1;
-                    let mut t: String = String::new();
-                    let mut index = 0;
-                    for a in filename.chars() {
-                        if index >= st && index <= ed {
-                            t.push(a);
-                        }
-
-                        index += 1;
-                    }
-
-                    if utilities::checks::Checks::is_numeric(&t) {
-                        track = t.parse::<i32>().unwrap();
-                    }
-                    disc = 1
-                }
-            }
-            2 => {
-                if k != end && dot != end && d != end {
-                    let st = k + 1;
-                    let ed = dot - 1;
-                    let mut t: String = String::new();
-                    let mut index = 0;
-                    for a in filename.chars() {
-                        if index <= ed {
-                            t.push(a);
-                        } else if index >= st {
-                            t.push(a);
-                        }
-
-                        index += 1;
-                    }
-
-                    if utilities::checks::Checks::is_numeric(&t) {
-                        track = t.parse::<i32>().unwrap();
-                    }
-
-                    let sst = d + 1;
-                    let eed = dot;
-                    let mut d_s = String::new();
-                    index = 0;
-                    for a in filename.chars() {
-                        if index <= eed {
-                            d_s.push(a);
-                        } else if index >= sst {
-                            d_s.push(a);
-                        }
-
-                        index += 1;
-                    }
-
-                    if utilities::checks::Checks::is_numeric(&d_s) {
-                        track = d_s.parse::<i32>().unwrap();
-                    }
-                }
-            }
-            _ => println!(""),
-        }
-
-        song.disc = disc;
-        song.track = track;
-    }
-
-    fn _parse_disc_and_track(&self, song: &mut icarus_models::song::Song, track_id: &String) {
-        let sep = |_a: &char, _b: &char| -> bool {
-            return false;
-        };
-
-        let index = utilities::checks::Checks::index_of_item_in_container(track_id, &':', sep);
-
-        if index == -1 {
-            let mut d_str: String = String::new();
-            let t_str = String::new();
-
-            for c in track_id.chars().skip(0).take(index as usize) {
-                d_str.push(c);
-            }
-
-            let start = index + 1;
-            let end = track_id.len() - 1;
-
-            for c in track_id.chars().skip(start as usize).take(end as usize) {
-                d_str.push(c);
-            }
-
-            song.disc = d_str.parse::<i32>().unwrap();
-            song.track = t_str.parse::<i32>().unwrap();
-        } else {
-            if utilities::checks::Checks::is_numeric(track_id) {
-                song.track = track_id.parse::<i32>().unwrap();
-            }
-        }
     }
 
     fn _check_for_no_confirm(&self) -> bool {

@@ -110,7 +110,7 @@ impl Upload {
         let cover = reqwest::multipart::Part::bytes(cover_raw_data).headers(headers_i);
 
         let mut song_filename = String::from("audio");
-        song_filename += icarus_models::constants::WAVEXTENSION;
+        song_filename += icarus_models::constants::DEFAULTMUSICEXTENSION;
         let mut cover_filename = String::from("cover");
         cover_filename += icarus_models::constants::JPGEXTENSION;
 

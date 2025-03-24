@@ -4,11 +4,11 @@ use serde::{Deserialize, Serialize};
 pub struct Checks {}
 
 impl Checks {
-    pub fn is_numeric(text: &String) -> bool {
+    pub fn _is_numeric(text: &String) -> bool {
         text.parse::<f64>().is_ok()
     }
 
-    pub fn index_of_item_in_container<F>(container: &String, item: &char, func: F) -> i32
+    pub fn _index_of_item_in_container<F>(container: &String, item: &char, func: F) -> i32
     where
         F: Fn(&char, &char) -> bool,
     {
