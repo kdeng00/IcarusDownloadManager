@@ -406,50 +406,54 @@ impl CommitManager {
         match icarus_models::album::collection::parse_album(metadata_path) {
             Ok(albums) => {
                 let mut songs: Vec<icarus_models::song::Song> = Vec::new();
-                /* 
-                for entry in read_dir(source_directory)? {
-                    match entry {
-                        Ok(dir_entry) => {
-                            match self.find_file_extension(&dir_entry.file_name()) {
-                                En::MetadataFile => {
+                /*
+                                for entry in read_dir(source_directory)? {
+                                    match entry {
+                                        Ok(dir_entry) => {
+                                            match self.find_file_extension(&dir_entry.file_name()) {
+                                                En::MetadataFile => {
+                                                }
+                                                _ => {
+                                                }
+                                            }
+                                        }
+                                        Err(_err) => {
+                                            // Err(err)
+                                        }
+                                    }
                                 }
-                                _ => {
-                                }
-                            }
-                        }
-                        Err(_err) => {
-                            // Err(err)
-                        }
-                    }
-                }
-*/
+                */
                 for track in &albums.tracks {
                     let filename = if track.track < 10 {
-                        "track0".to_owned() + &track.track.to_string() + icarus_models::constants::DEFAULTMUSICEXTENSION
+                        "track0".to_owned()
+                            + &track.track.to_string()
+                            + icarus_models::constants::DEFAULTMUSICEXTENSION
                     } else {
-                        "track".to_owned() + &track.track.to_string() + icarus_models::constants::DEFAULTMUSICEXTENSION
+                        "track".to_owned()
+                            + &track.track.to_string()
+                            + icarus_models::constants::DEFAULTMUSICEXTENSION
                     };
                     // let mut song = icarus_models::song::Song::default();
 
                     songs.push(icarus_models::song::Song {
-                    id: -1,
-                    title: track.title.clone(),
-                    artist: track.artist.clone(),
-                    disc: track.disc.clone(),
-                    track: track.track.clone(),
-                    duration: track.duration.clone() as i32,
-                    year: albums.year.clone(),
-                    album_artist: albums.artist.clone(),
-                    genre: albums.genre.clone(),
-                    disc_count: albums.disc_count.clone(),
-                    track_count: albums.track_count.clone(),
-                    album: albums.title.clone(),
-                    audio_type: String::from("FLAC"),
-                    directory: source_directory.clone(),
-                    filename: filename,
-                    user_id: -1,
-                    data: Vec::new(),
-                    date_created: String::new(),
+                        id: -1,
+                        title: track.title.clone(),
+                        artist: track.artist.clone(),
+                        disc: track.disc.clone(),
+                        track: track.track.clone(),
+                        duration: track.duration.clone() as i32,
+                        year: albums.year.clone(),
+                        album_artist: albums.artist.clone(),
+                        genre: albums.genre.clone(),
+                        disc_count: albums.disc_count.clone(),
+                        track_count: albums.track_count.clone(),
+                        album: albums.title.clone(),
+                        audio_type: String::from("FLAC"),
+                        directory: source_directory.clone(),
+                        filename: filename,
+                        user_id: -1,
+                        data: Vec::new(),
+                        date_created: String::new(),
                     });
                 }
                 Ok(songs)
