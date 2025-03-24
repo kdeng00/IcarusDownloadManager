@@ -4,6 +4,7 @@ use http::HeaderMap;
 use http::HeaderValue;
 use reqwest;
 use reqwest::multipart::Form;
+// use reqwest::Response;
 use serde::{Deserialize, Serialize};
 
 use crate::models;
@@ -50,10 +51,11 @@ impl Upload {
         song: &icarus_models::song::Song,
         cover: &icarus_models::coverart::CoverArt,
         album: &icarus_models::album::collection::Album,
-    ) -> Result<reqwest::Response, std::io::Error> {
+    ) -> Result<reqwest::Response, reqwest::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
         let url = self.retrieve_url();
-        let mut new_song = self.initialize_song(&song, &album);
+        let new_song = self.initialize_song(&song, &album);
+        /*
         match song.song_path() {
             Ok(p) => {
                 new_song.songpath = p;
@@ -68,6 +70,7 @@ impl Upload {
                 return Err(er);
             }
         }
+        */
         let access_token = token.bearer_token();
 
         if url.is_empty() {
@@ -76,6 +79,7 @@ impl Upload {
 
         println!("Url: {}", url);
         println!("Token: {}", access_token);
+        println!("Path: {:?}", new_song.songpath);
 
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
@@ -92,12 +96,23 @@ impl Upload {
             .multipart(form)
             .send()
             .await;
-        let response_text = response.unwrap();
+        // let response_text = response.unwrap();
 
+        match response {
+            Ok(r) => {
+                return Ok(r);
+            }
+            Err(err) => {
+                return Err(err);
+            }
+        }
+
+        /*
         println!("Something was sent");
         println!("{:?}", response_text);
 
         return Ok(response_text);
+        */
     }
 
     fn _initialize_form(
@@ -139,12 +154,13 @@ impl Upload {
     ) -> reqwest::multipart::Form {
         let songpath = song.songpath.clone();
         let coverpath = cover.path.clone();
+        println!("Cover path: {:?}", coverpath);
         let song_detail = song.to_metadata_json().unwrap();
 
         println!("\n{}\n", song_detail);
 
         let mut song_filename = String::from("audio");
-        song_filename += icarus_models::constants::WAVEXTENSION;
+        song_filename += icarus_models::constants::DEFAULTMUSICEXTENSION;
         let mut cover_filename = String::from("cover");
         cover_filename += icarus_models::constants::JPGEXTENSION;
 
@@ -210,7 +226,7 @@ impl Upload {
             track_count: album.track_count.clone(),
             disc: song.disc.clone(),
             disc_count: album.disc_count.clone(),
-            songpath: String::new(),
+            songpath: song.directory.clone() + "/" + &song.filename.clone(),
         };
     }
 }

@@ -363,6 +363,8 @@ impl CommitManager {
         let api = prsr.retrieve_api();
         let token = self.parse_token(&api);
 
+        println!("Token: {:?}", token.token);
+
         let song_file = std::path::Path::new(&songpath);
 
         if !song_file.exists() {
@@ -412,7 +414,10 @@ impl CommitManager {
 
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
-        let mut s = retrieve_song(&album, trck, 1, &fp, &dir).unwrap();
+        let mut s = retrieve_song(&album, trck, 1, &&dir, &fp).unwrap();
+        println!("Directory: {:?}", s.directory);
+        println!("Filename: {:?}", s.filename);
+        println!("Path: {:?}", s.song_path());
         // s.filename = fp;
         // s.directory = dir;
         // s.genre = album.genre.clone();
@@ -432,13 +437,16 @@ impl CommitManager {
         match &tken {
             Ok(o) => {
                 println!("Successfully sent {:?}", o);
+                Ok(())
             }
             Err(er) => {
                 println!("Some error {:?}", er);
+                Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    er.to_string(),
+                ))
             }
         }
-
-        Ok(())
     }
 
     fn get_songs(
@@ -447,8 +455,8 @@ impl CommitManager {
         source_directory: &String,
     ) -> Result<Vec<icarus_models::song::Song>> {
         match icarus_models::album::collection::parse_album(metadata_path) {
-            Ok(albums) => {
-                for entry in read_dir(source_directory)? {}
+            Ok(_albums) => {
+                for _entry in read_dir(source_directory)? {}
 
                 Ok(Vec::new())
             }
