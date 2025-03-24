@@ -404,10 +404,55 @@ impl CommitManager {
         source_directory: &String,
     ) -> Result<Vec<icarus_models::song::Song>> {
         match icarus_models::album::collection::parse_album(metadata_path) {
-            Ok(_albums) => {
-                for _entry in read_dir(source_directory)? {}
+            Ok(albums) => {
+                let mut songs: Vec<icarus_models::song::Song> = Vec::new();
+                /* 
+                for entry in read_dir(source_directory)? {
+                    match entry {
+                        Ok(dir_entry) => {
+                            match self.find_file_extension(&dir_entry.file_name()) {
+                                En::MetadataFile => {
+                                }
+                                _ => {
+                                }
+                            }
+                        }
+                        Err(_err) => {
+                            // Err(err)
+                        }
+                    }
+                }
+*/
+                for track in &albums.tracks {
+                    let filename = if track.track < 10 {
+                        "track0".to_owned() + &track.track.to_string() + icarus_models::constants::DEFAULTMUSICEXTENSION
+                    } else {
+                        "track".to_owned() + &track.track.to_string() + icarus_models::constants::DEFAULTMUSICEXTENSION
+                    };
+                    // let mut song = icarus_models::song::Song::default();
 
-                Ok(Vec::new())
+                    songs.push(icarus_models::song::Song {
+                    id: -1,
+                    title: track.title.clone(),
+                    artist: track.artist.clone(),
+                    disc: track.disc.clone(),
+                    track: track.track.clone(),
+                    duration: track.duration.clone() as i32,
+                    year: albums.year.clone(),
+                    album_artist: albums.artist.clone(),
+                    genre: albums.genre.clone(),
+                    disc_count: albums.disc_count.clone(),
+                    track_count: albums.track_count.clone(),
+                    album: albums.title.clone(),
+                    audio_type: String::from("FLAC"),
+                    directory: source_directory.clone(),
+                    filename: filename,
+                    user_id: -1,
+                    data: Vec::new(),
+                    date_created: String::new(),
+                    });
+                }
+                Ok(songs)
             }
             Err(_) => {
                 // Err()
@@ -437,7 +482,7 @@ impl CommitManager {
             path: String::new(),
             data: Vec::new(),
         };
-        let mut songs: Vec<icarus_models::song::Song> = Vec::new();
+        // let mut songs: Vec<icarus_models::song::Song> = Vec::new();
         let mut filenames: Vec<String> = Vec::new();
         let mut metadatapath: String = String::new();
 
@@ -465,6 +510,7 @@ impl CommitManager {
                     let fname = self.o_to_string(&file_name);
                     metadatapath = directory_part + "/" + &fname.unwrap();
                 }
+                /*
                 En::SongFile => {
                     let mut song = icarus_models::song::Song::default();
                     let fname = self.o_to_string(&file_name);
@@ -482,13 +528,13 @@ impl CommitManager {
                         Err(er) => println!("Error: {:?}", er),
                     }
                 }
+                */
                 _ => {}
             }
         }
 
         filenames.sort();
         let songs = self.get_songs(&metadatapath, &sourcepath);
-
         let album = self.retrieve_metadata(&metadatapath);
 
         // self.song_parsing(&mut album, &sourcepath, &filenames);
@@ -504,6 +550,8 @@ impl CommitManager {
         match songs {
             Ok(sngs) => {
                 for song in sngs {
+                    println!("Title: {:?}", song.title);
+                    println!("Path: {:?}", song.song_path());
                     let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
                     // let tken =
                     match Runtime::new().unwrap().block_on(res) {
