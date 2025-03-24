@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 
 use crate::managers;
-// use crate::models::song::Album;
 use crate::models::{self};
 use crate::parsers;
 use crate::syncers;
@@ -27,10 +26,6 @@ enum ActionValues {
     UploadAct,
     UploadSongWithMetadata,
     None,
-}
-
-enum _RetrieveTypes {
-    Songs,
 }
 
 #[derive(Clone, Debug)]
@@ -121,15 +116,17 @@ impl CommitManager {
     }
 
     fn map_actions(&self) -> HashMap<String, ActionValues> {
-        let mut actions: HashMap<String, ActionValues> = HashMap::new();
-        actions.insert("download".to_string(), ActionValues::DownloadAct);
-        actions.insert("upload".to_string(), ActionValues::UploadAct);
-        actions.insert(
-            "upload-meta".to_string(),
-            ActionValues::UploadSongWithMetadata,
-        );
-        actions.insert("retrieve".to_string(), ActionValues::RetrieveAct);
-        actions.insert("delete".to_string(), ActionValues::DeleteAct);
+        let actions: HashMap<String, ActionValues> = HashMap::from([
+            ("download".to_string(), ActionValues::DownloadAct),
+            ("download".to_string(), ActionValues::DownloadAct),
+            ("upload".to_string(), ActionValues::UploadAct),
+            (
+                "upload-meta".to_string(),
+                ActionValues::UploadSongWithMetadata,
+            ),
+            ("retrieve".to_string(), ActionValues::RetrieveAct),
+            ("delete".to_string(), ActionValues::DeleteAct),
+        ]);
 
         return actions;
     }
@@ -235,8 +232,7 @@ impl CommitManager {
         let mut repo = syncers::retrieve_records::RetrieveRecords { api: api.clone() };
         let result_fut = repo.get_all_songs(&token);
 
-        let result = Runtime::new().unwrap().block_on(result_fut);
-        match result {
+        match Runtime::new().unwrap().block_on(result_fut) {
             Ok(o) => {
                 for song in o {
                     println!("Title: {:?}", song.title);
@@ -351,7 +347,7 @@ impl CommitManager {
         match self.find_file_extension(&file_name) {
             En::ImageFile => {}
             En::MetadataFile => {}
-            En::SongFile => match self.o_to_string(&file_name) {
+            En::SongFile => match utilities::string::o_to_string(&file_name) {
                 Ok(s) => {
                     println!("file name: {:?}", file_name);
                     filenames.push(s.clone());
@@ -406,23 +402,7 @@ impl CommitManager {
         match icarus_models::album::collection::parse_album(metadata_path) {
             Ok(albums) => {
                 let mut songs: Vec<icarus_models::song::Song> = Vec::new();
-                /*
-                                for entry in read_dir(source_directory)? {
-                                    match entry {
-                                        Ok(dir_entry) => {
-                                            match self.find_file_extension(&dir_entry.file_name()) {
-                                                En::MetadataFile => {
-                                                }
-                                                _ => {
-                                                }
-                                            }
-                                        }
-                                        Err(_err) => {
-                                            // Err(err)
-                                        }
-                                    }
-                                }
-                */
+
                 for track in &albums.tracks {
                     let filename = if track.track < 10 {
                         "track0".to_owned()
@@ -433,7 +413,6 @@ impl CommitManager {
                             + &track.track.to_string()
                             + icarus_models::constants::DEFAULTMUSICEXTENSION
                     };
-                    // let mut song = icarus_models::song::Song::default();
 
                     songs.push(icarus_models::song::Song {
                         id: -1,
@@ -458,10 +437,7 @@ impl CommitManager {
                 }
                 Ok(songs)
             }
-            Err(_) => {
-                // Err()
-                Ok(Vec::new())
-            }
+            Err(_) => Ok(Vec::new()),
         }
     }
 
@@ -486,7 +462,6 @@ impl CommitManager {
             path: String::new(),
             data: Vec::new(),
         };
-        // let mut songs: Vec<icarus_models::song::Song> = Vec::new();
         let mut filenames: Vec<String> = Vec::new();
         let mut metadatapath: String = String::new();
 
@@ -505,34 +480,15 @@ impl CommitManager {
             match self.find_file_extension(&file_name) {
                 En::ImageFile => {
                     let directory_part = sourcepath.clone();
-                    let fname = self.o_to_string(&file_name);
+                    let fname = utilities::string::o_to_string(&file_name);
                     let fullpath = directory_part + "/" + &fname.unwrap();
                     cover_art.path = fullpath;
                 }
                 En::MetadataFile => {
                     let directory_part = sourcepath.clone();
-                    let fname = self.o_to_string(&file_name);
+                    let fname = utilities::string::o_to_string(&file_name);
                     metadatapath = directory_part + "/" + &fname.unwrap();
                 }
-                /*
-                En::SongFile => {
-                    let mut song = icarus_models::song::Song::default();
-                    let fname = self.o_to_string(&file_name);
-
-                    match fname {
-                        Ok(s) => {
-                            filenames.push(s.clone());
-                            song.filename = s.clone();
-                            song.directory = sourcepath.clone();
-                            song.data = song.to_data().unwrap();
-                            self.initialize_disc_and_track(&mut song);
-
-                            songs.push(song);
-                        }
-                        Err(er) => println!("Error: {:?}", er),
-                    }
-                }
-                */
                 _ => {}
             }
         }
@@ -540,8 +496,6 @@ impl CommitManager {
         filenames.sort();
         let songs = self.get_songs(&metadatapath, &sourcepath);
         let album = self.retrieve_metadata(&metadatapath);
-
-        // self.song_parsing(&mut album, &sourcepath, &filenames);
 
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
@@ -557,7 +511,6 @@ impl CommitManager {
                     println!("Title: {:?}", song.title);
                     println!("Path: {:?}", song.song_path());
                     let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
-                    // let tken =
                     match Runtime::new().unwrap().block_on(res) {
                         Ok(o) => {
                             println!("Response: {:?}", o);
@@ -573,77 +526,8 @@ impl CommitManager {
             }
         }
 
-        /*
-        for track in &mut album.tracks {
-            match sng.to_data() {
-                Ok(data) => {
-                    sng.data = data;
-                }
-                Err(err) => {
-                    return Err(err);
-                }
-            };
-        }
-
-        for track in &album.tracks {
-            // Upload each song
-            println!("Sending song...");
-            // let song =
-            match retrieve_song(&album, track.track, 1, &sourcepath, filename) {
-                Ok(song) => {
-                    let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
-                    let tken = Runtime::new().unwrap().block_on(res);
-
-                    match &tken {
-                        Ok(o) => {
-                            println!("Successfully sent {:?}", o);
-                        }
-                        Err(er) => {
-                            println!("Some error {:?}", er);
-                        }
-                    }
-
-                    println!("");
-                }
-                Err(err) => {
-                    println!("Error: {:?}", err);
-                }
-            }
-        }
-        */
-
         Ok(())
     }
-
-    // Makes sure the elements in album.songs is populated
-    /*
-    fn song_parsing(
-        &self,
-        album: &mut icarus_models::album::collection::Album,
-        directory: &String,
-        filenames: &Vec<String>,
-    ) {
-        // Apply directory
-        for song in &mut album.tracks {
-            // let dir = &song.directory;
-            song.directory = directory.clone();
-        }
-
-        // Apply filename
-        let mut index = 0;
-        for song in &mut album.tracks {
-            let filename = filenames[index].clone();
-            song.filename = filename.clone();
-            index += 1;
-        }
-
-        for song in &mut album.tracks {
-            song.album = album.title.clone();
-            song.genre = album.genre.clone();
-            song.year = album.year.clone();
-        }
-    }
-    */
 
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
         let file_name_str = Some(file_name.clone().into_string());
@@ -684,14 +568,6 @@ impl CommitManager {
         }
 
         return En::Other;
-    }
-
-    fn o_to_string(&self, val: &std::ffi::OsString) -> Result<std::string::String> {
-        let res = val.clone().into_string();
-        return match res {
-            Ok(sss) => Ok(sss),
-            Err(_) => Ok(String::from("Error")),
-        };
     }
 
     // Standards
