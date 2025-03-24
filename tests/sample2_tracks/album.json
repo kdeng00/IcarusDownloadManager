@@ -1,0 +1,31 @@
+{
+  "album": "Sample Tracks 2",
+  "album_artist": "KD",
+  "genre": "Country",
+  "year": 2025,
+  "track_count": 3,
+  "disc_count": 1,
+  "tracks": [
+    {
+      "title": "Uh huh",
+      "artist": "KD",
+      "disc": 1,
+      "track": 1,
+      "duration": 32
+    },
+    {
+      "title": "Bold and brash",
+      "artist": "KD",
+      "disc": 1,
+      "track": 2,
+      "duration": 37
+    },
+    {
+      "title": "How does this work?",
+      "artist": "KD",
+      "disc": 1,
+      "track": 3,
+      "duration": 46
+    }
+  ]
+}

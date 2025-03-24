@@ -21,8 +21,8 @@ impl Delete {
     pub async fn delete_song(
         &mut self,
         token: &icarus_models::token::AccessToken,
-        song: &models::song::Song,
-    ) -> Result<models::song::Song, std::io::Error> {
+        song: &icarus_models::song::Song,
+    ) -> Result<icarus_models::song::Song, std::io::Error> {
         self.api.endpoint = "song/data/delete".to_owned();
         let url = self.retrieve_url(&song);
         let client = reqwest::Client::builder().build().unwrap();
@@ -33,12 +33,12 @@ impl Delete {
             .send()
             .await
             .unwrap();
-        let mut sng = models::song::Song::default();
+        let mut sng = icarus_models::song::Song::default();
 
         match response.status() {
             reqwest::StatusCode::OK => {
                 println!("Success!");
-                let s = response.json::<models::song::Song>().await;
+                let s = response.json::<icarus_models::song::Song>().await;
                 match s {
                     //
                     Ok(parsed) => {
@@ -57,7 +57,7 @@ impl Delete {
         return Ok(sng);
     }
 
-    fn retrieve_url(&self, song: &models::song::Song) -> String {
+    fn retrieve_url(&self, song: &icarus_models::song::Song) -> String {
         let api = &self.api;
         let mut url: String = String::from(&api.url);
         url += &String::from("api/");
@@ -65,7 +65,7 @@ impl Delete {
         url += &String::from("/");
         url += &String::from(&api.endpoint);
         url += &String::from("/");
-        url += &song.id.unwrap().to_string();
+        url += &song.id.to_string();
 
         return url;
     }

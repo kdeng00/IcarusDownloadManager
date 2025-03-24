@@ -8,7 +8,6 @@ use serde::{Deserialize, Serialize};
 use tokio::runtime::Runtime;
 
 use crate::managers;
-use crate::models::song::Album;
 use crate::models::{self};
 use crate::parsers;
 use crate::syncers;
@@ -29,10 +28,6 @@ enum ActionValues {
     None,
 }
 
-enum _RetrieveTypes {
-    Songs,
-}
-
 #[derive(Clone, Debug)]
 enum En {
     ImageFile,
@@ -41,36 +36,47 @@ enum En {
     Other,
 }
 
-impl Album {
-    pub fn _print_info(&self) {
-        println!("Album: {}", self.title);
-        println!("Album Artist: {}", self.album_artist);
-        println!("Genre: {}", self.genre);
-        println!("Year: {}", self.year);
-        println!("Track Count: {}", self.track_count);
-        println!("Disc Count: {}\n", self.disc_count);
+pub fn retrieve_song(
+    album: &icarus_models::album::collection::Album,
+    track: i32,
+    disc: i32,
+    directory: &String,
+    filename: &String,
+) -> Result<icarus_models::song::Song> {
+    let mut found = false;
+    let mut song = icarus_models::song::Song::default();
+
+    for song_i in &album.tracks {
+        if song_i.track == track && song_i.disc == disc {
+            let track = song_i.clone();
+            song.album = album.title.clone();
+            song.album_artist = album.artist.clone();
+            song.artist = track.artist.clone();
+            song.audio_type = String::from(icarus_models::constants::DEFAULTMUSICEXTENSION);
+            song.disc = track.disc.clone();
+            song.disc_count = album.disc_count.clone();
+            song.duration = track.duration as i32;
+            song.genre = album.genre.clone();
+            song.title = track.title.clone();
+            song.year = album.year.clone();
+            song.track = track.track.clone();
+            song.track_count = album.track_count.clone();
+            song.directory = directory.clone();
+            song.filename = filename.clone();
+
+            found = true;
+            break;
+        }
     }
 
-    pub fn retrieve_song(&self, track: i32, disc: i32) -> Result<models::song::Song> {
-        let mut found = false;
-        let mut song = models::song::Song::default();
-
-        for song_i in &self.songs {
-            if song_i.track.unwrap() == track && song_i.disc.unwrap() == disc {
-                song = song_i.clone();
-                found = true;
-            }
-        }
-
-        if found {
-            return Ok(song);
-        }
-
-        return Err(std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "Song not found",
-        ));
+    if found {
+        return Ok(song);
     }
+
+    return Err(std::io::Error::new(
+        std::io::ErrorKind::NotFound,
+        "Song not found",
+    ));
 }
 
 impl CommitManager {
@@ -110,15 +116,17 @@ impl CommitManager {
     }
 
     fn map_actions(&self) -> HashMap<String, ActionValues> {
-        let mut actions: HashMap<String, ActionValues> = HashMap::new();
-        actions.insert("download".to_string(), ActionValues::DownloadAct);
-        actions.insert("upload".to_string(), ActionValues::UploadAct);
-        actions.insert(
-            "upload-meta".to_string(),
-            ActionValues::UploadSongWithMetadata,
-        );
-        actions.insert("retrieve".to_string(), ActionValues::RetrieveAct);
-        actions.insert("delete".to_string(), ActionValues::DeleteAct);
+        let actions: HashMap<String, ActionValues> = HashMap::from([
+            ("download".to_string(), ActionValues::DownloadAct),
+            ("download".to_string(), ActionValues::DownloadAct),
+            ("upload".to_string(), ActionValues::UploadAct),
+            (
+                "upload-meta".to_string(),
+                ActionValues::UploadSongWithMetadata,
+            ),
+            ("retrieve".to_string(), ActionValues::RetrieveAct),
+            ("delete".to_string(), ActionValues::DeleteAct),
+        ]);
 
         return actions;
     }
@@ -135,14 +143,14 @@ impl CommitManager {
 
         println!("Deleting song");
 
-        let mut song = models::song::Song::default();
+        let mut song = icarus_models::song::Song::default();
 
         for arg in &self.ica_action.flags {
             let flag = &arg.flag;
             let value = &arg.value;
 
             if flag == "-D" {
-                song.id = Some(value.parse::<i32>().unwrap());
+                song.id = value.parse::<i32>().unwrap();
             }
         }
 
@@ -165,7 +173,7 @@ impl CommitManager {
     fn download_song(&self) {
         println!("Deleting song");
         let dwn = self.ica_action.retrieve_flag_value(&String::from("-b"));
-        let num: i32 = dwn.parse::<i32>().unwrap();
+        let id: i32 = dwn.parse::<i32>().unwrap();
 
         let mut prsr = parsers::api_parser::APIParser {
             api: models::api::API::default(),
@@ -178,27 +186,27 @@ impl CommitManager {
         println!("Message: {}", token.message);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
-        let mut song = models::song::Song::default();
-        song.id = Some(num);
+        let mut song = icarus_models::song::Song::default();
+        song.id = id;
         let result_fut = dwn_loader.download_song(&token, &song);
-        let result = Runtime::new().unwrap().block_on(result_fut);
-        match result {
+        match Runtime::new().unwrap().block_on(result_fut) {
             Ok(o) => {
                 println!("Success");
-                let mut filename = String::from("audio");
-                filename += icarus_models::constants::WAV_EXTENSION;
+                let filename =
+                    String::from("audio") + icarus_models::constants::DEFAULTMUSICEXTENSION;
                 let data = o.as_bytes();
                 let mut file = std::fs::File::create(filename).expect("Failed to save");
-                file.write_all(&data).expect("ff");
+                file.write_all(&data)
+                    .expect("Failed to save downloaded song");
             }
             Err(er) => {
                 println!("Error {:?}", er);
                 match er {
-                    syncers::download::MyError::Request(r) => {
-                        println!("Error {:?}", r)
+                    syncers::download::MyError::Request(error) => {
+                        println!("Error: {:?}", error);
                     }
-                    syncers::download::MyError::Other(ot) => {
-                        println!("Error {:?}", ot)
+                    syncers::download::MyError::Other(ss) => {
+                        println!("Error: {:?}", ss);
                     }
                 }
             }
@@ -206,7 +214,7 @@ impl CommitManager {
     }
 
     fn retrieve_object(&self) {
-        println!("Deleting song");
+        println!("Retrieving song");
         let rt = self.ica_action.retrieve_flag_value(&String::from("-rt"));
 
         if rt != "songs" {
@@ -224,11 +232,13 @@ impl CommitManager {
         let mut repo = syncers::retrieve_records::RetrieveRecords { api: api.clone() };
         let result_fut = repo.get_all_songs(&token);
 
-        let result = Runtime::new().unwrap().block_on(result_fut);
-        match result {
+        match Runtime::new().unwrap().block_on(result_fut) {
             Ok(o) => {
-                for son in o {
-                    son.print_info();
+                for song in o {
+                    println!("Title: {:?}", song.title);
+                    println!("Artist: {:?}", song.artist);
+                    println!("Album: {:?}", song.album);
+                    println!("Year: {:?}", song.year);
                 }
             }
             Err(er) => {
@@ -315,6 +325,8 @@ impl CommitManager {
         let api = prsr.retrieve_api();
         let token = self.parse_token(&api);
 
+        println!("Token: {:?}", token.token);
+
         let song_file = std::path::Path::new(&songpath);
 
         if !song_file.exists() {
@@ -322,52 +334,43 @@ impl CommitManager {
             panic!("Error");
         }
 
-        let mut cover_art = models::song::CoverArt::default();
-        let mut song = models::song::Song::default();
+        let mut cover_art = icarus_models::coverart::CoverArt {
+            id: 0,
+            title: String::new(),
+            path: String::new(),
+            data: Vec::new(),
+        };
+        let mut song = icarus_models::song::Song::default();
         let mut filenames = Vec::new();
-        let mut fp = String::new();
-        let mut dir = String::new();
-
-        let entry = &song_file;
-
-        let file_name = std::ffi::OsString::from(entry.file_name().unwrap());
-
-        println!("file name: {:?}", file_name);
+        let file_name = std::ffi::OsString::from(&song_file.file_name().unwrap());
 
         match self.find_file_extension(&file_name) {
             En::ImageFile => {}
             En::MetadataFile => {}
-            En::SongFile => {
-                let fname = self.o_to_string(&file_name);
-
-                match fname {
-                    Ok(s) => {
-                        filenames.push(s.clone());
-                        fp = s.clone();
-                        dir = song_file.parent().unwrap().display().to_string();
-                        song.filename = Some(s.clone());
-                        song.directory = Some(dir.clone());
-                        self.initialize_disc_and_track(&mut song);
-                    }
-                    Err(er) => println!("Error: {:?}", er),
+            En::SongFile => match utilities::string::o_to_string(&file_name) {
+                Ok(s) => {
+                    println!("file name: {:?}", file_name);
+                    filenames.push(s.clone());
+                    song.filename = s.clone();
+                    song.directory = song_file.parent().unwrap().display().to_string();
+                    self.initialize_disc_and_track(&mut song);
                 }
-            }
+                Err(er) => println!("Error: {:?}", er),
+            },
             _ => {}
         }
 
-        cover_art.path = Some(cover_path.clone());
+        cover_art.path = cover_path.clone();
 
         let album = self.retrieve_metadata(&meta_path);
         let trck = i32::from_str(track_id).unwrap();
-        let mut s = album.retrieve_song(trck, 1).unwrap();
-        s.filename = Some(fp);
-        s.directory = Some(dir);
-        s.genre = Some(album.genre.clone());
-        s.year = Some(album.year.clone());
-        s.album = Some(album.title.clone());
-        s.data = Some(s.to_data().unwrap());
+        let mut s = retrieve_song(&album, trck, 1, &song.directory, &song.filename).unwrap();
+        println!("Directory: {:?}", s.directory);
+        println!("Filename: {:?}", s.filename);
+        println!("Path: {:?}", s.song_path());
+        s.data = s.to_data().unwrap();
 
-        cover_art.data = Some(cover_art.to_data().unwrap());
+        cover_art.data = cover_art.to_data().unwrap();
 
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
@@ -379,13 +382,63 @@ impl CommitManager {
         match &tken {
             Ok(o) => {
                 println!("Successfully sent {:?}", o);
+                Ok(())
             }
             Err(er) => {
                 println!("Some error {:?}", er);
+                Err(std::io::Error::new(
+                    std::io::ErrorKind::Other,
+                    er.to_string(),
+                ))
             }
         }
+    }
 
-        Ok(())
+    fn get_songs(
+        &self,
+        metadata_path: &String,
+        source_directory: &String,
+    ) -> Result<Vec<icarus_models::song::Song>> {
+        match icarus_models::album::collection::parse_album(metadata_path) {
+            Ok(albums) => {
+                let mut songs: Vec<icarus_models::song::Song> = Vec::new();
+
+                for track in &albums.tracks {
+                    let filename = if track.track < 10 {
+                        "track0".to_owned()
+                            + &track.track.to_string()
+                            + icarus_models::constants::DEFAULTMUSICEXTENSION
+                    } else {
+                        "track".to_owned()
+                            + &track.track.to_string()
+                            + icarus_models::constants::DEFAULTMUSICEXTENSION
+                    };
+
+                    songs.push(icarus_models::song::Song {
+                        id: -1,
+                        title: track.title.clone(),
+                        artist: track.artist.clone(),
+                        disc: track.disc.clone(),
+                        track: track.track.clone(),
+                        duration: track.duration.clone() as i32,
+                        year: albums.year.clone(),
+                        album_artist: albums.artist.clone(),
+                        genre: albums.genre.clone(),
+                        disc_count: albums.disc_count.clone(),
+                        track_count: albums.track_count.clone(),
+                        album: albums.title.clone(),
+                        audio_type: String::from("FLAC"),
+                        directory: source_directory.clone(),
+                        filename: filename,
+                        user_id: -1,
+                        data: Vec::new(),
+                        date_created: String::new(),
+                    });
+                }
+                Ok(songs)
+            }
+            Err(_) => Ok(Vec::new()),
+        }
     }
 
     fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
@@ -403,8 +456,12 @@ impl CommitManager {
             panic!("Directory does not exist");
         }
 
-        let mut cover_art = models::song::CoverArt::default();
-        let mut songs: Vec<models::song::Song> = Vec::new();
+        let mut cover_art = icarus_models::coverart::CoverArt {
+            id: 0,
+            title: String::new(),
+            path: String::new(),
+            data: Vec::new(),
+        };
         let mut filenames: Vec<String> = Vec::new();
         let mut metadatapath: String = String::new();
 
@@ -423,128 +480,53 @@ impl CommitManager {
             match self.find_file_extension(&file_name) {
                 En::ImageFile => {
                     let directory_part = sourcepath.clone();
-                    let fname = self.o_to_string(&file_name);
+                    let fname = utilities::string::o_to_string(&file_name);
                     let fullpath = directory_part + "/" + &fname.unwrap();
-                    cover_art.path = Some(fullpath);
+                    cover_art.path = fullpath;
                 }
                 En::MetadataFile => {
                     let directory_part = sourcepath.clone();
-                    let fname = self.o_to_string(&file_name);
+                    let fname = utilities::string::o_to_string(&file_name);
                     metadatapath = directory_part + "/" + &fname.unwrap();
-                }
-                En::SongFile => {
-                    let mut song = models::song::Song::default();
-                    let fname = self.o_to_string(&file_name);
-
-                    match fname {
-                        Ok(s) => {
-                            filenames.push(s.clone());
-                            song.filename = Some(s.clone());
-                            song.directory = Some(sourcepath.clone());
-                            song.data = Some(song.to_data().unwrap());
-                            self.initialize_disc_and_track(&mut song);
-                        }
-                        Err(er) => println!("Error: {:?}", er),
-                    }
-
-                    songs.push(song)
                 }
                 _ => {}
             }
         }
 
         filenames.sort();
-
-        let mut album = self.retrieve_metadata(&metadatapath);
-
-        self.song_parsing(&mut album, &sourcepath, &filenames);
+        let songs = self.get_songs(&metadatapath, &sourcepath);
+        let album = self.retrieve_metadata(&metadatapath);
 
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
 
-        cover_art.data = Some(cover_art.to_data().unwrap());
+        cover_art.data = cover_art.to_data().unwrap();
 
         println!("");
 
-        for sng in &mut album.songs {
-            match sng.data {
-                Some(_) => {}
-                None => {
-                    sng.data = Some(sng.to_data().unwrap());
-                }
-            };
-        }
-
-        for song in &album.songs {
-            // Upload each song
-            println!("Sending song...");
-            let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
-            let tken = Runtime::new().unwrap().block_on(res);
-
-            match &tken {
-                Ok(o) => {
-                    println!("Successfully sent {:?}", o);
-                }
-                Err(er) => {
-                    println!("Some error {:?}", er);
+        match songs {
+            Ok(sngs) => {
+                for song in sngs {
+                    println!("Title: {:?}", song.title);
+                    println!("Path: {:?}", song.song_path());
+                    let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
+                    match Runtime::new().unwrap().block_on(res) {
+                        Ok(o) => {
+                            println!("Response: {:?}", o);
+                        }
+                        Err(err) => {
+                            println!("Error: {:?}", err);
+                        }
+                    };
                 }
             }
-
-            println!("");
+            Err(error) => {
+                println!("Error: {:?}", error);
+            }
         }
 
         Ok(())
-    }
-
-    // Makes sure the elements in album.songs is populated
-    fn song_parsing(
-        &self,
-        album: &mut models::song::Album,
-        directory: &String,
-        filenames: &Vec<String>,
-    ) {
-        // Apply directory
-        for song in &mut album.songs {
-            let dir = &song.directory;
-            match dir {
-                Some(s) => println!("{}", s),
-                None => {
-                    song.directory = Some(directory.clone());
-                }
-            }
-        }
-
-        // Apply filename
-        let mut index = 0;
-        for song in &mut album.songs {
-            let filename = filenames[index].clone();
-            song.filename = Some(filename);
-            index += 1;
-        }
-
-        for song in &mut album.songs {
-            match &mut song.album {
-                Some(_) => {}
-                None => {
-                    song.album = Some(album.title.clone());
-                }
-            }
-
-            match &mut song.genre {
-                Some(_) => {}
-                None => {
-                    song.genre = Some(album.genre.clone());
-                }
-            }
-
-            match &mut song.year {
-                Some(_) => {}
-                None => {
-                    song.year = Some(album.year.clone());
-                }
-            }
-        }
     }
 
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
@@ -588,23 +570,14 @@ impl CommitManager {
         return En::Other;
     }
 
-    fn o_to_string(&self, val: &std::ffi::OsString) -> Result<std::string::String> {
-        let res = val.clone().into_string();
-        return match res {
-            Ok(sss) => Ok(sss),
-            Err(_) => Ok(String::from("Error")),
-        };
-    }
-
     // Standards
     // * track01.cdda.wav - Disc 1, Track 1
     // * track02d02.cdda.wav - Disc 2, Track 2
-    fn initialize_disc_and_track(&mut self, song: &mut models::song::Song) {
+    fn initialize_disc_and_track(&mut self, song: &mut icarus_models::song::Song) {
         let mut disc = 1;
         let mut track = 1;
         let mut mode = 0;
-        let filename =
-            &<std::option::Option<std::string::String> as Clone>::clone(&song.filename).unwrap();
+        let filename = &song.filename;
 
         let trd = filename.contains("trackd");
         let tr = filename.contains("track");
@@ -688,11 +661,11 @@ impl CommitManager {
             _ => println!(""),
         }
 
-        song.disc = Some(disc);
-        song.track = Some(track);
+        song.disc = disc;
+        song.track = track;
     }
 
-    fn _parse_disc_and_track(&self, song: &mut models::song::Song, track_id: &String) {
+    fn _parse_disc_and_track(&self, song: &mut icarus_models::song::Song, track_id: &String) {
         let sep = |_a: &char, _b: &char| -> bool {
             return false;
         };
@@ -714,11 +687,11 @@ impl CommitManager {
                 d_str.push(c);
             }
 
-            song.disc = Some(d_str.parse::<i32>().unwrap());
-            song.track = Some(t_str.parse::<i32>().unwrap());
+            song.disc = d_str.parse::<i32>().unwrap();
+            song.track = t_str.parse::<i32>().unwrap();
         } else {
             if utilities::checks::Checks::is_numeric(track_id) {
-                song.track = Some(track_id.parse::<i32>().unwrap());
+                song.track = track_id.parse::<i32>().unwrap();
             }
         }
     }
@@ -732,7 +705,7 @@ impl CommitManager {
         return false;
     }
 
-    fn retrieve_metadata(&self, path: &String) -> Album {
+    fn retrieve_metadata(&self, path: &String) -> icarus_models::album::collection::Album {
         let content = self.retrieve_file_content(&path);
         let val = content.unwrap();
 
