@@ -3,8 +3,6 @@ use std::default::Default;
 use http::HeaderMap;
 use http::HeaderValue;
 use reqwest;
-use reqwest::multipart::Form;
-// use reqwest::Response;
 use serde::{Deserialize, Serialize};
 
 use crate::models;
@@ -55,22 +53,6 @@ impl Upload {
         self.api.endpoint = String::from("song/data/upload/with/data");
         let url = self.retrieve_url();
         let new_song = self.initialize_song(&song, &album);
-        /*
-        match song.song_path() {
-            Ok(p) => {
-                new_song.songpath = p;
-            }
-            Err(er) => {
-                /*
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    "Error with song path",
-                ));
-                */
-                return Err(er);
-            }
-        }
-        */
         let access_token = token.bearer_token();
 
         if url.is_empty() {
@@ -90,15 +72,13 @@ impl Upload {
 
         let form = self.init_form(&new_song, &cover);
         let client = reqwest::Client::builder().build().unwrap();
-        let response = client
+        match client
             .post(url)
             .headers(headers)
             .multipart(form)
             .send()
-            .await;
-        // let response_text = response.unwrap();
-
-        match response {
+            .await
+        {
             Ok(r) => {
                 return Ok(r);
             }
@@ -106,13 +86,6 @@ impl Upload {
                 return Err(err);
             }
         }
-
-        /*
-        println!("Something was sent");
-        println!("{:?}", response_text);
-
-        return Ok(response_text);
-        */
     }
 
     fn _initialize_form(
@@ -120,7 +93,7 @@ impl Upload {
         song_raw_data: Vec<u8>,
         cover_raw_data: Vec<u8>,
         song_detail: String,
-    ) -> Form {
+    ) -> reqwest::multipart::Form {
         let mut headers = HeaderMap::new();
         headers.insert(
             http::header::CONTENT_TYPE,
