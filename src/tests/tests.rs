@@ -1,6 +1,7 @@
+    #[cfg(test)]
 mod tests {
 
-    #[cfg(test)]
+    #[test]
     fn test_song_prep_upload() {
         use crate::managers;
 
@@ -15,7 +16,6 @@ mod tests {
                 for track in 1..3 {
                     let directory_path = std::path::Path::new(&meta_path);
                     let directory: String = directory_path.parent().unwrap().display().to_string();
-                    // let track = 1;
                     let filename: String = if track < 10 {
                         String::from("track0")
                             + &track.to_string()
