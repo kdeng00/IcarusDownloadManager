@@ -337,59 +337,72 @@ impl CommitManager {
         let mut cover_art = icarus_models::coverart::CoverArt {
             id: 0,
             title: String::new(),
-            path: String::new(),
+            path: cover_path.clone(),
             data: Vec::new(),
         };
-        let mut filenames = Vec::new();
         let file_name = std::ffi::OsString::from(&song_file.file_name().unwrap());
-        let mut directory: String = String::new();
-        let mut filename: String = String::new();
 
         match self.find_file_extension(&file_name) {
-            En::ImageFile => {}
-            En::MetadataFile => {}
             En::SongFile => match utilities::string::o_to_string(&file_name) {
                 Ok(s) => {
                     println!("file name: {:?}", file_name);
-                    filenames.push(s.clone());
-                    filename = s.clone();
-                    directory = song_file.parent().unwrap().display().to_string();
+
+                    match icarus_models::album::collection::parse_album(&meta_path) {
+                        Ok(album) => {
+                            let filename = s.clone();
+                            let directory = song_file.parent().unwrap().display().to_string();
+                            let trck = i32::from_str(track_id).unwrap();
+                            let mut s =
+                                retrieve_song(&album, trck, 1, &directory, &filename).unwrap();
+                            println!("Directory: {:?}", s.directory);
+                            println!("Filename: {:?}", s.filename);
+                            println!("Path: {:?}", s.song_path());
+                            s.data = s.to_data().unwrap();
+
+                            cover_art.data = cover_art.to_data().unwrap();
+
+                            let mut up = syncers::upload::Upload::default();
+                            let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
+                            up.set_api(&host);
+
+                            let res = up.upload_song_with_metadata(&token, &s, &cover_art);
+
+                            match Runtime::new().unwrap().block_on(res) {
+                                Ok(o) => {
+                                    println!("Successfully sent {:?}", o);
+                                    Ok(())
+                                }
+                                Err(er) => {
+                                    println!("Some error {:?}", er);
+                                    Err(std::io::Error::new(
+                                        std::io::ErrorKind::Other,
+                                        er.to_string(),
+                                    ))
+                                }
+                            }
+                        }
+                        Err(err) => {
+                            println!("Error: {:?}", err);
+                            Err(std::io::Error::new(
+                                std::io::ErrorKind::Other,
+                                err.to_string(),
+                            ))
+                        }
+                    }
                 }
-                Err(er) => println!("Error: {:?}", er),
+                Err(er) => {
+                    println!("Error: {:?}", er);
+                    return Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        er.to_string(),
+                    ));
+                }
             },
-            _ => {}
-        }
-
-        cover_art.path = cover_path.clone();
-
-        let album = self.retrieve_metadata(&meta_path);
-        let trck = i32::from_str(track_id).unwrap();
-        let mut s = retrieve_song(&album, trck, 1, &directory, &filename).unwrap();
-        println!("Directory: {:?}", s.directory);
-        println!("Filename: {:?}", s.filename);
-        println!("Path: {:?}", s.song_path());
-        s.data = s.to_data().unwrap();
-
-        cover_art.data = cover_art.to_data().unwrap();
-
-        let mut up = syncers::upload::Upload::default();
-        let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
-        up.set_api(&host);
-
-        let res = up.upload_song_with_metadata(&token, &s, &cover_art, &album);
-        let tken = Runtime::new().unwrap().block_on(res);
-
-        match &tken {
-            Ok(o) => {
-                println!("Successfully sent {:?}", o);
-                Ok(())
-            }
-            Err(er) => {
-                println!("Some error {:?}", er);
-                Err(std::io::Error::new(
+            _ => {
+                return Err(std::io::Error::new(
                     std::io::ErrorKind::Other,
-                    er.to_string(),
-                ))
+                    "No sutitable file found".to_owned(),
+                ));
             }
         }
     }
@@ -459,43 +472,16 @@ impl CommitManager {
         let mut cover_art = icarus_models::coverart::CoverArt {
             id: 0,
             title: String::new(),
-            path: String::new(),
+            path: match self.get_cover_art_path(&sourcepath) {
+                Ok(o) => o,
+                Err(_) => String::new(),
+            },
             data: Vec::new(),
         };
-        let mut filenames: Vec<String> = Vec::new();
-        let mut metadatapath: String = String::new();
-
-        // iterate files in metadatapath
-        let path = std::path::Path::new(directory_path);
-
-        for entry in read_dir(path)? {
-            let entry = entry?;
-
-            let file_type = entry.file_type();
-            let file_name = entry.file_name();
-
-            println!("file type: {:?}", file_type);
-            println!("file name: {:?}", file_name);
-
-            match self.find_file_extension(&file_name) {
-                En::ImageFile => {
-                    let directory_part = sourcepath.clone();
-                    let fname = utilities::string::o_to_string(&file_name);
-                    let fullpath = directory_part + "/" + &fname.unwrap();
-                    cover_art.path = fullpath;
-                }
-                En::MetadataFile => {
-                    let directory_part = sourcepath.clone();
-                    let fname = utilities::string::o_to_string(&file_name);
-                    metadatapath = directory_part + "/" + &fname.unwrap();
-                }
-                _ => {}
-            }
-        }
-
-        filenames.sort();
-        let songs = self.get_songs(&metadatapath, &sourcepath);
-        let album = self.retrieve_metadata(&metadatapath);
+        let metadatapath = match self.get_metadata_path(&sourcepath) {
+            Ok(o) => o,
+            Err(_) => String::new(),
+        };
 
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
@@ -505,13 +491,13 @@ impl CommitManager {
 
         println!("");
 
-        match songs {
+        match self.get_songs(&metadatapath, &sourcepath) {
             Ok(sngs) => {
                 for song in sngs {
-                    println!("Title: {:?}", song.title);
-                    println!("Path: {:?}", song.song_path());
-                    let res = up.upload_song_with_metadata(&token, &song, &cover_art, &album);
-                    match Runtime::new().unwrap().block_on(res) {
+                    match Runtime::new()
+                        .unwrap()
+                        .block_on(up.upload_song_with_metadata(&token, &song, &cover_art))
+                    {
                         Ok(o) => {
                             println!("Response: {:?}", o);
                         }
@@ -575,6 +561,53 @@ impl CommitManager {
         return En::Other;
     }
 
+    fn get_cover_art_path(&self, directory_path: &String) -> Result<String> {
+        for entry in read_dir(std::path::Path::new(directory_path))? {
+            let entry = entry?;
+
+            let file_type = entry.file_type();
+            let file_name = entry.file_name();
+
+            println!("file type: {:?}", file_type);
+            println!("file name: {:?}", file_name);
+
+            match self.find_file_extension(&file_name) {
+                En::ImageFile => {
+                    let directory_part = directory_path.clone();
+                    let fname = utilities::string::o_to_string(&file_name);
+                    let fullpath = directory_part + "/" + &fname.unwrap();
+                    return Ok(fullpath);
+                }
+                _ => {}
+            }
+        }
+
+        Ok(String::new())
+    }
+
+    fn get_metadata_path(&self, directory_path: &String) -> Result<String> {
+        for entry in read_dir(std::path::Path::new(directory_path))? {
+            let entry = entry?;
+
+            let file_type = entry.file_type();
+            let file_name = entry.file_name();
+
+            println!("file type: {:?}", file_type);
+            println!("file name: {:?}", file_name);
+
+            match self.find_file_extension(&file_name) {
+                En::MetadataFile => {
+                    let directory_part = directory_path.clone();
+                    let fname = utilities::string::o_to_string(&file_name);
+                    return Ok(directory_part + "/" + &fname.unwrap());
+                }
+                _ => {}
+            }
+        }
+
+        Ok(String::new())
+    }
+
     fn _check_for_no_confirm(&self) -> bool {
         for flag in self.ica_action.flags.iter() {
             if flag.flag == "-nc" {
@@ -582,22 +615,5 @@ impl CommitManager {
             }
         }
         return false;
-    }
-
-    fn retrieve_metadata(&self, path: &String) -> icarus_models::album::collection::Album {
-        let content = self.retrieve_file_content(&path);
-        let val = content.unwrap();
-
-        let converted = serde_json::from_str(&val);
-
-        match &converted {
-            Ok(_) => println!("Good!"),
-            Err(er) => println!("Error {:?}", er),
-        }
-        return converted.unwrap();
-    }
-
-    fn retrieve_file_content(&self, path: &String) -> Result<String> {
-        return std::fs::read_to_string(path);
     }
 }
