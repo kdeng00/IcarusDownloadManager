@@ -1,11 +1,3 @@
-// mod managers;
-// mod tests;
-
-// use i
-// use crate::icarus_dm::managers;
-// use icarus-dm;
-// use managers;
-
 mod tests {
 
     #[cfg(test)]
