@@ -207,7 +207,6 @@ mod tests {
                 && action != "upload-meta")
         );
 
-        let mut all_flags_found = false;
         let mut found_count = 0;
         let mut flags_already_read = Vec::new();
 
@@ -228,7 +227,7 @@ mod tests {
             }
         }
 
-        all_flags_found = found_count == 3;
+        let all_flags_found = found_count == 3;
 
         assert_eq!(found_count, 3, "Three flags are required: -u, -p, -h");
         assert!(all_flags_found, "All flags have not been found");

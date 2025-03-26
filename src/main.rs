@@ -3,6 +3,7 @@ mod managers;
 mod models;
 mod parsers;
 mod syncers;
+mod tests;
 mod utilities;
 
 use std::env;
