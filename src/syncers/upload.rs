@@ -26,7 +26,6 @@ impl Upload {
     ) -> Result<reqwest::Response, reqwest::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
         let url = self.retrieve_url();
-        // let new_song = self.initialize_song(&song, &album);
         let access_token = token.bearer_token();
 
         if url.is_empty() {

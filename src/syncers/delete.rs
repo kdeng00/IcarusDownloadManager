@@ -40,7 +40,6 @@ impl Delete {
                 println!("Success!");
                 let s = response.json::<icarus_models::song::Song>().await;
                 match s {
-                    //
                     Ok(parsed) => {
                         sng = parsed;
                     }
