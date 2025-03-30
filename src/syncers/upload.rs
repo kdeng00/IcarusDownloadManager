@@ -4,6 +4,7 @@ use http::HeaderValue;
 use reqwest;
 
 use crate::models;
+use crate::syncers;
 
 pub struct Upload {
     pub api: models::api::API,
@@ -25,7 +26,7 @@ impl Upload {
         cover: &icarus_models::coverart::CoverArt,
     ) -> Result<reqwest::Response, reqwest::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
-        let url = self.retrieve_url();
+        let url = syncers::common::retrieve_url(&self.api, false, 0);
         let access_token = token.bearer_token();
 
         if url.is_empty() {
@@ -105,23 +106,5 @@ impl Upload {
         api.url = host.clone();
         api.version = String::from("v1");
         self.api = api;
-    }
-
-    fn retrieve_url(&self) -> String {
-        let api = &self.api;
-        let mut buffer = api.url.clone();
-        let count = buffer.len();
-
-        if buffer.chars().nth(count - 1) != Some('/') {
-            buffer += "/";
-        }
-
-        let mut url: String = String::from(&buffer);
-        url += &String::from("api/");
-        url += &String::from(&api.version);
-        url += &String::from("/");
-        url += &String::from(&api.endpoint);
-
-        return url;
     }
 }
