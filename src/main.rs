@@ -52,11 +52,11 @@ mod tests {
                     let filename: String = if track < 10 {
                         String::from("track0")
                             + &track.to_string()
-                            + icarus_models::constants::DEFAULTMUSICEXTENSION
+                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     } else {
                         String::from("track")
                             + &track.to_string()
-                            + icarus_models::constants::DEFAULTMUSICEXTENSION
+                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     };
                     let disc = 1;
                     match managers::commit_manager::retrieve_song(
