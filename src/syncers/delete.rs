@@ -34,26 +34,23 @@ impl Delete {
             .send()
             .await
             .unwrap();
-        let mut sng = icarus_models::song::Song::default();
 
         match response.status() {
             reqwest::StatusCode::OK => {
                 println!("Success!");
-                let s = response.json::<icarus_models::song::Song>().await;
-                match s {
-                    Ok(parsed) => {
-                        sng = parsed;
-                    }
-                    Err(er) => {
-                        println!("Error {:?}", er);
-                    }
-                };
-            }
-            other => {
-                panic!("Issue occurred: {:?}", other);
-            }
-        }
 
-        return Ok(sng);
+                match response.json::<icarus_models::song::Song>().await {
+                    Ok(sng) => Ok(sng),
+                    Err(er) => Err(std::io::Error::new(
+                        std::io::ErrorKind::Other,
+                        er.to_string(),
+                    )),
+                }
+            }
+            other => Err(std::io::Error::new(
+                std::io::ErrorKind::Other,
+                other.to_string(),
+            )),
+        }
     }
 }
