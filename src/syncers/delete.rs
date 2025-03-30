@@ -3,6 +3,7 @@ use std::default::Default;
 use reqwest;
 
 use crate::models;
+use crate::syncers;
 
 #[derive(Clone, Debug)]
 pub struct Delete {
@@ -24,7 +25,7 @@ impl Delete {
         song: &icarus_models::song::Song,
     ) -> Result<icarus_models::song::Song, std::io::Error> {
         self.api.endpoint = "song/data/delete".to_owned();
-        let url = self.retrieve_url(&song);
+        let url = syncers::common::retrieve_url(&self.api, true, song.id);
         let client = reqwest::Client::builder().build().unwrap();
         let access_token = token.bearer_token();
         let response = client
@@ -54,18 +55,5 @@ impl Delete {
         }
 
         return Ok(sng);
-    }
-
-    fn retrieve_url(&self, song: &icarus_models::song::Song) -> String {
-        let api = &self.api;
-        let mut url: String = String::from(&api.url);
-        url += &String::from("api/");
-        url += &String::from(&api.version);
-        url += &String::from("/");
-        url += &String::from(&api.endpoint);
-        url += &String::from("/");
-        url += &song.id.to_string();
-
-        return url;
     }
 }

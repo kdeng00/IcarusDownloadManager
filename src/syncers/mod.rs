@@ -1,3 +1,4 @@
+pub mod common;
 pub mod delete;
 pub mod download;
 pub mod retrieve_records;

@@ -52,7 +52,9 @@ pub fn retrieve_song(
             song.album = album.title.clone();
             song.album_artist = album.artist.clone();
             song.artist = track.artist.clone();
-            song.audio_type = String::from(icarus_models::constants::DEFAULTMUSICEXTENSION);
+            song.audio_type = String::from(
+                icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION,
+            );
             song.disc = track.disc.clone();
             song.disc_count = album.disc_count.clone();
             song.duration = track.duration as i32;
@@ -192,8 +194,8 @@ impl CommitManager {
         match Runtime::new().unwrap().block_on(result_fut) {
             Ok(o) => {
                 println!("Success");
-                let filename =
-                    String::from("audio") + icarus_models::constants::DEFAULTMUSICEXTENSION;
+                let filename = String::from("audio")
+                    + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
                 let data = o.as_bytes();
                 let mut file = std::fs::File::create(filename).expect("Failed to save");
                 file.write_all(&data)
@@ -420,11 +422,11 @@ impl CommitManager {
                     let filename = if track.track < 10 {
                         "track0".to_owned()
                             + &track.track.to_string()
-                            + icarus_models::constants::DEFAULTMUSICEXTENSION
+                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     } else {
                         "track".to_owned()
                             + &track.track.to_string()
-                            + icarus_models::constants::DEFAULTMUSICEXTENSION
+                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     };
 
                     songs.push(icarus_models::song::Song {
@@ -540,13 +542,15 @@ impl CommitManager {
                     index += 1;
                 }
 
-                if extension == icarus_models::constants::WAVEXTENSION[1..]
-                    || extension == icarus_models::constants::FLACEXTENSION[1..]
+                if extension == icarus_models::constants::file_extensions::audio::WAVEXTENSION[1..]
+                    || extension
+                        == icarus_models::constants::file_extensions::audio::FLACEXTENSION[1..]
                 {
                     return En::SongFile;
                 } else if extension == "json" {
                     return En::MetadataFile;
-                } else if extension == icarus_models::constants::JPGEXTENSION[1..]
+                } else if extension
+                    == icarus_models::constants::file_extensions::image::JPGEXTENSION[1..]
                     || extension == "jpeg"
                     || extension == "png"
                 {
