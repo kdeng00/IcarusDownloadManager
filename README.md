@@ -42,7 +42,7 @@ The program has been built and can be executed by the binary file *icarus-dm*. F
 ### Downloading Song
 
 ```BASH
-icarus-dm download -u spacecadet -p stellar40 -h https://icarus.com -b 15
+icarus-dm download -u spacecadet -p stellar40 -h https://icarus.com -b e8407fc6-edd2-44c1-993f-08dd7324d91a
 ```
 
 ### Uploading Song with metadata
@@ -66,7 +66,7 @@ icarus-dm retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs
 ### Deleting Song
 
 ```BASH
-icarus-dm delete -u spacecadet -p stellar40 -h https://icarus.com -D 15
+icarus-dm delete -u spacecadet -p stellar40 -h https://icarus.com -D e8407fc6-edd2-44c1-993f-08dd7324d91a
 ```
 
 
