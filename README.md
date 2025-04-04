@@ -14,6 +14,7 @@ IcarusDownloadManager is a CLI software client application that has the feature 
 * serde_json
 * tokio
 * tokio-util
+* icarus_models
 
 
 ### Getting Started
@@ -21,7 +22,7 @@ IcarusDownloadManager is a CLI software client application that has the feature 
 Clone the repo
 
 ```BASH
-git clone --recursive https://github.com/kdeng00/IcarusDownloadManager
+git clone git@github.com:kdeng00/IcarusDownloadManager.git
 ```
 
 
@@ -31,6 +32,10 @@ Build the project:
 cd IcarusDownloadManager
 cargo build
 ```
+
+Even though this project is open source, there are some libraries that are closed source (may be opened later).
+In order to successfully build it, your ssh public key would be needed to add to the closed libraries. If you
+have interest, something could be worked out to provide access.
 
 The program has been built and can be executed by the binary file *icarus-dm*. For information on how to use icarua-dm, merely execute the program without any command line arguments.
 
