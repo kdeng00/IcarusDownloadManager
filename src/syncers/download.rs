@@ -31,6 +31,8 @@ impl Download {
         let url = syncers::common::retrieve_url(&self.api, true, &song.id);
         let access_token = token.bearer_token();
 
+        println!("Url: {:?}", url);
+
         let client = reqwest::Client::builder().build().unwrap();
 
         match client

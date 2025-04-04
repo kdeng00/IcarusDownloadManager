@@ -22,7 +22,6 @@ fn retrieve_url_reg(api: &models::api::API) -> String {
 
 fn retrieve_url_with_id(api: &models::api::API, id: &uuid::Uuid) -> String {
     let mut url: String = String::from(&api.url);
-    url += &String::from("/");
     url += &String::from("api/");
     url += &String::from(&api.version);
     url += &String::from("/");

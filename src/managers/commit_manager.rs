@@ -446,7 +446,7 @@ impl CommitManager {
                         audio_type: String::from("FLAC"),
                         directory: source_directory.clone(),
                         filename: filename,
-                        user_id: -1,
+                        user_id: uuid::Uuid::nil(),
                         data: Vec::new(),
                         date_created: String::new(),
                     });
