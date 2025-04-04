@@ -153,7 +153,6 @@ impl CommitManager {
 
             if flag == "-D" {
                 song.id = uuid::Uuid::from_str(value.as_str()).unwrap();
-                // value.parse::<i32>().unwrap();
             }
         }
 
