@@ -29,7 +29,7 @@ impl TokenManager {
         println!("URL: {}", url);
 
         let mut token = icarus_models::token::AccessToken {
-            user_id: -1,
+            user_id: uuid::Uuid::nil(),
             username: String::new(),
             token: String::new(),
             token_type: String::new(),

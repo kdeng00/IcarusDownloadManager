@@ -25,7 +25,7 @@ impl Delete {
         song: &icarus_models::song::Song,
     ) -> Result<icarus_models::song::Song, std::io::Error> {
         self.api.endpoint = "song/data/delete".to_owned();
-        let url = syncers::common::retrieve_url(&self.api, true, song.id);
+        let url = syncers::common::retrieve_url(&self.api, true, &song.id);
         let client = reqwest::Client::builder().build().unwrap();
         let access_token = token.bearer_token();
         let response = client

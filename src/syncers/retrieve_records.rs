@@ -22,7 +22,7 @@ impl RetrieveRecords {
         token: &icarus_models::token::AccessToken,
     ) -> Result<Vec<icarus_models::song::Song>, Error> {
         self.api.endpoint = String::from("song");
-        let url = syncers::common::retrieve_url(&self.api, false, 0);
+        let url = syncers::common::retrieve_url(&self.api, false, &uuid::Uuid::nil());
         let access_token = token.bearer_token();
 
         let client = reqwest::Client::builder().build().unwrap();

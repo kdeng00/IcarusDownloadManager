@@ -152,7 +152,8 @@ impl CommitManager {
             let value = &arg.value;
 
             if flag == "-D" {
-                song.id = value.parse::<i32>().unwrap();
+                song.id = uuid::Uuid::from_str(value.as_str()).unwrap();
+                // value.parse::<i32>().unwrap();
             }
         }
 
@@ -175,7 +176,7 @@ impl CommitManager {
     fn download_song(&self) {
         println!("Deleting song");
         let dwn = self.ica_action.retrieve_flag_value(&String::from("-b"));
-        let id: i32 = dwn.parse::<i32>().unwrap();
+        let id = uuid::Uuid::from_str(dwn.as_str()).unwrap();
 
         let mut prsr = parsers::api_parser::APIParser {
             api: models::api::API::default(),
@@ -337,7 +338,7 @@ impl CommitManager {
         }
 
         let mut cover_art = icarus_models::coverart::CoverArt {
-            id: 0,
+            id: uuid::Uuid::nil(),
             title: String::new(),
             path: cover_path.clone(),
             data: Vec::new(),
@@ -430,7 +431,7 @@ impl CommitManager {
                     };
 
                     songs.push(icarus_models::song::Song {
-                        id: -1,
+                        id: uuid::Uuid::nil(),
                         title: track.title.clone(),
                         artist: track.artist.clone(),
                         disc: track.disc.clone(),
@@ -471,15 +472,8 @@ impl CommitManager {
             panic!("Directory does not exist");
         }
 
-        let mut cover_art = icarus_models::coverart::CoverArt {
-            id: 0,
-            title: String::new(),
-            path: match self.get_cover_art_path(&sourcepath) {
-                Ok(o) => o,
-                Err(_) => String::new(),
-            },
-            data: Vec::new(),
-        };
+        let mut cover_art =
+            icarus_models::coverart::init::init_coverart_only_path(sourcepath.clone());
         let metadatapath = match self.get_metadata_path(&sourcepath) {
             Ok(o) => o,
             Err(_) => String::new(),
@@ -563,30 +557,6 @@ impl CommitManager {
         }
 
         return En::Other;
-    }
-
-    fn get_cover_art_path(&self, directory_path: &String) -> Result<String> {
-        for entry in read_dir(std::path::Path::new(directory_path))? {
-            let entry = entry?;
-
-            let file_type = entry.file_type();
-            let file_name = entry.file_name();
-
-            println!("file type: {:?}", file_type);
-            println!("file name: {:?}", file_name);
-
-            match self.find_file_extension(&file_name) {
-                En::ImageFile => {
-                    let directory_part = directory_path.clone();
-                    let fname = utilities::string::o_to_string(&file_name);
-                    let fullpath = directory_part + "/" + &fname.unwrap();
-                    return Ok(fullpath);
-                }
-                _ => {}
-            }
-        }
-
-        Ok(String::new())
     }
 
     fn get_metadata_path(&self, directory_path: &String) -> Result<String> {

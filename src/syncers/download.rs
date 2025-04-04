@@ -28,7 +28,7 @@ impl Download {
         song: &icarus_models::song::Song,
     ) -> Result<String, MyError> {
         self.api.endpoint = String::from("song/data/download");
-        let url = syncers::common::retrieve_url(&self.api, true, song.id);
+        let url = syncers::common::retrieve_url(&self.api, true, &song.id);
         let access_token = token.bearer_token();
 
         let client = reqwest::Client::builder().build().unwrap();
