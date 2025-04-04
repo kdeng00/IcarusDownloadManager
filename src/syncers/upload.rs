@@ -26,7 +26,7 @@ impl Upload {
         cover: &icarus_models::coverart::CoverArt,
     ) -> Result<reqwest::Response, reqwest::Error> {
         self.api.endpoint = String::from("song/data/upload/with/data");
-        let url = syncers::common::retrieve_url(&self.api, false, &uuid::Uuid::new_v4());
+        let url = syncers::common::retrieve_url(&self.api, false, &uuid::Uuid::nil());
         let access_token = token.bearer_token();
 
         if url.is_empty() {

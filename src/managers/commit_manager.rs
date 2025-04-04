@@ -472,8 +472,12 @@ impl CommitManager {
             panic!("Directory does not exist");
         }
 
+        let coverart_path = match self.get_cover_art_path(&sourcepath) {
+            Ok(path) => path,
+            Err(_) => String::new(),
+        };
         let mut cover_art =
-            icarus_models::coverart::init::init_coverart_only_path(sourcepath.clone());
+            icarus_models::coverart::init::init_coverart_only_path(coverart_path.clone());
         let metadatapath = match self.get_metadata_path(&sourcepath) {
             Ok(o) => o,
             Err(_) => String::new(),
@@ -509,6 +513,30 @@ impl CommitManager {
         }
 
         Ok(())
+    }
+
+    fn get_cover_art_path(&self, directory_path: &String) -> Result<String> {
+        for entry in read_dir(std::path::Path::new(directory_path))? {
+            let entry = entry?;
+
+            let file_type = entry.file_type();
+            let file_name = entry.file_name();
+
+            println!("file type: {:?}", file_type);
+            println!("file name: {:?}", file_name);
+
+            match self.find_file_extension(&file_name) {
+                En::ImageFile => {
+                    let directory_part = directory_path.clone();
+                    let fname = utilities::string::o_to_string(&file_name);
+                    let fullpath = directory_part + "/" + &fname.unwrap();
+                    return Ok(fullpath);
+                }
+                _ => {}
+            }
+        }
+
+        Ok(String::new())
     }
 
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {

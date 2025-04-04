@@ -23,7 +23,7 @@ impl Checks {
             index += 1;
         }
 
-        return index;
+        index
     }
 }
 
