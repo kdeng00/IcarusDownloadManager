@@ -460,8 +460,8 @@ dependencies = [
 
 [[package]]
 name = "icarus_models"
-version = "0.4.3"
-source = "git+ssh://git@git.kundeng.us/phoenix/icarus_models.git?tag=v0.4.3#6aa4c3d74142f5fceb4a6e95078bb3ae0a2d99c5"
+version = "0.5.0"
+source = "git+ssh://git@git.kundeng.us/phoenix/icarus_models.git?tag=v0.5.0-devel-7958b89abc-111#7958b89abc56bc9262015b3e201ea2906cc8a9ff"
 dependencies = [
  "rand",
  "serde",
@@ -897,13 +897,12 @@ checksum = "74765f6d916ee2faa39bc8e68e4f3ed8949b48cccdac59983d287a7cb71ce9c5"
 
 [[package]]
 name = "rand"
-version = "0.9.0"
+version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3779b94aeb87e8bd4e834cee3650289ee9e0d5677f976ecdb6d219e5f4f6cd94"
+checksum = "9fbfd9d094a40bf3ae768db9361049ace4c0e04a4fd6b359518bd7b73a73dd97"
 dependencies = [
  "rand_chacha",
  "rand_core",
- "zerocopy",
 ]
 
 [[package]]
