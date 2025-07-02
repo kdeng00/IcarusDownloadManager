@@ -8,7 +8,7 @@ use crate::syncers;
 
 #[derive(Default)]
 pub struct Upload {
-    pub api: models::api::API,
+    pub api: models::api::Api,
 }
 
 impl Upload {
@@ -83,7 +83,7 @@ impl Upload {
     }
 
     pub fn set_api(&mut self, host: &str) {
-        let api = models::api::API {
+        let api = models::api::Api {
             url: host.to_owned(),
             version: String::from("v1"),
             endpoint: String::new(),

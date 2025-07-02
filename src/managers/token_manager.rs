@@ -4,14 +4,14 @@ use crate::models;
 
 pub struct TokenManager {
     pub user: icarus_models::user::User,
-    pub api: models::api::API,
+    pub api: models::api::Api,
 }
 
 impl Default for TokenManager {
     fn default() -> Self {
         let mut token = TokenManager {
             user: icarus_models::user::User::default(),
-            api: models::api::API::default(),
+            api: models::api::Api::default(),
         };
 
         token.init();

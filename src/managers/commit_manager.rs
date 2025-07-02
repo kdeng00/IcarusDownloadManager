@@ -136,7 +136,7 @@ impl CommitManager {
     fn delete_song(&self) {
         let mut prsr = parsers::api_parser::APIParser {
             ica_act: self.ica_action.clone(),
-            api: models::api::API::default(),
+            api: models::api::Api::default(),
         };
         prsr.parse_api();
         let api = prsr.retrieve_api();
@@ -178,7 +178,7 @@ impl CommitManager {
         let id = uuid::Uuid::from_str(dwn.as_str()).unwrap();
 
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::API::default(),
+            api: models::api::Api::default(),
             ica_act: self.ica_action.clone(),
         };
         prsr.parse_api();
@@ -224,7 +224,7 @@ impl CommitManager {
         }
 
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::API::default(),
+            api: models::api::Api::default(),
             ica_act: self.ica_action.clone(),
         };
         prsr.parse_api();
@@ -254,7 +254,7 @@ impl CommitManager {
         panic!("Not supported");
     }
 
-    fn parse_token(&self, api: &models::api::API) -> icarus_models::token::AccessToken {
+    fn parse_token(&self, api: &models::api::Api) -> icarus_models::token::AccessToken {
         println!("Fetching token");
 
         let mut usr_mgr: managers::user_manager::UserManager =
@@ -319,7 +319,7 @@ impl CommitManager {
         cover_path: &String,
     ) -> Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::API::default(),
+            api: models::api::Api::default(),
             ica_act: self.ica_action.clone(),
         };
         prsr.parse_api();
@@ -458,7 +458,7 @@ impl CommitManager {
 
     fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::API::default(),
+            api: models::api::Api::default(),
             ica_act: self.ica_action.clone(),
         };
         prsr.parse_api();

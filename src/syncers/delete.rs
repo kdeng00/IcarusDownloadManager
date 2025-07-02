@@ -7,7 +7,7 @@ use crate::syncers;
 
 #[derive(Clone, Debug, Default)]
 pub struct Delete {
-    pub api: models::api::API,
+    pub api: models::api::Api,
 }
 
 impl Delete {

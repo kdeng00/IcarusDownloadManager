@@ -5,7 +5,7 @@ use crate::syncers;
 
 #[derive(Default)]
 pub struct Download {
-    pub api: models::api::API,
+    pub api: models::api::Api,
 }
 
 #[derive(Debug)]

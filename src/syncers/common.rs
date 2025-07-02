@@ -1,6 +1,6 @@
 use crate::models;
 
-pub fn retrieve_url(api: &models::api::API, with_id: bool, id: &uuid::Uuid) -> String {
+pub fn retrieve_url(api: &models::api::Api, with_id: bool, id: &uuid::Uuid) -> String {
     if with_id {
         retrieve_url_with_id(api, id)
     } else {
@@ -8,13 +8,13 @@ pub fn retrieve_url(api: &models::api::API, with_id: bool, id: &uuid::Uuid) -> S
     }
 }
 
-fn retrieve_url_reg(api: &models::api::API) -> String {
+fn retrieve_url_reg(api: &models::api::Api) -> String {
     let url = format!("{}/api/{}/{}/", api.url, api.version, api.endpoint);
 
     url
 }
 
-fn retrieve_url_with_id(api: &models::api::API, id: &uuid::Uuid) -> String {
+fn retrieve_url_with_id(api: &models::api::Api, id: &uuid::Uuid) -> String {
     let url = format!("{}/api/{}/{}/{}", api.url, api.version, api.endpoint, id);
 
     url
