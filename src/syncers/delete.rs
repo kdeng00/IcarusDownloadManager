@@ -5,17 +5,9 @@ use reqwest;
 use crate::models;
 use crate::syncers;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Delete {
     pub api: models::api::API,
-}
-
-impl Default for Delete {
-    fn default() -> Self {
-        Delete {
-            api: models::api::API::default(),
-        }
-    }
 }
 
 impl Delete {
@@ -41,16 +33,10 @@ impl Delete {
 
                 match response.json::<icarus_models::song::Song>().await {
                     Ok(sng) => Ok(sng),
-                    Err(er) => Err(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        er.to_string(),
-                    )),
+                    Err(er) => Err(std::io::Error::other(er.to_string())),
                 }
             }
-            other => Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                other.to_string(),
-            )),
+            other => Err(std::io::Error::other(other.to_string())),
         }
     }
 }

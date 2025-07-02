@@ -16,7 +16,7 @@ fn main() {
         utilities::checks::exit_program(-1);
     }
 
-    println!("Argument count: {}", args_len);
+    println!("Argument count: {args_len}");
 
     let mut act_mgr = managers::action_managers::ActionManager::default();
     act_mgr.set_params(&args);
@@ -41,7 +41,7 @@ mod tests {
         let meta_path = String::from("tests/sample2_tracks/album.json");
 
         if !std::path::Path::new(&meta_path).exists() {
-            assert!(false, "File does not exists: {:?}", meta_path);
+            assert!(false, "File does not exists: {meta_path:?}");
         }
 
         match icarus_models::album::collection::parse_album(&meta_path) {
