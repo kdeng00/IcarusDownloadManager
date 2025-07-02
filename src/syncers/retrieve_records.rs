@@ -4,10 +4,12 @@ use std::io::Error;
 use crate::models;
 use crate::syncers;
 
+#[derive(Default)]
 pub struct RetrieveRecords {
     pub api: models::api::API,
 }
 
+/*
 impl Default for RetrieveRecords {
     fn default() -> Self {
         RetrieveRecords {
@@ -15,6 +17,7 @@ impl Default for RetrieveRecords {
         }
     }
 }
+*/
 
 impl RetrieveRecords {
     pub async fn get_all_songs(
@@ -39,24 +42,21 @@ impl RetrieveRecords {
                 match response.json::<Vec<icarus_models::song::Song>>().await {
                     Ok(parsed) => Ok(parsed),
                     Err(err) => {
-                        return Err(std::io::Error::new(
-                            std::io::ErrorKind::Other,
+                        Err(std::io::Error::other(
                             err.to_string(),
-                        ));
+                        ))
                     }
                 }
             }
             reqwest::StatusCode::UNAUTHORIZED => {
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::Other,
+                Err(std::io::Error::other(
                     "Need to grab a new token",
-                ));
+                ))
             }
             other => {
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::Other,
+                Err(std::io::Error::other(
                     other.to_string(),
-                ));
+                ))
             }
         }
     }

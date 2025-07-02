@@ -3,10 +3,12 @@ use std::default::Default;
 use crate::models;
 use crate::syncers;
 
+#[derive(Default)]
 pub struct Download {
     pub api: models::api::API,
 }
 
+/*
 impl Default for Download {
     fn default() -> Self {
         Download {
@@ -14,6 +16,7 @@ impl Default for Download {
         }
     }
 }
+*/
 
 #[derive(Debug)]
 pub enum MyError {
@@ -31,7 +34,7 @@ impl Download {
         let url = syncers::common::retrieve_url(&self.api, true, &song.id);
         let access_token = token.bearer_token();
 
-        println!("Url: {:?}", url);
+        println!("Url: {url:?}");
 
         let client = reqwest::Client::builder().build().unwrap();
 
@@ -46,22 +49,22 @@ impl Download {
                     let data = rep.text();
                     match data.await {
                         Ok(e) => {
-                            return Ok(e);
+                            Ok(e)
                         }
                         Err(er) => {
-                            return Err(MyError::Other(er.to_string()));
+                            Err(MyError::Other(er.to_string()))
                         }
                     }
                 }
                 reqwest::StatusCode::UNAUTHORIZED => {
-                    return Err(MyError::Other(String::from("Need to grab a new token")));
+                    Err(MyError::Other(String::from("Need to grab a new token")))
                 }
                 other => {
-                    return Err(MyError::Other(other.to_string()));
+                    Err(MyError::Other(other.to_string()))
                 }
             },
             Err(er) => {
-                return Err(MyError::Request(er));
+                Err(MyError::Request(er))
             }
         }
     }

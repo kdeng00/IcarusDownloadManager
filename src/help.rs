@@ -32,5 +32,5 @@ pub fn print_help() {
             -D song id"#,
     );
 
-    println!("{}", msg);
+    println!("{msg}");
 }

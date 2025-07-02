@@ -6,10 +6,12 @@ use reqwest;
 use crate::models;
 use crate::syncers;
 
+#[derive(Default)]
 pub struct Upload {
     pub api: models::api::API,
 }
 
+/*
 impl Default for Upload {
     fn default() -> Self {
         Upload {
@@ -17,6 +19,7 @@ impl Default for Upload {
         }
     }
 }
+*/
 
 impl Upload {
     pub async fn upload_song_with_metadata(
@@ -33,8 +36,8 @@ impl Upload {
             println!("Url is empty");
         }
 
-        println!("Url: {}", url);
-        println!("Token: {}", access_token);
+        println!("Url: {url}");
+        println!("Token: {access_token}");
         println!("Path: {:?}", song.song_path());
 
         let mut headers = reqwest::header::HeaderMap::new();
@@ -44,7 +47,7 @@ impl Upload {
         );
         headers.insert(reqwest::header::ACCEPT, HeaderValue::from_static("*/*"));
 
-        let form = self.init_form(&song, &cover);
+        let form = self.init_form(song, cover);
         let client = reqwest::Client::builder().build().unwrap();
         match client
             .post(url)
@@ -54,10 +57,10 @@ impl Upload {
             .await
         {
             Ok(r) => {
-                return Ok(r);
+                Ok(r)
             }
             Err(err) => {
-                return Err(err);
+                Err(err)
             }
         }
     }
@@ -67,25 +70,24 @@ impl Upload {
         song: &icarus_models::song::Song,
         cover: &icarus_models::coverart::CoverArt,
     ) -> reqwest::multipart::Form {
-        let songpath = match song.song_path() {
-            Ok(s) => s,
-            Err(_) => String::new(),
-        };
+        let songpath = song.song_path().unwrap_or_default();
         let coverpath = cover.path.clone();
-        println!("Cover path: {:?}", coverpath);
-        let song_detail = match song.to_metadata_json(true) {
+        println!("Cover path: {coverpath:?}");
+        let song_detail = song.to_metadata_json(true).unwrap_or_default();
+        /*{
             Ok(s) => s,
             Err(_) => String::new(),
         };
+        */
 
-        println!("\n{}\n", song_detail);
+        println!("\n{song_detail}\n");
 
         let mut song_filename = String::from("audio");
         song_filename += icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
         let mut cover_filename = String::from("cover");
         cover_filename += icarus_models::constants::file_extensions::image::JPGEXTENSION;
 
-        let form = reqwest::multipart::Form::new()
+        reqwest::multipart::Form::new()
             .part(
                 "file",
                 reqwest::multipart::Part::bytes(std::fs::read(songpath).unwrap())
@@ -96,15 +98,11 @@ impl Upload {
                 reqwest::multipart::Part::bytes(std::fs::read(coverpath).unwrap())
                     .file_name(cover_filename),
             )
-            .text("metadata", song_detail);
-
-        return form;
+            .text("metadata", song_detail)
     }
 
-    pub fn set_api(&mut self, host: &String) {
-        let mut api = models::api::API::default();
-        api.url = host.clone();
-        api.version = String::from("v1");
+    pub fn set_api(&mut self, host: &str) {
+        let api = models::api::API { url: host.to_owned(), version: String::from("v1"), endpoint: String::new() };
         self.api = api;
     }
 }
