@@ -8,16 +8,6 @@ pub struct Download {
     pub api: models::api::API,
 }
 
-/*
-impl Default for Download {
-    fn default() -> Self {
-        Download {
-            api: models::api::API::default(),
-        }
-    }
-}
-*/
-
 #[derive(Debug)]
 pub enum MyError {
     Request(reqwest::Error),
@@ -48,24 +38,16 @@ impl Download {
                 reqwest::StatusCode::OK => {
                     let data = rep.text();
                     match data.await {
-                        Ok(e) => {
-                            Ok(e)
-                        }
-                        Err(er) => {
-                            Err(MyError::Other(er.to_string()))
-                        }
+                        Ok(e) => Ok(e),
+                        Err(er) => Err(MyError::Other(er.to_string())),
                     }
                 }
                 reqwest::StatusCode::UNAUTHORIZED => {
                     Err(MyError::Other(String::from("Need to grab a new token")))
                 }
-                other => {
-                    Err(MyError::Other(other.to_string()))
-                }
+                other => Err(MyError::Other(other.to_string())),
             },
-            Err(er) => {
-                Err(MyError::Request(er))
-            }
+            Err(er) => Err(MyError::Request(er)),
         }
     }
 }

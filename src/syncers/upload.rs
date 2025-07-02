@@ -11,16 +11,6 @@ pub struct Upload {
     pub api: models::api::API,
 }
 
-/*
-impl Default for Upload {
-    fn default() -> Self {
-        Upload {
-            api: models::api::API::default(),
-        }
-    }
-}
-*/
-
 impl Upload {
     pub async fn upload_song_with_metadata(
         &mut self,
@@ -56,12 +46,8 @@ impl Upload {
             .send()
             .await
         {
-            Ok(r) => {
-                Ok(r)
-            }
-            Err(err) => {
-                Err(err)
-            }
+            Ok(r) => Ok(r),
+            Err(err) => Err(err),
         }
     }
 
@@ -74,11 +60,6 @@ impl Upload {
         let coverpath = cover.path.clone();
         println!("Cover path: {coverpath:?}");
         let song_detail = song.to_metadata_json(true).unwrap_or_default();
-        /*{
-            Ok(s) => s,
-            Err(_) => String::new(),
-        };
-        */
 
         println!("\n{song_detail}\n");
 
@@ -102,7 +83,11 @@ impl Upload {
     }
 
     pub fn set_api(&mut self, host: &str) {
-        let api = models::api::API { url: host.to_owned(), version: String::from("v1"), endpoint: String::new() };
+        let api = models::api::API {
+            url: host.to_owned(),
+            version: String::from("v1"),
+            endpoint: String::new(),
+        };
         self.api = api;
     }
 }

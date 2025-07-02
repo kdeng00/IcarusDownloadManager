@@ -9,16 +9,6 @@ pub struct RetrieveRecords {
     pub api: models::api::API,
 }
 
-/*
-impl Default for RetrieveRecords {
-    fn default() -> Self {
-        RetrieveRecords {
-            api: models::api::API::default(),
-        }
-    }
-}
-*/
-
 impl RetrieveRecords {
     pub async fn get_all_songs(
         &mut self,
@@ -41,23 +31,13 @@ impl RetrieveRecords {
                 // on success, parse our JSON to an APIResponse
                 match response.json::<Vec<icarus_models::song::Song>>().await {
                     Ok(parsed) => Ok(parsed),
-                    Err(err) => {
-                        Err(std::io::Error::other(
-                            err.to_string(),
-                        ))
-                    }
+                    Err(err) => Err(std::io::Error::other(err.to_string())),
                 }
             }
             reqwest::StatusCode::UNAUTHORIZED => {
-                Err(std::io::Error::other(
-                    "Need to grab a new token",
-                ))
+                Err(std::io::Error::other("Need to grab a new token"))
             }
-            other => {
-                Err(std::io::Error::other(
-                    other.to_string(),
-                ))
-            }
+            other => Err(std::io::Error::other(other.to_string())),
         }
     }
 }

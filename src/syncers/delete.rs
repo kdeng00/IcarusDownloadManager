@@ -10,16 +10,6 @@ pub struct Delete {
     pub api: models::api::API,
 }
 
-/*
-impl Default for Delete {
-    fn default() -> Self {
-        Delete {
-            api: models::api::API::default(),
-        }
-    }
-}
-*/
-
 impl Delete {
     pub async fn delete_song(
         &mut self,
@@ -43,14 +33,10 @@ impl Delete {
 
                 match response.json::<icarus_models::song::Song>().await {
                     Ok(sng) => Ok(sng),
-                    Err(er) => Err(std::io::Error::other(
-                        er.to_string(),
-                    )),
+                    Err(er) => Err(std::io::Error::other(er.to_string())),
                 }
             }
-            other => Err(std::io::Error::other(
-                other.to_string(),
-            )),
+            other => Err(std::io::Error::other(other.to_string())),
         }
     }
 }
