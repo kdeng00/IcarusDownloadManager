@@ -4,24 +4,16 @@ use serde::{Deserialize, Serialize};
 
 use crate::models::{self};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Default, Deserialize, Serialize)]
 pub struct UserManager {
     pub user: icarus_models::user::User,
     pub ica_action: models::icarus_action::IcarusAction,
 }
 
-impl Default for UserManager {
-    fn default() -> Self {
-        UserManager {
-            user: icarus_models::user::User::default(),
-            ica_action: models::icarus_action::IcarusAction::default(),
-        }
-    }
-}
 
 impl UserManager {
     pub fn retrieve_user(&self) -> icarus_models::user::User {
-        return self.user.clone();
+        self.user.clone()
     }
 
     pub fn parse_user_from_actions(&mut self) {
