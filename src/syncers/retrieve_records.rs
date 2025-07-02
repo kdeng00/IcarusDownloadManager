@@ -6,7 +6,7 @@ use crate::syncers;
 
 #[derive(Default)]
 pub struct RetrieveRecords {
-    pub api: models::api::API,
+    pub api: models::api::Api,
 }
 
 impl RetrieveRecords {
@@ -28,7 +28,7 @@ impl RetrieveRecords {
 
         match response.status() {
             reqwest::StatusCode::OK => {
-                // on success, parse our JSON to an APIResponse
+                // on success, parse our JSON to an API Response
                 match response.json::<Vec<icarus_models::song::Song>>().await {
                     Ok(parsed) => Ok(parsed),
                     Err(err) => Err(std::io::Error::other(err.to_string())),

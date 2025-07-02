@@ -2,13 +2,13 @@ use crate::models;
 
 #[derive(Clone, Debug)]
 pub struct APIParser {
-    pub api: models::api::API,
+    pub api: models::api::Api,
     pub ica_act: models::icarus_action::IcarusAction,
 }
 
 impl APIParser {
-    pub fn retrieve_api(&self) -> models::api::API {
-        return self.api.clone();
+    pub fn retrieve_api(&self) -> models::api::Api {
+        self.api.clone()
     }
 
     pub fn parse_api(&mut self) {
