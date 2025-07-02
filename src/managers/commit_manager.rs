@@ -187,8 +187,6 @@ impl CommitManager {
         println!("Message: {}", token.message);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
-        // let mut song = icarus_models::song::Song::default();
-        // song.id = id;
         let song = icarus_models::song::Song {
             id: song_id, ..Default::default()
         };
