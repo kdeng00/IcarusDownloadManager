@@ -74,9 +74,7 @@ pub fn retrieve_song(
     if found {
         Ok(song)
     } else {
-        Err(std::io::Error::other(
-            "Song not found",
-        ))
+        Err(std::io::Error::other("Song not found"))
     }
 }
 
@@ -188,7 +186,8 @@ impl CommitManager {
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
         let song = icarus_models::song::Song {
-            id: song_id, ..Default::default()
+            id: song_id,
+            ..Default::default()
         };
         let result_fut = dwn_loader.download_song(&token, &song);
         match Runtime::new().unwrap().block_on(result_fut) {
@@ -376,32 +375,22 @@ impl CommitManager {
                                 }
                                 Err(er) => {
                                     println!("Some error {er:?}");
-                                    Err(std::io::Error::other(
-                                        er.to_string(),
-                                    ))
+                                    Err(std::io::Error::other(er.to_string()))
                                 }
                             }
                         }
                         Err(err) => {
                             println!("Error: {err:?}");
-                            Err(std::io::Error::other(
-                                err.to_string(),
-                            ))
+                            Err(std::io::Error::other(err.to_string()))
                         }
                     }
                 }
                 Err(er) => {
                     println!("Error: {er:?}");
-                    Err(std::io::Error::other(
-                        er.to_string(),
-                    ))
+                    Err(std::io::Error::other(er.to_string()))
                 }
             },
-            _ => {
-                Err(std::io::Error::other(
-                    "No sutitable file found".to_owned(),
-                ))
-            }
+            _ => Err(std::io::Error::other("No sutitable file found".to_owned())),
         }
     }
 
@@ -515,7 +504,7 @@ impl CommitManager {
             if let En::ImageFile = self.find_file_extension(&file_name) {
                 let directory_part = directory_path.clone();
                 let fname = utilities::string::o_to_string(&file_name);
-                let fullpath = format!("{}/{}", directory_part ,&fname.unwrap());
+                let fullpath = format!("{}/{}", directory_part, &fname.unwrap());
                 return Ok(fullpath);
             }
         }

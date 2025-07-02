@@ -7,4 +7,3 @@ pub struct UploadForm {
     pub url: Option<String>,
     pub filepath: Option<String>,
 }
-

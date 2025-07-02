@@ -8,4 +8,3 @@ pub struct Api {
     pub endpoint: String,
     pub version: String,
 }
-

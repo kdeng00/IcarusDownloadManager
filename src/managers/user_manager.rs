@@ -10,7 +10,6 @@ pub struct UserManager {
     pub ica_action: models::icarus_action::IcarusAction,
 }
 
-
 impl UserManager {
     pub fn retrieve_user(&self) -> icarus_models::user::User {
         self.user.clone()
