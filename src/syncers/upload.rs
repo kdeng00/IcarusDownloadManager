@@ -62,26 +62,40 @@ impl Upload {
     }
 
     pub async fn queue_song(&self, token: &icarus_models::token::AccessToken, song: &icarus_models::song::Song) -> Result<uuid::Uuid, reqwest::Error> {
-        let songpath = song.song_path().unwrap_or_default();
+        let songpath = song.song_path().unwrap();
+        let file = tokio::fs::File::open(&songpath).await.unwrap();
+        let stream = tokio_util::codec::FramedRead::new(file, tokio_util::codec::BytesCodec::new());
+        let file_body = reqwest::Body::wrap_stream(stream);
+        println!("Song path: {songpath:?}");
+        println!("Token: {}", token.token);
 
-        let mut song_filename = String::from("audio");
-        song_filename += icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
+        // let mut song_filename = String::from("audio");
+        // song_filename += icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
 
         let form = reqwest::multipart::Form::new()
             .part(
                 "file",
-                reqwest::multipart::Part::bytes(std::fs::read(songpath).unwrap())
-                    .file_name(song_filename),
+                reqwest::multipart::Part::stream(file_body)
+                    .file_name(song.filename.clone()).mime_str("application/octet-stream").unwrap(),
             );
 
         let endpoint = String::from("api/v2/song/queue");
         let url = format!("{}/{endpoint}", self.api.url);
+        println!("Url: {url:?}");
+
         let mut headers = reqwest::header::HeaderMap::new();
         headers.insert(
             reqwest::header::AUTHORIZATION,
-            HeaderValue::from_str(&token.token.clone()).unwrap(),
+            HeaderValue::from_str(&token.bearer_token()).unwrap(),
         );
-        let client = reqwest::Client::builder().build().unwrap();
+        headers.insert("Accept", HeaderValue::from_str("*/*").unwrap());
+        headers.insert("Connection", HeaderValue::from_str("keep-alive").unwrap());
+        headers.insert("Cache-Control", HeaderValue::from_str("no-cache").unwrap());
+
+        // let client = reqwest::Client::new();
+        let client = reqwest::Client::builder().timeout(std::time::Duration::from_secs(300))
+            .pool_idle_timeout(std::time::Duration::from_secs(30))
+            .build().unwrap();
         match client.post(url).headers(headers).multipart(form).send().await {
             Ok(response) => match response.json::<response::queue_song::Response>().await {
                 Ok(resp) => {

@@ -282,7 +282,7 @@ impl CommitManager {
         };
         tok_mgr.init();
 
-        let token = Runtime::new().unwrap().block_on(tok_mgr.request_token());
+        let token = tok_mgr.request_token().await;
 
         token.unwrap()
     }
@@ -376,10 +376,11 @@ impl CommitManager {
 
                             cover_art.data = cover_art.to_data().unwrap();
 
-                            let mut up = syncers::upload::Upload::default();
-                            let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
-                            up.set_api(&host);
+                            // let mut up = syncers::upload::Upload::default();
+                            // let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
+                            // up.set_api(&host);
 
+                            /*
                             let res = up.upload_song_with_metadata(&token, &s, &cover_art);
 
                             match Runtime::new().unwrap().block_on(res) {
@@ -390,6 +391,16 @@ impl CommitManager {
                                 Err(er) => {
                                     println!("Some error {er:?}");
                                     Err(std::io::Error::other(er.to_string()))
+                                }
+                            }
+                            */
+                            let res = self.queue_song(&token, &s).await;
+                            match res {
+                                Ok(val) => {
+                                    Ok(())
+                                },
+                                Err(err) => {
+                                    Err(err)
                                 }
                             }
                         }
@@ -406,6 +417,29 @@ impl CommitManager {
             },
             _ => Err(std::io::Error::other("No sutitable file found".to_owned())),
         }
+    }
+
+    async fn queue_song(&self, token: &icarus_models::token::AccessToken, song: &icarus_models::song::Song) -> Result<()> {
+        let mut up = syncers::upload::Upload::default();
+        let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
+        up.set_api(&host);
+
+        let mut queued_song_id = uuid::Uuid::nil();
+
+        println!("Queueing song");
+
+        match up.queue_song(token, song).await {
+            Ok(id) => {
+                queued_song_id = id;
+            }
+            Err(err) => {
+                eprintln!("Error: {err:?}");
+            }
+        }
+
+        println!("Queued song Id: {queued_song_id:?}");
+
+        Ok(())
     }
 
     fn get_songs(
