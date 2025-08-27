@@ -340,6 +340,7 @@ impl CommitManager {
             title: String::new(),
             path: cover_path.to_owned(),
             data: Vec::new(),
+            ..Default::default()
         };
         let file_name = std::ffi::OsString::from(&song_file.file_name().unwrap());
 
