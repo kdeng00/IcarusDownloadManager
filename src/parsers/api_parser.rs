@@ -35,7 +35,7 @@ impl APIParser {
                         if value.chars().nth(value.len() - 1) == Some('/') {
                             self.apis[0].url = value;
                         } else {
-                            self.apis[0].url = value + "/";
+                            self.apis[0].url = format!("{value}/");
                         }
                         break;
                     }
@@ -45,7 +45,7 @@ impl APIParser {
                         if value.chars().nth(value.len() - 1) == Some('/') {
                             self.apis[1].url = value;
                         } else {
-                            self.apis[1].url = value + "/";
+                            self.apis[1].url = format!("{value}/");
                         }
                         break;
                     }
@@ -53,8 +53,8 @@ impl APIParser {
             }
         }
 
-        // for api in self.apis {
-        // }
-        // self.api.version = String::from(API_VERSION);
+        for api in &mut self.apis {
+            api.version = String::from(API_VERSION);
+        }
     }
 }

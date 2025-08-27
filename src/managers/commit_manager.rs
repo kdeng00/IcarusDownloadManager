@@ -182,7 +182,6 @@ impl CommitManager {
             apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
         };
-        // parsers::api_parser::APIType
         prsr.parse_api(parsers::api_parser::APIType::Main);
         prsr.parse_api(parsers::api_parser::APIType::Auth);
 
