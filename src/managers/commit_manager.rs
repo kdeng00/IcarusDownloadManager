@@ -79,7 +79,7 @@ pub fn retrieve_song(
 }
 
 impl CommitManager {
-    pub fn commit_action(&mut self) {
+    pub async fn commit_action(&mut self) {
         let action = &self.ica_action.action;
         println!("Committing {action} action");
 
@@ -91,11 +91,11 @@ impl CommitManager {
         // TODO: Move code to get token here and then pass it to the respective functions
 
         match mapped_action {
-            ActionValues::DeleteAct => self.delete_song(),
-            ActionValues::DownloadAct => self.download_song(),
-            ActionValues::RetrieveAct => self.retrieve_object(),
+            ActionValues::DeleteAct => self.delete_song().await,
+            ActionValues::DownloadAct => self.download_song().await,
+            ActionValues::RetrieveAct => self.retrieve_object().await,
             ActionValues::UploadAct => self.upload_song(),
-            ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata(),
+            ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata().await,
             _ => {
                 println!("Nothing good here");
             }
@@ -132,7 +132,7 @@ impl CommitManager {
         actions
     }
 
-    fn delete_song(&self) {
+    async fn delete_song(&self) {
         let mut prsr = parsers::api_parser::APIParser {
             apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
@@ -141,7 +141,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
 
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
 
         println!("Deleting song");
 
@@ -173,7 +173,7 @@ impl CommitManager {
         }
     }
 
-    fn download_song(&self) {
+    async fn download_song(&self) {
         println!("Deleting song");
         let dwn = self.ica_action.retrieve_flag_value(&String::from("-b"));
         let song_id = uuid::Uuid::from_str(dwn.as_str()).unwrap();
@@ -186,7 +186,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
 
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
         println!("Message: {}", token.message);
         let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
 
@@ -220,7 +220,7 @@ impl CommitManager {
         }
     }
 
-    fn retrieve_object(&self) {
+    async fn retrieve_object(&self) {
         println!("Retrieving song");
         let rt = self.ica_action.retrieve_flag_value(&String::from("-rt"));
 
@@ -236,7 +236,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
 
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
         println!("Token {token:?}");
 
         let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
@@ -265,7 +265,7 @@ impl CommitManager {
         panic!("Not supported");
     }
 
-    fn parse_token(&self, api: &models::api::Api) -> icarus_models::token::AccessToken {
+    async fn parse_token(&self, api: &models::api::Api) -> icarus_models::token::AccessToken {
         println!("Fetching token");
 
         let mut usr_mgr: managers::user_manager::UserManager =
@@ -282,12 +282,12 @@ impl CommitManager {
         };
         tok_mgr.init();
 
-        let token = Runtime::new().unwrap().block_on(tok_mgr.request_token());
+        let token = tok_mgr.request_token().await;
 
         token.unwrap()
     }
 
-    fn upload_song_with_metadata(&mut self) {
+    async fn upload_song_with_metadata(&mut self) {
         println!("Uplodaring song with metadara");
 
         let songpath = self.ica_action.retrieve_flag_value(&String::from("-s"));
@@ -314,15 +314,17 @@ impl CommitManager {
             println!("metadata path: {metadata_path}");
             println!("cover art path: {coverpath}");
 
-            let _ = self.sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath);
+            let _ = self
+                .sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath)
+                .await;
         } else if multitarget {
-            let _ = self.multi_target_upload(&uni);
+            let _ = self.multi_target_upload(&uni).await;
         } else {
             println!("Single or Multi target has not been chosen");
         }
     }
 
-    fn sing_target_upload(
+    async fn sing_target_upload(
         &mut self,
         songpath: &String,
         track_id: &str,
@@ -337,7 +339,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
 
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
 
         println!("Token: {:?}", token.token);
 
@@ -376,21 +378,9 @@ impl CommitManager {
 
                             cover_art.data = cover_art.to_data().unwrap();
 
-                            let mut up = syncers::upload::Upload::default();
-                            let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
-                            up.set_api(&host);
-
-                            let res = up.upload_song_with_metadata(&token, &s, &cover_art);
-
-                            match Runtime::new().unwrap().block_on(res) {
-                                Ok(o) => {
-                                    println!("Successfully sent {o:?}");
-                                    Ok(())
-                                }
-                                Err(er) => {
-                                    println!("Some error {er:?}");
-                                    Err(std::io::Error::other(er.to_string()))
-                                }
+                            match self.queue_song(&token, &s).await {
+                                Ok(_) => Ok(()),
+                                Err(err) => Err(err),
                             }
                         }
                         Err(err) => {
@@ -406,6 +396,33 @@ impl CommitManager {
             },
             _ => Err(std::io::Error::other("No sutitable file found".to_owned())),
         }
+    }
+
+    async fn queue_song(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        song: &icarus_models::song::Song,
+    ) -> Result<()> {
+        let mut up = syncers::upload::Upload::default();
+        let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
+        up.set_api(&host);
+
+        let mut queued_song_id = uuid::Uuid::nil();
+
+        println!("Queueing song");
+
+        match up.queue_song(token, song).await {
+            Ok(id) => {
+                queued_song_id = id;
+            }
+            Err(err) => {
+                eprintln!("Error: {err:?}");
+            }
+        }
+
+        println!("Queued song Id: {queued_song_id:?}");
+
+        Ok(())
     }
 
     fn get_songs(
@@ -455,7 +472,7 @@ impl CommitManager {
         }
     }
 
-    fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
+    async fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
             apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
@@ -463,7 +480,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Main);
         prsr.parse_api(parsers::api_parser::APIType::Auth);
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
 
         let directory_path = std::path::Path::new(&sourcepath);
 
