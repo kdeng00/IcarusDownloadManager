@@ -88,6 +88,8 @@ impl CommitManager {
 
         println!("{mapped_action:?}");
 
+        // TODO: Move code to get token here and then pass it to the respective functions
+
         match mapped_action {
             ActionValues::DeleteAct => self.delete_song(),
             ActionValues::DownloadAct => self.download_song(),
@@ -132,13 +134,14 @@ impl CommitManager {
 
     fn delete_song(&self) {
         let mut prsr = parsers::api_parser::APIParser {
+            apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
-            api: models::api::Api::default(),
         };
-        prsr.parse_api();
-        let api = prsr.retrieve_api();
+        prsr.parse_api(parsers::api_parser::APIType::Main);
+        prsr.parse_api(parsers::api_parser::APIType::Auth);
+        let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
 
-        let token = self.parse_token(&api);
+        let token = self.parse_token(&auth_api);
 
         println!("Deleting song");
 
@@ -153,6 +156,7 @@ impl CommitManager {
             }
         }
 
+        let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
         let mut del = syncers::delete::Delete { api: api.clone() };
 
         println!("Deleting song..");
@@ -175,14 +179,17 @@ impl CommitManager {
         let song_id = uuid::Uuid::from_str(dwn.as_str()).unwrap();
 
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::Api::default(),
+            apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
         };
-        prsr.parse_api();
+        // parsers::api_parser::APIType
+        prsr.parse_api(parsers::api_parser::APIType::Main);
+        prsr.parse_api(parsers::api_parser::APIType::Auth);
 
-        let api = prsr.retrieve_api();
-        let token = self.parse_token(&api);
+        let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
+        let token = self.parse_token(&auth_api);
         println!("Message: {}", token.message);
+        let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
         let song = icarus_models::song::Song {
@@ -223,14 +230,17 @@ impl CommitManager {
         }
 
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::Api::default(),
+            apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
         };
-        prsr.parse_api();
+        prsr.parse_api(parsers::api_parser::APIType::Main);
+        prsr.parse_api(parsers::api_parser::APIType::Auth);
 
-        let api = prsr.retrieve_api();
-        let token = self.parse_token(&api);
+        let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
+        let token = self.parse_token(&auth_api);
         println!("Token {token:?}");
+
+        let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
 
         let mut repo = syncers::retrieve_records::RetrieveRecords { api: api.clone() };
         let result_fut = repo.get_all_songs(&token);
@@ -321,13 +331,14 @@ impl CommitManager {
         cover_path: &str,
     ) -> Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::Api::default(),
+            apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
         };
-        prsr.parse_api();
+        prsr.parse_api(parsers::api_parser::APIType::Main);
+        prsr.parse_api(parsers::api_parser::APIType::Auth);
 
-        let api = prsr.retrieve_api();
-        let token = self.parse_token(&api);
+        let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
+        let token = self.parse_token(&auth_api);
 
         println!("Token: {:?}", token.token);
 
@@ -447,12 +458,13 @@ impl CommitManager {
 
     fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
-            api: models::api::Api::default(),
+            apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
         };
-        prsr.parse_api();
-        let api = prsr.retrieve_api();
-        let token = self.parse_token(&api);
+        prsr.parse_api(parsers::api_parser::APIType::Main);
+        prsr.parse_api(parsers::api_parser::APIType::Auth);
+        let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
+        let token = self.parse_token(&auth_api);
 
         let directory_path = std::path::Path::new(&sourcepath);
 

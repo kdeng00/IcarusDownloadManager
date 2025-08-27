@@ -63,7 +63,7 @@ impl TokenManager {
 
     pub fn init(&mut self) {
         let api = &mut self.api;
-        api.version = String::from("v1");
+        api.version = String::from(crate::parsers::api_parser::API_VERSION);
         api.endpoint = format!("api/{}/login", api.version);
     }
 
