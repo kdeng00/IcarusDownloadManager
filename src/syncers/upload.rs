@@ -11,6 +11,16 @@ pub struct Upload {
     pub api: models::api::Api,
 }
 
+mod response {
+    pub mod queue_song {
+        #[derive(Debug, serde::Deserialize)]
+        pub struct Response {
+            pub message: String,
+            pub data: Vec<uuid::Uuid>
+        }
+    }
+}
+
 impl Upload {
     pub async fn upload_song_with_metadata(
         &mut self,
@@ -48,6 +58,42 @@ impl Upload {
         {
             Ok(r) => Ok(r),
             Err(err) => Err(err),
+        }
+    }
+
+    pub async fn queue_song(&self, token: &icarus_models::token::AccessToken, song: &icarus_models::song::Song) -> Result<uuid::Uuid, reqwest::Error> {
+        let songpath = song.song_path().unwrap_or_default();
+
+        let mut song_filename = String::from("audio");
+        song_filename += icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
+
+        let form = reqwest::multipart::Form::new()
+            .part(
+                "file",
+                reqwest::multipart::Part::bytes(std::fs::read(songpath).unwrap())
+                    .file_name(song_filename),
+            );
+
+        let endpoint = String::from("api/v2/song/queue");
+        let url = format!("{}/{endpoint}", self.api.url);
+        let mut headers = reqwest::header::HeaderMap::new();
+        headers.insert(
+            reqwest::header::AUTHORIZATION,
+            HeaderValue::from_str(&token.token.clone()).unwrap(),
+        );
+        let client = reqwest::Client::builder().build().unwrap();
+        match client.post(url).headers(headers).multipart(form).send().await {
+            Ok(response) => match response.json::<response::queue_song::Response>().await {
+                Ok(resp) => {
+                    Ok(resp.data[0])
+                }
+                Err(err) => {
+                    Err(err)
+                }
+            }
+            Err(err) => {
+                Err(err)
+            }
         }
     }
 
