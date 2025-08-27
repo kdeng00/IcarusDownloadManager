@@ -17,7 +17,7 @@ impl APIParser {
     pub fn retrieve_api(&self, api_type: APIType) -> models::api::Api {
         match api_type {
             APIType::Main => self.apis[0].clone(),
-            APIType::Auth => self.apis[1].clone()
+            APIType::Auth => self.apis[1].clone(),
         }
     }
 
@@ -39,7 +39,7 @@ impl APIParser {
                         }
                         break;
                     }
-                }, 
+                }
                 APIType::Auth => {
                     if arg == "-ha" {
                         if value.chars().nth(value.len() - 1) == Some('/') {
@@ -51,7 +51,6 @@ impl APIParser {
                     }
                 }
             }
-
         }
 
         // for api in self.apis {
