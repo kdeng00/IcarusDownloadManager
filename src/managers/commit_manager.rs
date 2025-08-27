@@ -314,7 +314,9 @@ impl CommitManager {
             println!("metadata path: {metadata_path}");
             println!("cover art path: {coverpath}");
 
-            let _ = self.sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath).await;
+            let _ = self
+                .sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath)
+                .await;
         } else if multitarget {
             let _ = self.multi_target_upload(&uni).await;
         } else {
@@ -376,32 +378,9 @@ impl CommitManager {
 
                             cover_art.data = cover_art.to_data().unwrap();
 
-                            // let mut up = syncers::upload::Upload::default();
-                            // let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
-                            // up.set_api(&host);
-
-                            /*
-                            let res = up.upload_song_with_metadata(&token, &s, &cover_art);
-
-                            match Runtime::new().unwrap().block_on(res) {
-                                Ok(o) => {
-                                    println!("Successfully sent {o:?}");
-                                    Ok(())
-                                }
-                                Err(er) => {
-                                    println!("Some error {er:?}");
-                                    Err(std::io::Error::other(er.to_string()))
-                                }
-                            }
-                            */
-                            let res = self.queue_song(&token, &s).await;
-                            match res {
-                                Ok(val) => {
-                                    Ok(())
-                                },
-                                Err(err) => {
-                                    Err(err)
-                                }
+                            match self.queue_song(&token, &s).await {
+                                Ok(_) => Ok(()),
+                                Err(err) => Err(err),
                             }
                         }
                         Err(err) => {
@@ -419,7 +398,11 @@ impl CommitManager {
         }
     }
 
-    async fn queue_song(&self, token: &icarus_models::token::AccessToken, song: &icarus_models::song::Song) -> Result<()> {
+    async fn queue_song(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        song: &icarus_models::song::Song,
+    ) -> Result<()> {
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);

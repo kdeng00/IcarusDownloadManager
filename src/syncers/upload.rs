@@ -16,7 +16,7 @@ mod response {
         #[derive(Debug, serde::Deserialize)]
         pub struct Response {
             pub message: String,
-            pub data: Vec<uuid::Uuid>
+            pub data: Vec<uuid::Uuid>,
         }
     }
 }
@@ -61,23 +61,23 @@ impl Upload {
         }
     }
 
-    pub async fn queue_song(&self, token: &icarus_models::token::AccessToken, song: &icarus_models::song::Song) -> Result<uuid::Uuid, reqwest::Error> {
+    pub async fn queue_song(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        song: &icarus_models::song::Song,
+    ) -> Result<uuid::Uuid, reqwest::Error> {
         let songpath = song.song_path().unwrap();
         let file = tokio::fs::File::open(&songpath).await.unwrap();
         let stream = tokio_util::codec::FramedRead::new(file, tokio_util::codec::BytesCodec::new());
         let file_body = reqwest::Body::wrap_stream(stream);
-        println!("Song path: {songpath:?}");
-        println!("Token: {}", token.token);
 
-        // let mut song_filename = String::from("audio");
-        // song_filename += icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
-
-        let form = reqwest::multipart::Form::new()
-            .part(
-                "file",
-                reqwest::multipart::Part::stream(file_body)
-                    .file_name(song.filename.clone()).mime_str("application/octet-stream").unwrap(),
-            );
+        let form = reqwest::multipart::Form::new().part(
+            "file",
+            reqwest::multipart::Part::stream(file_body)
+                .file_name(song.filename.clone())
+                .mime_str("application/octet-stream")
+                .unwrap(),
+        );
 
         let endpoint = String::from("api/v2/song/queue");
         let url = format!("{}/{endpoint}", self.api.url);
@@ -92,22 +92,26 @@ impl Upload {
         headers.insert("Connection", HeaderValue::from_str("keep-alive").unwrap());
         headers.insert("Cache-Control", HeaderValue::from_str("no-cache").unwrap());
 
-        // let client = reqwest::Client::new();
-        let client = reqwest::Client::builder().timeout(std::time::Duration::from_secs(300))
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(300))
             .pool_idle_timeout(std::time::Duration::from_secs(30))
-            .build().unwrap();
-        match client.post(url).headers(headers).multipart(form).send().await {
+            .build()
+            .unwrap();
+        match client
+            .post(url)
+            .headers(headers)
+            .multipart(form)
+            .send()
+            .await
+        {
             Ok(response) => match response.json::<response::queue_song::Response>().await {
                 Ok(resp) => {
+                    println!("Message: {:?}", resp.message);
                     Ok(resp.data[0])
                 }
-                Err(err) => {
-                    Err(err)
-                }
-            }
-            Err(err) => {
-                Err(err)
-            }
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
         }
     }
 
