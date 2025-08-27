@@ -230,6 +230,8 @@ impl CommitManager {
 
         let api = prsr.retrieve_api();
         let token = self.parse_token(&api);
+        println!("Token {token:?}");
+
         let mut repo = syncers::retrieve_records::RetrieveRecords { api: api.clone() };
         let result_fut = repo.get_all_songs(&token);
 
@@ -248,6 +250,7 @@ impl CommitManager {
         }
     }
 
+    // TODO: Remove at some point
     fn upload_song(&self) {
         println!("Deleting song");
         panic!("Not supported");
