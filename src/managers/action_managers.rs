@@ -35,6 +35,7 @@ impl ActionManager {
             String::from("-p"),
             String::from("-t"),
             String::from("-h"),
+            String::from("-ha"),
             String::from("-s"),
             String::from("-sd"),
             String::from("-sr"),
@@ -75,6 +76,7 @@ impl ActionManager {
 
             let mut flg = models::flags::Flags::default();
 
+            // TODO: Refactor this
             if self.is_valid_flag(flag) && self.does_flag_have_value(flag) {
                 println!("Flag has value");
                 flg.flag = String::from(flag);

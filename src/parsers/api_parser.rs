@@ -2,16 +2,26 @@ use crate::models;
 
 #[derive(Clone, Debug)]
 pub struct APIParser {
-    pub api: models::api::Api,
+    pub apis: Vec<models::api::Api>,
     pub ica_act: models::icarus_action::IcarusAction,
 }
 
+pub const API_VERSION: &str = "v2";
+
+pub enum APIType {
+    Main,
+    Auth,
+}
+
 impl APIParser {
-    pub fn retrieve_api(&self) -> models::api::Api {
-        self.api.clone()
+    pub fn retrieve_api(&self, api_type: APIType) -> models::api::Api {
+        match api_type {
+            APIType::Main => self.apis[0].clone(),
+            APIType::Auth => self.apis[1].clone(),
+        }
     }
 
-    pub fn parse_api(&mut self) {
+    pub fn parse_api(&mut self, api_type: APIType) {
         let flags = self.ica_act.flags.clone();
         println!("Parsing api");
 
@@ -19,16 +29,32 @@ impl APIParser {
             let arg = elem.flag;
             let value = elem.value;
 
-            if arg == "-h" {
-                if value.chars().nth(value.len() - 1) == Some('/') {
-                    self.api.url = value;
-                } else {
-                    self.api.url = value + "/";
+            match api_type {
+                APIType::Main => {
+                    if arg == "-h" {
+                        if value.chars().nth(value.len() - 1) == Some('/') {
+                            self.apis[0].url = value;
+                        } else {
+                            self.apis[0].url = format!("{value}/");
+                        }
+                        break;
+                    }
                 }
-                break;
+                APIType::Auth => {
+                    if arg == "-ha" {
+                        if value.chars().nth(value.len() - 1) == Some('/') {
+                            self.apis[1].url = value;
+                        } else {
+                            self.apis[1].url = format!("{value}/");
+                        }
+                        break;
+                    }
+                }
             }
         }
 
-        self.api.version = "v1".to_string();
+        for api in &mut self.apis {
+            api.version = String::from(API_VERSION);
+        }
     }
 }
