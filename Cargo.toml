@@ -1,6 +1,6 @@
 [package]
 name = "icarus-dm"
-version = "0.6.0"
+version = "0.6.1"
 rust-version = "1.88"
 edition = "2024"
 
@@ -14,4 +14,4 @@ serde_json = "1.0.140"
 tokio = { version = "1.45.1", features = ["full"] }
 tokio-util = { version = "0.7.15", features = ["codec"] }
 uuid = { version = "1.17.0", features = ["v4", "serde"] }
-icarus_models = { git = "ssh://git@git.kundeng.us/phoenix/icarus_models.git", tag = "v0.5.0-devel-7958b89abc-111" }
+icarus_models = { git = "ssh://git@git.kundeng.us/phoenix/icarus_models.git", tag = "v0.5.6" }
