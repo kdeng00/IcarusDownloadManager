@@ -300,7 +300,12 @@ impl Upload {
         }
     }
 
-    pub async fn update_queued_song_status(&self, token: &icarus_models::token::AccessToken, queued_song_id: &uuid::Uuid, status: &str) -> Result<(), reqwest::Error> {
+    pub async fn update_queued_song_status(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        queued_song_id: &uuid::Uuid,
+        status: &str,
+    ) -> Result<(), reqwest::Error> {
         let endpoint = String::from("api/v2/song/queue");
         let url = format!("{}/{endpoint}", self.api.url);
 
@@ -315,13 +320,15 @@ impl Upload {
 
         let client = reqwest::Client::builder().build().unwrap();
 
-        match client.patch(url).headers(headers).json(&payload).send().await {
-            Ok(_) => {
-                Ok(())
-            }
-            Err(err) => {
-                Err(err)
-            }
+        match client
+            .patch(url)
+            .headers(headers)
+            .json(&payload)
+            .send()
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(err) => Err(err),
         }
     }
 
