@@ -268,7 +268,12 @@ impl Upload {
         }
     }
 
-    pub async fn link_queued_song_to_queued_coverart(&self, token: &icarus_models::token::AccessToken, queued_song_id: &uuid::Uuid, queued_coverart_id: &uuid::Uuid) -> Result<(), reqwest::Error> {
+    pub async fn link_queued_song_to_queued_coverart(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        queued_song_id: &uuid::Uuid,
+        queued_coverart_id: &uuid::Uuid,
+    ) -> Result<(), reqwest::Error> {
         let endpoint = String::from("api/v2/coverart/queue/link");
         let url = format!("{}/{endpoint}", self.api.url);
 
