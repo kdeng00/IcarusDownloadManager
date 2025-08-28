@@ -532,6 +532,7 @@ impl CommitManager {
         }
     }
 
+    // TODO: Make sure this works
     async fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
             apis: vec![models::api::Api::default(), models::api::Api::default()],
