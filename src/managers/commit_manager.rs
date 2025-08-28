@@ -388,7 +388,7 @@ impl CommitManager {
                             let members = UploadSongMembers {
                                 song: s,
                                 coverart: cover_art,
-                                token: token
+                                token: token,
                             };
 
                             match self.upload_song_process(&members).await {
@@ -411,12 +411,7 @@ impl CommitManager {
         }
     }
 
-    async fn upload_song_process(
-        &self,
-        // token: &icarus_models::token::AccessToken,
-        // song: &icarus_models::song::Song,
-        data: &UploadSongMembers
-    ) -> Result<()> {
+    async fn upload_song_process(&self, data: &UploadSongMembers) -> Result<()> {
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
@@ -424,19 +419,14 @@ impl CommitManager {
         let token = &data.token;
         let song = &data.song;
 
-        let mut queued_song_id = uuid::Uuid::nil();
-
         println!("Queueing song");
 
-        match up.queue_song(token, song).await {
-            Ok(id) => {
-                println!("Song queued");
-                queued_song_id = id;
-            }
+        let queued_song_id = match up.queue_song(token, song).await {
+            Ok(id) => id,
             Err(err) => {
                 return Err(std::io::Error::other(err.to_string()));
             }
-        }
+        };
 
         println!("Queued song Id: {queued_song_id:?}");
 
@@ -448,7 +438,6 @@ impl CommitManager {
                 return Err(std::io::Error::other(err.to_string()));
             }
         }
-
 
         Ok(())
     }
