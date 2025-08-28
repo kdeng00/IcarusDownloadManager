@@ -300,6 +300,10 @@ impl Upload {
         }
     }
 
+    pub async fn update_queued_song_status(&self, token: &icarus_models::token::AccessToken, queued_song_id: &uuid::Uuid, status: &str) -> Result<(), reqwest::Error> {
+        Ok(())
+    }
+
     fn init_form(
         &self,
         song: &icarus_models::song::Song,
