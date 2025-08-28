@@ -462,6 +462,7 @@ impl CommitManager {
                     Ok(_) => {
                         println!("Queued coverart Id: {id:?}");
                         println!("Linked queued song to queued coverart");
+                        println!("Queued status updated");
                     }
                     Err(err) => {
                         return Err(std::io::Error::other(err.to_string()));
