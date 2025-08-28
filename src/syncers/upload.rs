@@ -27,6 +27,14 @@ mod response {
             pub data: Vec<uuid::Uuid>,
         }
     }
+
+    pub mod queue_coverart {
+        #[derive(Debug, serde::Deserialize)]
+        pub struct Response {
+            pub message: String,
+            pub data: Vec<uuid::Uuid>,
+        }
+    }
 }
 
 impl Upload {
@@ -202,6 +210,64 @@ impl Upload {
         }
     }
 
+    pub async fn queue_coverart(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        coverart: &icarus_models::coverart::CoverArt,
+    ) -> Result<uuid::Uuid, reqwest::Error> {
+        let coverartpath = coverart.path.clone();
+        let file = tokio::fs::File::open(&coverartpath).await.unwrap();
+        let stream = tokio_util::codec::FramedRead::new(file, tokio_util::codec::BytesCodec::new());
+        let file_body = reqwest::Body::wrap_stream(stream);
+
+        let file_name = std::path::Path::new(&coverartpath)
+            .file_name()
+            .and_then(|name| name.to_str())
+            .map(String::from)
+            .unwrap_or("file".to_string());
+
+        let form = reqwest::multipart::Form::new().part(
+            "file",
+            reqwest::multipart::Part::stream(file_body)
+                .file_name(file_name)
+                .mime_str("application/octet-stream")
+                .unwrap(),
+        );
+
+        let endpoint = String::from("api/v2/coverart/queue");
+        let url = format!("{}/{endpoint}", self.api.url);
+        println!("Url: {url:?}");
+
+        let mut headers = reqwest::header::HeaderMap::new();
+        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        headers.insert(auth, auth_val);
+        headers.insert("Accept", HeaderValue::from_str("*/*").unwrap());
+        headers.insert("Connection", HeaderValue::from_str("keep-alive").unwrap());
+        headers.insert("Cache-Control", HeaderValue::from_str("no-cache").unwrap());
+
+        let client = reqwest::Client::builder()
+            .timeout(std::time::Duration::from_secs(300))
+            .pool_idle_timeout(std::time::Duration::from_secs(30))
+            .build()
+            .unwrap();
+        match client
+            .post(url)
+            .headers(headers)
+            .multipart(form)
+            .send()
+            .await
+        {
+            Ok(response) => match response.json::<response::queue_coverart::Response>().await {
+                Ok(resp) => {
+                    println!("Message: {:?}", resp.message);
+                    Ok(resp.data[0])
+                }
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
+        }
+    }
+
     fn init_form(
         &self,
         song: &icarus_models::song::Song,
@@ -236,7 +302,7 @@ impl Upload {
     pub fn set_api(&mut self, host: &str) {
         let api = models::api::Api {
             url: host.to_owned(),
-            version: String::from("v1"),
+            version: String::from(crate::parsers::api_parser::API_VERSION),
             endpoint: String::new(),
         };
         self.api = api;
