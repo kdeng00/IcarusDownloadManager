@@ -24,7 +24,7 @@ mod response {
         #[derive(Debug, serde::Deserialize)]
         pub struct Response {
             pub message: String,
-            pub data: Vec<uuid::Uuid>
+            pub data: Vec<uuid::Uuid>,
         }
     }
 }
@@ -152,7 +152,13 @@ impl Upload {
         }
     }
 
-    pub async fn queue_metadata(&self, token: &icarus_models::token::AccessToken, album: &icarus_models::album::collection::Album, song: &icarus_models::song::Song, queued_song_id: &uuid::Uuid) -> Result<uuid::Uuid, reqwest::Error> {
+    pub async fn queue_metadata(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        album: &icarus_models::album::collection::Album,
+        song: &icarus_models::song::Song,
+        queued_song_id: &uuid::Uuid,
+    ) -> Result<uuid::Uuid, reqwest::Error> {
         let endpoint = String::from("api/v2/song/metadata/queue");
         let url = format!("{}/{endpoint}", self.api.url);
 
@@ -174,23 +180,25 @@ impl Upload {
             "year": album.year,
             "duration": song.duration,
         });
-        
+
         let client = reqwest::Client::builder().build().unwrap();
 
-        match client.post(url).headers(headers).json(&payload).send().await {
+        match client
+            .post(url)
+            .headers(headers)
+            .json(&payload)
+            .send()
+            .await
+        {
             Ok(response) => match response.json::<response::queue_metadata::Response>().await {
                 Ok(resp) => {
                     println!("Message: {:?}", resp.message);
 
                     Ok(resp.data[0])
                 }
-                Err(err) => {
-                    Err(err)
-                }
-            }
-            Err(err) => {
-                Err(err)
-            }
+                Err(err) => Err(err),
+            },
+            Err(err) => Err(err),
         }
     }
 

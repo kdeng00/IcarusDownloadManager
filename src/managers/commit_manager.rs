@@ -442,10 +442,9 @@ impl CommitManager {
             }
         }
 
-        let queued_metadata_id = match up.queue_metadata(token, album, song, &queued_song_id).await {
-            Ok(id) => {
-                id
-            }
+        let queued_metadata_id = match up.queue_metadata(token, album, song, &queued_song_id).await
+        {
+            Ok(id) => id,
             Err(err) => {
                 return Err(std::io::Error::other(err.to_string()));
             }
