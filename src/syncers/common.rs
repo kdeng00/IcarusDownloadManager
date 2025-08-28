@@ -19,3 +19,12 @@ fn retrieve_url_with_id(api: &models::api::Api, id: &uuid::Uuid) -> String {
 
     url
 }
+
+pub async fn auth_header(
+    token: &icarus_models::token::AccessToken,
+) -> (http::HeaderName, http::HeaderValue) {
+    let auth = reqwest::header::AUTHORIZATION;
+    let auth_value = http::HeaderValue::from_str(&token.bearer_token()).unwrap();
+
+    (auth, auth_value)
+}
