@@ -36,6 +36,13 @@ enum En {
     Other,
 }
 
+#[derive(Debug)]
+struct UploadSongMembers {
+    pub song: icarus_models::song::Song,
+    pub coverart: icarus_models::coverart::CoverArt,
+    pub token: icarus_models::token::AccessToken,
+}
+
 pub fn retrieve_song(
     album: &icarus_models::album::collection::Album,
     track: i32,
@@ -378,7 +385,13 @@ impl CommitManager {
 
                             cover_art.data = cover_art.to_data().unwrap();
 
-                            match self.queue_song(&token, &s).await {
+                            let members = UploadSongMembers {
+                                song: s,
+                                coverart: cover_art,
+                                token: token
+                            };
+
+                            match self.upload_song_process(&members).await {
                                 Ok(_) => Ok(()),
                                 Err(err) => Err(err),
                             }
@@ -398,14 +411,18 @@ impl CommitManager {
         }
     }
 
-    async fn queue_song(
+    async fn upload_song_process(
         &self,
-        token: &icarus_models::token::AccessToken,
-        song: &icarus_models::song::Song,
+        // token: &icarus_models::token::AccessToken,
+        // song: &icarus_models::song::Song,
+        data: &UploadSongMembers
     ) -> Result<()> {
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
+
+        let token = &data.token;
+        let song = &data.song;
 
         let mut queued_song_id = uuid::Uuid::nil();
 
@@ -417,6 +434,7 @@ impl CommitManager {
             }
             Err(err) => {
                 eprintln!("Error: {err:?}");
+                return Err(std::io::Error::other(err.to_string()));
             }
         }
 
