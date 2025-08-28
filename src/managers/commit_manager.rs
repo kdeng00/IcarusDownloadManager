@@ -41,6 +41,7 @@ struct UploadSongMembers {
     pub song: icarus_models::song::Song,
     pub coverart: icarus_models::coverart::CoverArt,
     pub token: icarus_models::token::AccessToken,
+    pub album: icarus_models::album::collection::Album,
 }
 
 pub fn retrieve_song(
@@ -389,6 +390,7 @@ impl CommitManager {
                                 song: s,
                                 coverart: cover_art,
                                 token: token,
+                                album: album,
                             };
 
                             match self.upload_song_process(&members).await {
@@ -418,6 +420,7 @@ impl CommitManager {
 
         let token = &data.token;
         let song = &data.song;
+        let album = &data.album;
 
         println!("Queueing song");
 
@@ -438,6 +441,17 @@ impl CommitManager {
                 return Err(std::io::Error::other(err.to_string()));
             }
         }
+
+        let queued_metadata_id = match up.queue_metadata(token, album, song, &queued_song_id).await {
+            Ok(id) => {
+                id
+            }
+            Err(err) => {
+                return Err(std::io::Error::other(err.to_string()));
+            }
+        };
+
+        println!("Queued metadata Id: {queued_metadata_id:?}");
 
         Ok(())
     }
