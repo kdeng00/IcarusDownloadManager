@@ -332,6 +332,7 @@ impl CommitManager {
         }
     }
 
+    /// Only uploading one song
     async fn sing_target_upload(
         &mut self,
         songpath: &String,
@@ -413,6 +414,7 @@ impl CommitManager {
         }
     }
 
+    /// Upload song to the queue to get processed
     async fn upload_song_process(&self, data: &UploadSongMembers) -> Result<()> {
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
