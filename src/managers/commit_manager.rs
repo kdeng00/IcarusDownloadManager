@@ -421,6 +421,7 @@ impl CommitManager {
         let token = &data.token;
         let song = &data.song;
         let album = &data.album;
+        let coverart = &data.coverart;
 
         println!("Queueing song");
 
@@ -451,6 +452,15 @@ impl CommitManager {
         };
 
         println!("Queued metadata Id: {queued_metadata_id:?}");
+
+        match up.queue_coverart(token, coverart).await {
+            Ok(id) => {
+                println!("Queued coverart Id: {id:?}");
+            }
+            Err(err) => {
+                return Err(std::io::Error::other(err.to_string()));
+            }
+        }
 
         Ok(())
     }
