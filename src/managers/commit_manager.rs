@@ -430,15 +430,25 @@ impl CommitManager {
 
         match up.queue_song(token, song).await {
             Ok(id) => {
+                println!("Song queued");
                 queued_song_id = id;
             }
             Err(err) => {
-                eprintln!("Error: {err:?}");
                 return Err(std::io::Error::other(err.to_string()));
             }
         }
 
         println!("Queued song Id: {queued_song_id:?}");
+
+        match up.link_user_to_queued_song(token, &queued_song_id).await {
+            Ok(_) => {
+                println!("Queued song linked to user");
+            }
+            Err(err) => {
+                return Err(std::io::Error::other(err.to_string()));
+            }
+        }
+
 
         Ok(())
     }
