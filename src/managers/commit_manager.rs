@@ -458,9 +458,14 @@ impl CommitManager {
                 .link_queued_song_to_queued_coverart(token, &queued_song_id, &id)
                 .await
             {
-                Ok(_) => {
-                    println!("Queued coverart Id: {id:?}");
-                    println!("Linked queued song to queued coverart");
+                Ok(_) => match up.update_queued_song_status(token, &queued_song_id, "ready").await {
+                    Ok(_) => {
+                        println!("Queued coverart Id: {id:?}");
+                        println!("Linked queued song to queued coverart");
+                    }
+                    Err(err) => {
+                        return Err(std::io::Error::other(err.to_string()));
+                    }
                 }
                 Err(err) => {
                     return Err(std::io::Error::other(err.to_string()));
