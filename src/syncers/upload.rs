@@ -300,6 +300,38 @@ impl Upload {
         }
     }
 
+    pub async fn update_queued_song_status(
+        &self,
+        token: &icarus_models::token::AccessToken,
+        queued_song_id: &uuid::Uuid,
+        status: &str,
+    ) -> Result<(), reqwest::Error> {
+        let endpoint = String::from("api/v2/song/queue");
+        let url = format!("{}/{endpoint}", self.api.url);
+
+        let mut headers = reqwest::header::HeaderMap::new();
+        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        headers.insert(auth, auth_val);
+
+        let payload = serde_json::json!({
+            "id": queued_song_id,
+            "status": status
+        });
+
+        let client = reqwest::Client::builder().build().unwrap();
+
+        match client
+            .patch(url)
+            .headers(headers)
+            .json(&payload)
+            .send()
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(err) => Err(err),
+        }
+    }
+
     fn init_form(
         &self,
         song: &icarus_models::song::Song,
