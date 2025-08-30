@@ -332,6 +332,7 @@ impl CommitManager {
         }
     }
 
+    /// Only uploading one song
     async fn sing_target_upload(
         &mut self,
         songpath: &String,
@@ -413,6 +414,7 @@ impl CommitManager {
         }
     }
 
+    /// Upload song to the queue to get processed
     async fn upload_song_process(&self, data: &UploadSongMembers) -> Result<()> {
         let mut up = syncers::upload::Upload::default();
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
@@ -558,27 +560,39 @@ impl CommitManager {
         cover_art.data = cover_art.to_data().unwrap();
 
         match self.get_songs(&metadatapath, sourcepath) {
-            Ok(sngs) => {
-                for song in sngs {
-                    match Runtime::new()
-                        .unwrap()
-                        .block_on(up.upload_song_with_metadata(&token, &song, &cover_art))
-                    {
-                        Ok(o) => {
-                            println!("Response: {o:?}");
+            Ok(sngs) => match icarus_models::album::collection::parse_album(&metadatapath) {
+                Ok(album) => {
+                    for song in sngs {
+                        let members = UploadSongMembers {
+                            song: song,
+                            coverart: cover_art.clone(),
+                            token: token.clone(),
+                            album: album.clone(),
+                        };
+
+                        match self.upload_song_process(&members).await {
+                            Ok(o) => {
+                                println!("Response: {o:?}");
+                            }
+                            Err(err) => {
+                                println!("Error: {err:?}");
+                                return Err(err);
+                            }
                         }
-                        Err(err) => {
-                            println!("Error: {err:?}");
-                        }
-                    };
+                    }
+
+                    Ok(())
                 }
-            }
+                Err(err) => {
+                    println!("Error: {err:?}");
+                    Err(std::io::Error::other(err.to_string()))
+                }
+            },
             Err(error) => {
                 println!("Error: {error:?}");
+                Err(std::io::Error::other(error.to_string()))
             }
         }
-
-        Ok(())
     }
 
     fn get_cover_art_path(&self, directory_path: &String) -> Result<String> {
