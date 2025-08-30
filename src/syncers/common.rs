@@ -15,7 +15,7 @@ fn retrieve_url_reg(api: &models::api::Api) -> String {
 }
 
 fn retrieve_url_with_id(api: &models::api::Api, id: &uuid::Uuid) -> String {
-    let url = format!("{}/api/{}/{}/{}", api.url, api.version, api.endpoint, id);
+    let url = format!("{}api/{}/{}/{}", api.url, api.version, api.endpoint, id);
 
     url
 }

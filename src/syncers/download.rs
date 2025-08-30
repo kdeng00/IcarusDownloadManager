@@ -20,7 +20,7 @@ impl Download {
         token: &icarus_models::token::AccessToken,
         song: &icarus_models::song::Song,
     ) -> Result<String, MyError> {
-        self.api.endpoint = String::from("song/data/download");
+        self.api.endpoint = String::from("song/download");
         let url = syncers::common::retrieve_url(&self.api, true, &song.id);
         let access_token = token.bearer_token();
 
@@ -35,13 +35,10 @@ impl Download {
             .await
         {
             Ok(rep) => match rep.status() {
-                reqwest::StatusCode::OK => {
-                    let data = rep.text();
-                    match data.await {
-                        Ok(e) => Ok(e),
-                        Err(er) => Err(MyError::Other(er.to_string())),
-                    }
-                }
+                reqwest::StatusCode::OK => match rep.text().await {
+                    Ok(e) => Ok(e),
+                    Err(er) => Err(MyError::Other(er.to_string())),
+                },
                 reqwest::StatusCode::UNAUTHORIZED => {
                     Err(MyError::Other(String::from("Need to grab a new token")))
                 }

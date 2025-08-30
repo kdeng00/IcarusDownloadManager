@@ -196,6 +196,7 @@ impl CommitManager {
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
         let token = self.parse_token(&auth_api).await;
         println!("Message: {}", token.message);
+
         let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
@@ -203,8 +204,8 @@ impl CommitManager {
             id: song_id,
             ..Default::default()
         };
-        let result_fut = dwn_loader.download_song(&token, &song);
-        match Runtime::new().unwrap().block_on(result_fut) {
+
+        match dwn_loader.download_song(&token, &song).await {
             Ok(o) => {
                 println!("Success");
                 let filename = String::from("audio")
