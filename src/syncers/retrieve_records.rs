@@ -13,7 +13,7 @@ mod response {
         #[derive(Debug, serde::Deserialize)]
         pub struct Response {
             pub message: String,
-            pub data: Vec<icarus_models::song::Song>
+            pub data: Vec<icarus_models::song::Song>,
         }
     }
 }
@@ -44,7 +44,7 @@ impl RetrieveRecords {
                     Ok(parsed) => {
                         println!("Response message: {:?}", parsed.message);
                         Ok(parsed.data)
-                    } 
+                    }
                     Err(err) => Err(std::io::Error::other(err.to_string())),
                 }
             }
