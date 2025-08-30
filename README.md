@@ -66,7 +66,7 @@ icarus-dm retrieve -u spacecadet -p stellar40 -h https://icarus.com -ha https://
 ### Deleting Song
 
 ```BASH
-icarus-dm delete -u spacecadet -p stellar40 -h https://icarus.com -D e8407fc6-edd2-44c1-993f-08dd7324d91a
+icarus-dm delete -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -D e8407fc6-edd2-44c1-993f-08dd7324d91a
 ```
 
 
