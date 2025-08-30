@@ -532,7 +532,6 @@ impl CommitManager {
         }
     }
 
-    // TODO: Make sure this works
     async fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
             apis: vec![models::api::Api::default(), models::api::Api::default()],
@@ -561,37 +560,34 @@ impl CommitManager {
         cover_art.data = cover_art.to_data().unwrap();
 
         match self.get_songs(&metadatapath, sourcepath) {
-            Ok(sngs) => {
-                match icarus_models::album::collection::parse_album(&metadatapath) {
-                    Ok(album) => {
-                        for song in sngs {
-                                    let members = UploadSongMembers {
-                                        song: song,
-                                        coverart: cover_art.clone(),
-                                        token: token.clone(),
-                                        album: album.clone(),
-                                    };
+            Ok(sngs) => match icarus_models::album::collection::parse_album(&metadatapath) {
+                Ok(album) => {
+                    for song in sngs {
+                        let members = UploadSongMembers {
+                            song: song,
+                            coverart: cover_art.clone(),
+                            token: token.clone(),
+                            album: album.clone(),
+                        };
 
-                            match self.upload_song_process(&members).await
-                            {
-                                Ok(o) => {
-                                    println!("Response: {o:?}");
-                                }
-                                Err(err) => {
-                                    println!("Error: {err:?}");
-                                    return Err(err);
-                                }
+                        match self.upload_song_process(&members).await {
+                            Ok(o) => {
+                                println!("Response: {o:?}");
+                            }
+                            Err(err) => {
+                                println!("Error: {err:?}");
+                                return Err(err);
                             }
                         }
+                    }
 
-                        Ok(())
-                    }
-                    Err(err) => {
-                        println!("Error: {err:?}");
-                        Err(std::io::Error::other(err.to_string()))
-                    }
+                    Ok(())
                 }
-            }
+                Err(err) => {
+                    println!("Error: {err:?}");
+                    Err(std::io::Error::other(err.to_string()))
+                }
+            },
             Err(error) => {
                 println!("Error: {error:?}");
                 Err(std::io::Error::other(error.to_string()))
