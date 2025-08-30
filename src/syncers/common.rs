@@ -9,7 +9,7 @@ pub fn retrieve_url(api: &models::api::Api, with_id: bool, id: &uuid::Uuid) -> S
 }
 
 fn retrieve_url_reg(api: &models::api::Api) -> String {
-    let url = format!("{}/api/{}/{}/", api.url, api.version, api.endpoint);
+    let url = format!("{}api/{}/{}/", api.url, api.version, api.endpoint);
 
     url
 }

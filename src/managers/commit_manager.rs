@@ -251,10 +251,11 @@ impl CommitManager {
         let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
 
         let mut repo = syncers::retrieve_records::RetrieveRecords { api: api.clone() };
-        let result_fut = repo.get_all_songs(&token);
 
-        match Runtime::new().unwrap().block_on(result_fut) {
+        match repo.get_all_songs(&token).await {
             Ok(o) => {
+                println!("Songs");
+                println!("=====");
                 for song in o {
                     println!("Title: {:?}", song.title);
                     println!("Artist: {:?}", song.artist);
