@@ -2,7 +2,6 @@ use std::default::Default;
 use std::io::Error;
 
 use crate::models;
-use crate::syncers;
 
 #[derive(Default)]
 pub struct RetrieveRecords {
