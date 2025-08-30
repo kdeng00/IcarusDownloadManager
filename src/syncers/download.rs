@@ -35,12 +35,10 @@ impl Download {
             .await
         {
             Ok(rep) => match rep.status() {
-                reqwest::StatusCode::OK => {
-                    match rep.text().await {
-                        Ok(e) => Ok(e),
-                        Err(er) => Err(MyError::Other(er.to_string())),
-                    }
-                }
+                reqwest::StatusCode::OK => match rep.text().await {
+                    Ok(e) => Ok(e),
+                    Err(er) => Err(MyError::Other(er.to_string())),
+                },
                 reqwest::StatusCode::UNAUTHORIZED => {
                     Err(MyError::Other(String::from("Need to grab a new token")))
                 }
