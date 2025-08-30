@@ -3,7 +3,6 @@ use std::default::Default;
 use reqwest;
 
 use crate::models;
-use crate::syncers;
 
 #[derive(Clone, Debug, Default)]
 pub struct Delete {
@@ -15,13 +14,13 @@ mod response {
         #[derive(Debug, serde::Deserialize)]
         pub struct SongAndCoverArt {
             pub song: icarus_models::song::Song,
-            pub coverart: icarus_models::coverart::CoverArt
+            pub coverart: icarus_models::coverart::CoverArt,
         }
 
         #[derive(Debug, serde::Deserialize)]
         pub struct Response {
             pub message: String,
-            pub data: Vec<SongAndCoverArt>
+            pub data: Vec<SongAndCoverArt>,
         }
     }
 }
@@ -31,9 +30,9 @@ impl Delete {
         &mut self,
         token: &icarus_models::token::AccessToken,
         song: &icarus_models::song::Song,
-    ) -> Result<icarus_models::song::Song, std::io::Error> {
+    ) -> Result<(icarus_models::song::Song, icarus_models::coverart::CoverArt), std::io::Error>
+    {
         self.api.endpoint = "api/v2/song".to_owned();
-        // let url = syncers::common::retrieve_url(&self.api, true, &song.id);
         let url = format!("{}{}/{}", self.api.url, self.api.endpoint, song.id);
         println!("Url: {url:?}");
 
@@ -53,7 +52,8 @@ impl Delete {
                 match response.json::<response::delete_song::Response>().await {
                     Ok(resp) => {
                         println!("Response message: {:?}", resp.message);
-                        Ok(resp.data[0].song.clone())
+                        let data = &resp.data[0];
+                        Ok((data.song.clone(), data.coverart.clone()))
                     }
                     Err(er) => Err(std::io::Error::other(er.to_string())),
                 }
