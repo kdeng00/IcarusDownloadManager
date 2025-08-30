@@ -60,7 +60,7 @@ icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https
 ### Retrieving Song in json
 
 ```Bash
-icarus-dm retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs
+icarus-dm retrieve -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -rt songs
 ```
 
 ### Deleting Song
