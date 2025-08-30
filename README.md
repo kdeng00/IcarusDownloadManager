@@ -48,13 +48,13 @@ icarus-dm download -u spacecadet -p stellar40 -h https://icarus.com -b e8407fc6-
 ### Uploading Song with metadata
 
 ```BASH
-icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.flac -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
+icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -s /path/of/song.flac -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
 ```
 
 ### Uploading Song with metadata from directory
 
 ```BASH
-icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -smca /path/where/songs/and/metadata/exists/
+icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -smca /path/where/songs/and/metadata/exists/
 ```
 
 ### Retrieving Song in json
