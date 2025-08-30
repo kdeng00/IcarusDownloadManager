@@ -7,7 +7,8 @@ mod utilities;
 
 use std::env;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = env::args().collect();
     let args_len = args.len() as i32;
 
@@ -29,7 +30,7 @@ fn main() {
         ica_action: chosen_act,
     };
 
-    cmt_mgr.commit_action();
+    cmt_mgr.commit_action().await;
 }
 
 #[cfg(test)]

@@ -36,6 +36,14 @@ enum En {
     Other,
 }
 
+#[derive(Debug)]
+struct UploadSongMembers {
+    pub song: icarus_models::song::Song,
+    pub coverart: icarus_models::coverart::CoverArt,
+    pub token: icarus_models::token::AccessToken,
+    pub album: icarus_models::album::collection::Album,
+}
+
 pub fn retrieve_song(
     album: &icarus_models::album::collection::Album,
     track: i32,
@@ -79,7 +87,7 @@ pub fn retrieve_song(
 }
 
 impl CommitManager {
-    pub fn commit_action(&mut self) {
+    pub async fn commit_action(&mut self) {
         let action = &self.ica_action.action;
         println!("Committing {action} action");
 
@@ -91,11 +99,11 @@ impl CommitManager {
         // TODO: Move code to get token here and then pass it to the respective functions
 
         match mapped_action {
-            ActionValues::DeleteAct => self.delete_song(),
-            ActionValues::DownloadAct => self.download_song(),
-            ActionValues::RetrieveAct => self.retrieve_object(),
+            ActionValues::DeleteAct => self.delete_song().await,
+            ActionValues::DownloadAct => self.download_song().await,
+            ActionValues::RetrieveAct => self.retrieve_object().await,
             ActionValues::UploadAct => self.upload_song(),
-            ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata(),
+            ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata().await,
             _ => {
                 println!("Nothing good here");
             }
@@ -132,7 +140,7 @@ impl CommitManager {
         actions
     }
 
-    fn delete_song(&self) {
+    async fn delete_song(&self) {
         let mut prsr = parsers::api_parser::APIParser {
             apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
@@ -141,7 +149,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
 
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
 
         println!("Deleting song");
 
@@ -173,7 +181,7 @@ impl CommitManager {
         }
     }
 
-    fn download_song(&self) {
+    async fn download_song(&self) {
         println!("Deleting song");
         let dwn = self.ica_action.retrieve_flag_value(&String::from("-b"));
         let song_id = uuid::Uuid::from_str(dwn.as_str()).unwrap();
@@ -186,7 +194,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
 
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
         println!("Message: {}", token.message);
         let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
 
@@ -220,7 +228,7 @@ impl CommitManager {
         }
     }
 
-    fn retrieve_object(&self) {
+    async fn retrieve_object(&self) {
         println!("Retrieving song");
         let rt = self.ica_action.retrieve_flag_value(&String::from("-rt"));
 
@@ -236,7 +244,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
 
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
         println!("Token {token:?}");
 
         let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
@@ -265,7 +273,7 @@ impl CommitManager {
         panic!("Not supported");
     }
 
-    fn parse_token(&self, api: &models::api::Api) -> icarus_models::token::AccessToken {
+    async fn parse_token(&self, api: &models::api::Api) -> icarus_models::token::AccessToken {
         println!("Fetching token");
 
         let mut usr_mgr: managers::user_manager::UserManager =
@@ -282,12 +290,12 @@ impl CommitManager {
         };
         tok_mgr.init();
 
-        let token = Runtime::new().unwrap().block_on(tok_mgr.request_token());
+        let token = tok_mgr.request_token().await;
 
         token.unwrap()
     }
 
-    fn upload_song_with_metadata(&mut self) {
+    async fn upload_song_with_metadata(&mut self) {
         println!("Uplodaring song with metadara");
 
         let songpath = self.ica_action.retrieve_flag_value(&String::from("-s"));
@@ -314,15 +322,18 @@ impl CommitManager {
             println!("metadata path: {metadata_path}");
             println!("cover art path: {coverpath}");
 
-            let _ = self.sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath);
+            let _ = self
+                .sing_target_upload(&songpath, &track_id, &metadata_path, &coverpath)
+                .await;
         } else if multitarget {
-            let _ = self.multi_target_upload(&uni);
+            let _ = self.multi_target_upload(&uni).await;
         } else {
             println!("Single or Multi target has not been chosen");
         }
     }
 
-    fn sing_target_upload(
+    /// Only uploading one song
+    async fn sing_target_upload(
         &mut self,
         songpath: &String,
         track_id: &str,
@@ -337,7 +348,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Auth);
 
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
 
         println!("Token: {:?}", token.token);
 
@@ -376,21 +387,16 @@ impl CommitManager {
 
                             cover_art.data = cover_art.to_data().unwrap();
 
-                            let mut up = syncers::upload::Upload::default();
-                            let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
-                            up.set_api(&host);
+                            let members = UploadSongMembers {
+                                song: s,
+                                coverart: cover_art,
+                                token: token,
+                                album: album,
+                            };
 
-                            let res = up.upload_song_with_metadata(&token, &s, &cover_art);
-
-                            match Runtime::new().unwrap().block_on(res) {
-                                Ok(o) => {
-                                    println!("Successfully sent {o:?}");
-                                    Ok(())
-                                }
-                                Err(er) => {
-                                    println!("Some error {er:?}");
-                                    Err(std::io::Error::other(er.to_string()))
-                                }
+                            match self.upload_song_process(&members).await {
+                                Ok(_) => Ok(()),
+                                Err(err) => Err(err),
                             }
                         }
                         Err(err) => {
@@ -406,6 +412,77 @@ impl CommitManager {
             },
             _ => Err(std::io::Error::other("No sutitable file found".to_owned())),
         }
+    }
+
+    /// Upload song to the queue to get processed
+    async fn upload_song_process(&self, data: &UploadSongMembers) -> Result<()> {
+        let mut up = syncers::upload::Upload::default();
+        let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
+        up.set_api(&host);
+
+        let token = &data.token;
+        let song = &data.song;
+        let album = &data.album;
+        let coverart = &data.coverart;
+
+        println!("Queueing song");
+
+        let queued_song_id = match up.queue_song(token, song).await {
+            Ok(id) => id,
+            Err(err) => {
+                return Err(std::io::Error::other(err.to_string()));
+            }
+        };
+
+        println!("Queued song Id: {queued_song_id:?}");
+
+        match up.link_user_to_queued_song(token, &queued_song_id).await {
+            Ok(_) => {
+                println!("Queued song linked to user");
+            }
+            Err(err) => {
+                return Err(std::io::Error::other(err.to_string()));
+            }
+        }
+
+        let queued_metadata_id = match up.queue_metadata(token, album, song, &queued_song_id).await
+        {
+            Ok(id) => id,
+            Err(err) => {
+                return Err(std::io::Error::other(err.to_string()));
+            }
+        };
+
+        println!("Queued metadata Id: {queued_metadata_id:?}");
+
+        match up.queue_coverart(token, coverart).await {
+            Ok(id) => match up
+                .link_queued_song_to_queued_coverart(token, &queued_song_id, &id)
+                .await
+            {
+                Ok(_) => match up
+                    .update_queued_song_status(token, &queued_song_id, "ready")
+                    .await
+                {
+                    Ok(_) => {
+                        println!("Queued coverart Id: {id:?}");
+                        println!("Linked queued song to queued coverart");
+                        println!("Queued status updated");
+                    }
+                    Err(err) => {
+                        return Err(std::io::Error::other(err.to_string()));
+                    }
+                },
+                Err(err) => {
+                    return Err(std::io::Error::other(err.to_string()));
+                }
+            },
+            Err(err) => {
+                return Err(std::io::Error::other(err.to_string()));
+            }
+        }
+
+        Ok(())
     }
 
     fn get_songs(
@@ -455,7 +532,7 @@ impl CommitManager {
         }
     }
 
-    fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
+    async fn multi_target_upload(&mut self, sourcepath: &String) -> std::io::Result<()> {
         let mut prsr = parsers::api_parser::APIParser {
             apis: vec![models::api::Api::default(), models::api::Api::default()],
             ica_act: self.ica_action.clone(),
@@ -463,7 +540,7 @@ impl CommitManager {
         prsr.parse_api(parsers::api_parser::APIType::Main);
         prsr.parse_api(parsers::api_parser::APIType::Auth);
         let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let token = self.parse_token(&auth_api);
+        let token = self.parse_token(&auth_api).await;
 
         let directory_path = std::path::Path::new(&sourcepath);
 
@@ -483,27 +560,39 @@ impl CommitManager {
         cover_art.data = cover_art.to_data().unwrap();
 
         match self.get_songs(&metadatapath, sourcepath) {
-            Ok(sngs) => {
-                for song in sngs {
-                    match Runtime::new()
-                        .unwrap()
-                        .block_on(up.upload_song_with_metadata(&token, &song, &cover_art))
-                    {
-                        Ok(o) => {
-                            println!("Response: {o:?}");
+            Ok(sngs) => match icarus_models::album::collection::parse_album(&metadatapath) {
+                Ok(album) => {
+                    for song in sngs {
+                        let members = UploadSongMembers {
+                            song: song,
+                            coverart: cover_art.clone(),
+                            token: token.clone(),
+                            album: album.clone(),
+                        };
+
+                        match self.upload_song_process(&members).await {
+                            Ok(o) => {
+                                println!("Response: {o:?}");
+                            }
+                            Err(err) => {
+                                println!("Error: {err:?}");
+                                return Err(err);
+                            }
                         }
-                        Err(err) => {
-                            println!("Error: {err:?}");
-                        }
-                    };
+                    }
+
+                    Ok(())
                 }
-            }
+                Err(err) => {
+                    println!("Error: {err:?}");
+                    Err(std::io::Error::other(err.to_string()))
+                }
+            },
             Err(error) => {
                 println!("Error: {error:?}");
+                Err(std::io::Error::other(error.to_string()))
             }
         }
-
-        Ok(())
     }
 
     fn get_cover_art_path(&self, directory_path: &String) -> Result<String> {
