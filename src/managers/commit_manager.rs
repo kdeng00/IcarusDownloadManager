@@ -22,7 +22,6 @@ enum ActionValues {
     DeleteAct,
     DownloadAct,
     RetrieveAct,
-    UploadAct,
     UploadSongWithMetadata,
     None,
 }
@@ -101,7 +100,6 @@ impl CommitManager {
             ActionValues::DeleteAct => self.delete_song().await,
             ActionValues::DownloadAct => self.download_song().await,
             ActionValues::RetrieveAct => self.retrieve_object().await,
-            ActionValues::UploadAct => self.upload_song(),
             ActionValues::UploadSongWithMetadata => self.upload_song_with_metadata().await,
             _ => {
                 println!("Nothing good here");
@@ -127,7 +125,6 @@ impl CommitManager {
         let actions: HashMap<String, ActionValues> = HashMap::from([
             ("download".to_string(), ActionValues::DownloadAct),
             ("download".to_string(), ActionValues::DownloadAct),
-            ("upload".to_string(), ActionValues::UploadAct),
             (
                 "upload-meta".to_string(),
                 ActionValues::UploadSongWithMetadata,
@@ -264,12 +261,6 @@ impl CommitManager {
                 println!("Error: {er:?}");
             }
         }
-    }
-
-    // TODO: Remove at some point
-    fn upload_song(&self) {
-        println!("Deleting song");
-        panic!("Not supported");
     }
 
     async fn parse_token(&self, api: &models::api::Api) -> icarus_models::token::AccessToken {
