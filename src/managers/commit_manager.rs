@@ -169,9 +169,7 @@ impl CommitManager {
 
         println!("Deleting song..");
 
-        let res_fut = del.delete_song(&token, &song);
-        let result = Runtime::new().unwrap().block_on(res_fut);
-        match result {
+        match del.delete_song(&token, &song).await {
             Ok(o) => {
                 println!("Song (Id {:?}) has been successfully deleted", o.id);
             }
