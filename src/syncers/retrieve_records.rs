@@ -2,16 +2,18 @@ use std::default::Default;
 use std::io::Error;
 
 use crate::models;
-use crate::syncers;
 
+#[derive(Default)]
 pub struct RetrieveRecords {
-    pub api: models::api::API,
+    pub api: models::api::Api,
 }
 
-impl Default for RetrieveRecords {
-    fn default() -> Self {
-        RetrieveRecords {
-            api: models::api::API::default(),
+mod response {
+    pub mod get_all_songs {
+        #[derive(Debug, serde::Deserialize)]
+        pub struct Response {
+            pub message: String,
+            pub data: Vec<icarus_models::song::Song>,
         }
     }
 }
@@ -21,9 +23,11 @@ impl RetrieveRecords {
         &mut self,
         token: &icarus_models::token::AccessToken,
     ) -> Result<Vec<icarus_models::song::Song>, Error> {
-        self.api.endpoint = String::from("song");
-        let url = syncers::common::retrieve_url(&self.api, false, &uuid::Uuid::nil());
+        self.api.endpoint = String::from("api/v2/song/all");
+        let url = format!("{}{}", self.api.url, self.api.endpoint);
         let access_token = token.bearer_token();
+
+        println!("url: {url:?}");
 
         let client = reqwest::Client::builder().build().unwrap();
         let response = client
@@ -35,29 +39,19 @@ impl RetrieveRecords {
 
         match response.status() {
             reqwest::StatusCode::OK => {
-                // on success, parse our JSON to an APIResponse
-                match response.json::<Vec<icarus_models::song::Song>>().await {
-                    Ok(parsed) => Ok(parsed),
-                    Err(err) => {
-                        return Err(std::io::Error::new(
-                            std::io::ErrorKind::Other,
-                            err.to_string(),
-                        ));
+                // on success, parse our JSON to an API Response
+                match response.json::<response::get_all_songs::Response>().await {
+                    Ok(parsed) => {
+                        println!("Response message: {:?}", parsed.message);
+                        Ok(parsed.data)
                     }
+                    Err(err) => Err(std::io::Error::other(err.to_string())),
                 }
             }
             reqwest::StatusCode::UNAUTHORIZED => {
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    "Need to grab a new token",
-                ));
+                Err(std::io::Error::other("Need to grab a new token"))
             }
-            other => {
-                return Err(std::io::Error::new(
-                    std::io::ErrorKind::Other,
-                    other.to_string(),
-                ));
-            }
+            other => Err(std::io::Error::other(other.to_string())),
         }
     }
 }

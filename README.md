@@ -42,31 +42,31 @@ The program has been built and can be executed by the binary file *icarus-dm*. F
 ### Downloading Song
 
 ```BASH
-icarus-dm download -u spacecadet -p stellar40 -h https://icarus.com -b e8407fc6-edd2-44c1-993f-08dd7324d91a
+icarus-dm download -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -b e8407fc6-edd2-44c1-993f-08dd7324d91a
 ```
 
 ### Uploading Song with metadata
 
 ```BASH
-icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -s /path/of/song.flac -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
+icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -s /path/of/song.flac -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
 ```
 
 ### Uploading Song with metadata from directory
 
 ```BASH
-icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -smca /path/where/songs/and/metadata/exists/
+icarus-dm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -smca /path/where/songs/and/metadata/exists/
 ```
 
 ### Retrieving Song in json
 
 ```Bash
-icarus-dm retrieve -u spacecadet -p stellar40 -h https://icarus.com -rt songs
+icarus-dm retrieve -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -rt songs
 ```
 
 ### Deleting Song
 
 ```BASH
-icarus-dm delete -u spacecadet -p stellar40 -h https://icarus.com -D e8407fc6-edd2-44c1-993f-08dd7324d91a
+icarus-dm delete -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -D e8407fc6-edd2-44c1-993f-08dd7324d91a
 ```
 
 

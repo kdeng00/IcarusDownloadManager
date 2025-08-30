@@ -3,17 +3,24 @@ use std::default::Default;
 use reqwest;
 
 use crate::models;
-use crate::syncers;
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct Delete {
-    pub api: models::api::API,
+    pub api: models::api::Api,
 }
 
-impl Default for Delete {
-    fn default() -> Self {
-        Delete {
-            api: models::api::API::default(),
+mod response {
+    pub mod delete_song {
+        #[derive(Debug, serde::Deserialize)]
+        pub struct SongAndCoverArt {
+            pub song: icarus_models::song::Song,
+            pub coverart: icarus_models::coverart::CoverArt,
+        }
+
+        #[derive(Debug, serde::Deserialize)]
+        pub struct Response {
+            pub message: String,
+            pub data: Vec<SongAndCoverArt>,
         }
     }
 }
@@ -23,9 +30,12 @@ impl Delete {
         &mut self,
         token: &icarus_models::token::AccessToken,
         song: &icarus_models::song::Song,
-    ) -> Result<icarus_models::song::Song, std::io::Error> {
-        self.api.endpoint = "song/data/delete".to_owned();
-        let url = syncers::common::retrieve_url(&self.api, true, &song.id);
+    ) -> Result<(icarus_models::song::Song, icarus_models::coverart::CoverArt), std::io::Error>
+    {
+        self.api.endpoint = "api/v2/song".to_owned();
+        let url = format!("{}{}/{}", self.api.url, self.api.endpoint, song.id);
+        println!("Url: {url:?}");
+
         let client = reqwest::Client::builder().build().unwrap();
         let access_token = token.bearer_token();
         let response = client
@@ -39,18 +49,16 @@ impl Delete {
             reqwest::StatusCode::OK => {
                 println!("Success!");
 
-                match response.json::<icarus_models::song::Song>().await {
-                    Ok(sng) => Ok(sng),
-                    Err(er) => Err(std::io::Error::new(
-                        std::io::ErrorKind::Other,
-                        er.to_string(),
-                    )),
+                match response.json::<response::delete_song::Response>().await {
+                    Ok(resp) => {
+                        println!("Response message: {:?}", resp.message);
+                        let data = &resp.data[0];
+                        Ok((data.song.clone(), data.coverart.clone()))
+                    }
+                    Err(er) => Err(std::io::Error::other(er.to_string())),
                 }
             }
-            other => Err(std::io::Error::new(
-                std::io::ErrorKind::Other,
-                other.to_string(),
-            )),
+            other => Err(std::io::Error::other(other.to_string())),
         }
     }
 }

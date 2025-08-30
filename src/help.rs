@@ -12,7 +12,8 @@ pub fn print_help() {
         Required for all actions
             -u username
             -p password
-            -h host
+            -h api host
+            -ha auth api host
 
         Required for upload with metadata
             -s path of song
@@ -32,5 +33,5 @@ pub fn print_help() {
             -D song id"#,
     );
 
-    println!("{}", msg);
+    println!("{msg}");
 }

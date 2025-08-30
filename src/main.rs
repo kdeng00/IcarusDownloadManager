@@ -7,7 +7,8 @@ mod utilities;
 
 use std::env;
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Vec<String> = env::args().collect();
     let args_len = args.len() as i32;
 
@@ -16,7 +17,7 @@ fn main() {
         utilities::checks::exit_program(-1);
     }
 
-    println!("Argument count: {}", args_len);
+    println!("Argument count: {args_len}");
 
     let mut act_mgr = managers::action_managers::ActionManager::default();
     act_mgr.set_params(&args);
@@ -29,7 +30,7 @@ fn main() {
         ica_action: chosen_act,
     };
 
-    cmt_mgr.commit_action();
+    cmt_mgr.commit_action().await;
 }
 
 #[cfg(test)]
@@ -41,7 +42,7 @@ mod tests {
         let meta_path = String::from("tests/sample2_tracks/album.json");
 
         if !std::path::Path::new(&meta_path).exists() {
-            assert!(false, "File does not exists: {:?}", meta_path);
+            assert!(false, "File does not exists: {meta_path:?}");
         }
 
         match icarus_models::album::collection::parse_album(&meta_path) {

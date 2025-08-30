@@ -23,18 +23,19 @@ impl Default for ActionManager {
 
 impl ActionManager {
     pub fn retrieve_icarus_action(&self) -> models::icarus_action::IcarusAction {
-        return models::icarus_action::IcarusAction {
+        models::icarus_action::IcarusAction {
             flags: self.flags.clone(),
             action: String::from(&self.action),
-        };
+        }
     }
 
     fn supported_flags(&self) -> Vec<String> {
-        return vec![
+        vec![
             String::from("-u"),
             String::from("-p"),
             String::from("-t"),
             String::from("-h"),
+            String::from("-ha"),
             String::from("-s"),
             String::from("-sd"),
             String::from("-sr"),
@@ -47,7 +48,7 @@ impl ActionManager {
             String::from("-ca"),
             String::from("-smca"),
             String::from("-t"),
-        ];
+        ]
     }
 
     pub fn initialize(&mut self) {
@@ -56,8 +57,8 @@ impl ActionManager {
         self.action = self.action.to_lowercase();
     }
 
-    pub fn set_params(&mut self, args: &Vec<String>) {
-        self.params = args.clone();
+    pub fn set_params(&mut self, args: &[String]) {
+        self.params = args.to_owned();
         self.param_count = self.params.len() as i32;
     }
 
@@ -71,26 +72,26 @@ impl ActionManager {
 
         while i < flag_vals.len() {
             let flag = &flag_vals[i];
-            println!("Index: {} | Value: {}", i, flag);
+            println!("Index: {i} | Value: {flag}");
 
             let mut flg = models::flags::Flags::default();
 
+            // TODO: Refactor this
             if self.is_valid_flag(flag) && self.does_flag_have_value(flag) {
                 println!("Flag has value");
                 flg.flag = String::from(flag);
                 flg.value = String::from(&flag_vals[i + 1]);
 
-                i = i + 1;
+                i += 1;
             } else if self.is_valid_flag(flag) {
                 println!("Flag does not have a value");
                 flg.flag = String::from(flag);
             } else {
-                println!("Flag {} is not valid", flag);
+                println!("Flag {flag} is not valid");
                 utilities::checks::exit_program(-1);
             }
 
             self.flags.push(flg);
-            println!("");
             i += 1;
         }
     }
@@ -113,34 +114,30 @@ impl ActionManager {
             }
         }
 
-        return found;
+        found
     }
 
     fn does_flag_have_value(&self, flag: &String) -> bool {
         let flags_tmp = self.parsed_flags();
         let mut i_found: i32 = -1;
 
-        for i in 0..flags_tmp.len() {
-            let flg = &flags_tmp[i];
-            if flg == flag {
+        for (i, item) in flags_tmp.iter().enumerate() {
+            let flg = &item;
+            if *flg == flag {
                 i_found = i as i32;
                 break;
             }
         }
 
         if i_found >= 0 {
-            if (i_found + 1) < flags_tmp.len().try_into().unwrap() {
-                return true;
-            } else {
-                return false;
-            }
+            (i_found + 1) < flags_tmp.len().try_into().unwrap()
         } else {
-            return false;
+            false
         }
     }
 
     fn _print_action(&self) {
-        if self.action.len() == 0 {
+        if self.action.is_empty() {
             println!("Action is empty");
         } else {
             println!("Action is {}", self.action);
@@ -163,6 +160,6 @@ impl ActionManager {
             parsed.push(flag);
         }
 
-        return parsed;
+        parsed
     }
 }
