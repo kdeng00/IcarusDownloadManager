@@ -375,13 +375,14 @@ impl CommitManager {
                             println!("Path: {:?}", s.song_path());
                             s.data = icarus_models::song::io::to_data(&s).unwrap();
 
-                            cover_art.data = icarus_models::coverart::io::to_data(&cover_art).unwrap();
+                            cover_art.data =
+                                icarus_models::coverart::io::to_data(&cover_art).unwrap();
 
                             let members = UploadSongMembers {
                                 song: s,
                                 coverart: cover_art,
-                                token: token,
-                                album: album,
+                                token,
+                                album,
                             };
 
                             match self.upload_song_process(&members).await {
@@ -554,7 +555,7 @@ impl CommitManager {
                 Ok(album) => {
                     for song in sngs {
                         let members = UploadSongMembers {
-                            song: song,
+                            song,
                             coverart: cover_art.clone(),
                             token: token.clone(),
                             album: album.clone(),
