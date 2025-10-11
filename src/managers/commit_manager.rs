@@ -373,9 +373,9 @@ impl CommitManager {
                             println!("Directory: {:?}", s.directory);
                             println!("Filename: {:?}", s.filename);
                             println!("Path: {:?}", s.song_path());
-                            s.data = s.to_data().unwrap();
+                            s.data = icarus_models::song::io::to_data(&s).unwrap();
 
-                            cover_art.data = cover_art.to_data().unwrap();
+                            cover_art.data = icarus_models::coverart::io::to_data(&cover_art).unwrap();
 
                             let members = UploadSongMembers {
                                 song: s,
@@ -547,7 +547,7 @@ impl CommitManager {
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
 
-        cover_art.data = cover_art.to_data().unwrap();
+        cover_art.data = icarus_models::coverart::io::to_data(&cover_art).unwrap();
 
         match self.get_songs(&metadatapath, sourcepath) {
             Ok(sngs) => match icarus_models::album::collection::parse_album(&metadatapath) {
