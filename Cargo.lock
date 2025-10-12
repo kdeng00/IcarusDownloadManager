@@ -496,8 +496,8 @@ dependencies = [
 
 [[package]]
 name = "icarus_models"
-version = "0.6.6"
-source = "git+ssh://git@git.kundeng.us/phoenix/icarus_models.git?tag=v0.6.6-65-eac7562b80-111#eac7562b80b9f82d21ab737d1e84ba4f12e472dd"
+version = "0.7.0"
+source = "git+ssh://git@git.kundeng.us/phoenix/icarus_models.git?tag=v0.7.0-70-f0a716b243-111#f0a716b243fa868b7d03abe690297e4e95db7e12"
 dependencies = [
  "josekit",
  "rand",
