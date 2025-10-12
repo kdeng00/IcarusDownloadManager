@@ -1,7 +1,7 @@
 [package]
 name = "icarus-dm"
-version = "0.7.2"
-rust-version = "1.88"
+version = "0.8.0"
+rust-version = "1.90"
 edition = "2024"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -14,4 +14,4 @@ serde_json = "1.0.145"
 tokio = { version = "1.47.1", features = ["full"] }
 tokio-util = { version = "0.7.16", features = ["codec"] }
 uuid = { version = "1.18.1", features = ["v4", "serde"] }
-icarus_models = { git = "ssh://git@git.kundeng.us/phoenix/icarus_models.git", tag = "v0.6.6-65-eac7562b80-111" }
+icarus_models = { git = "ssh://git@git.kundeng.us/phoenix/icarus_models.git", tag = "v0.7.0-70-f0a716b243-111" }
