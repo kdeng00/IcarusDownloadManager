@@ -2,9 +2,9 @@ name: Rust
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "master", "icarus_v2_support" ]
+    branches: [ "main" ]
 
 env:
   CARGO_TERM_COLOR: always
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Install Rust version
       run: rustup install 1.90.0 && rustup default 1.90.0
 
