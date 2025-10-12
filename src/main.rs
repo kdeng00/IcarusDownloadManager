@@ -63,7 +63,7 @@ mod tests {
                     match managers::commit_manager::retrieve_song(
                         &album, track, disc, &directory, &filename,
                     ) {
-                        Ok(song) => match song.to_data() {
+                        Ok(song) => match icarus_models::song::io::to_data(&song) {
                             Ok(_) => {
                                 print!("Success");
                             }
