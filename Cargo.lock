@@ -481,7 +481,7 @@ dependencies = [
 
 [[package]]
 name = "icarus-dm"
-version = "0.8.0"
+version = "0.8.1"
 dependencies = [
  "futures",
  "http",
@@ -497,7 +497,7 @@ dependencies = [
 [[package]]
 name = "icarus_models"
 version = "0.7.0"
-source = "git+ssh://git@git.kundeng.us/phoenix/icarus_models.git?tag=v0.7.0-70-f0a716b243-111#f0a716b243fa868b7d03abe690297e4e95db7e12"
+source = "git+ssh://git@git.kundeng.us/phoenix/icarus_models.git?tag=v0.7.0#11e5b1745cdb256b027cb8ce3e18e949351ea9ea"
 dependencies = [
  "josekit",
  "rand",
