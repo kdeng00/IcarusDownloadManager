@@ -536,10 +536,8 @@ impl CommitManager {
             panic!("Directory does not exist");
         }
 
-        // let coverart_path = self.get_cover_art_path(sourcepath).unwrap_or_default();
         let (coverart_directory, coverart_filename) =
-            self.get_coverart_dir_and_filename(&sourcepath).unwrap();
-        // let mut cover_art =
+            self.get_coverart_dir_and_filename(sourcepath).unwrap();
         let mut cover_art = icarus_models::coverart::init::init_coverart_dir_and_filename(
             &coverart_directory,
             &coverart_filename,
