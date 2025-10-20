@@ -176,7 +176,7 @@ impl Upload {
         token: &icarus_models::token::AccessToken,
         coverart: &icarus_models::coverart::CoverArt,
     ) -> Result<uuid::Uuid, reqwest::Error> {
-        let coverartpath = coverart.path.clone();
+        let coverartpath = coverart.get_path().unwrap();
         let file = tokio::fs::File::open(&coverartpath).await.unwrap();
         let stream = tokio_util::codec::FramedRead::new(file, tokio_util::codec::BytesCodec::new());
         let file_body = reqwest::Body::wrap_stream(stream);
