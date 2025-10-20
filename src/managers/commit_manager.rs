@@ -585,27 +585,6 @@ impl CommitManager {
         }
     }
 
-    fn get_cover_art_path(&self, directory_path: &String) -> Result<String> {
-        for entry in read_dir(std::path::Path::new(directory_path))? {
-            let entry = entry?;
-
-            let file_type = entry.file_type();
-            let file_name = entry.file_name();
-
-            println!("file type: {file_type:?}");
-            println!("file name: {file_name:?}");
-
-            if let En::ImageFile = self.find_file_extension(&file_name) {
-                let directory_part = directory_path.clone();
-                let fname = utilities::string::o_to_string(&file_name);
-                let fullpath = format!("{}/{}", directory_part, &fname.unwrap());
-                return Ok(fullpath);
-            }
-        }
-
-        Ok(String::new())
-    }
-
     fn get_coverart_dir_and_filename(&self, directory: &str) -> Result<(String, String)> {
         for entry in read_dir(std::path::Path::new(directory))? {
             let entry = entry?;
