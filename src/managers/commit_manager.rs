@@ -597,11 +597,8 @@ impl CommitManager {
             println!("file name: {file_name:?}");
 
             if let En::ImageFile = self.find_file_extension(&file_name) {
-                // let directory_part = directory.clone();
                 let fname = utilities::string::o_to_string(&file_name);
                 return Ok((directory.to_string(), fname.unwrap()));
-                // let fullpath = format!("{}/{}", directory_part, &fname.unwrap());
-                // return Ok(fullpath);
             }
         }
 
