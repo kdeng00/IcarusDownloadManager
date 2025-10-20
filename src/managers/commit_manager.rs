@@ -537,10 +537,13 @@ impl CommitManager {
         }
 
         // let coverart_path = self.get_cover_art_path(sourcepath).unwrap_or_default();
-        let (coverart_directory, coverart_filename) = self.get_coverart_dir_and_filename(&sourcepath).unwrap();
+        let (coverart_directory, coverart_filename) =
+            self.get_coverart_dir_and_filename(&sourcepath).unwrap();
         // let mut cover_art =
-        let mut cover_art =
-            icarus_models::coverart::init::init_coverart_dir_and_filename(&coverart_directory, &coverart_filename);
+        let mut cover_art = icarus_models::coverart::init::init_coverart_dir_and_filename(
+            &coverart_directory,
+            &coverart_filename,
+        );
         let metadatapath = self.get_metadata_path(sourcepath).unwrap_or_default();
 
         let mut up = syncers::upload::Upload::default();
