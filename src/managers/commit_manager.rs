@@ -349,11 +349,11 @@ impl CommitManager {
             panic!("Error");
         }
 
+        let pa = std::path::Path::new(&cover_path);
+
         let mut cover_art = icarus_models::coverart::CoverArt {
-            id: uuid::Uuid::nil(),
-            title: String::new(),
-            path: cover_path.to_owned(),
-            data: Vec::new(),
+            directory: String::from(pa.parent().unwrap().to_str().unwrap()),
+            filename: String::from(pa.file_name().unwrap().to_str().unwrap()),
             ..Default::default()
         };
         let file_name = std::ffi::OsString::from(&song_file.file_name().unwrap());
@@ -497,7 +497,6 @@ impl CommitManager {
                     };
 
                     songs.push(icarus_models::song::Song {
-                        id: uuid::Uuid::nil(),
                         title: track.title.clone(),
                         artist: track.artist.clone(),
                         disc: track.disc,
@@ -512,9 +511,7 @@ impl CommitManager {
                         audio_type: String::from("FLAC"),
                         directory: source_directory.to_owned(),
                         filename: song_filename,
-                        user_id: uuid::Uuid::nil(),
-                        data: Vec::new(),
-                        date_created: String::new(),
+                        ..Default::default()
                     });
                 }
                 Ok(songs)
@@ -539,9 +536,12 @@ impl CommitManager {
             panic!("Directory does not exist");
         }
 
-        let coverart_path = self.get_cover_art_path(sourcepath).unwrap_or_default();
-        let mut cover_art =
-            icarus_models::coverart::init::init_coverart_only_path(coverart_path.clone());
+        let (coverart_directory, coverart_filename) =
+            self.get_coverart_dir_and_filename(sourcepath).unwrap();
+        let mut cover_art = icarus_models::coverart::init::init_coverart_dir_and_filename(
+            &coverart_directory,
+            &coverart_filename,
+        );
         let metadatapath = self.get_metadata_path(sourcepath).unwrap_or_default();
 
         let mut up = syncers::upload::Upload::default();
@@ -586,8 +586,8 @@ impl CommitManager {
         }
     }
 
-    fn get_cover_art_path(&self, directory_path: &String) -> Result<String> {
-        for entry in read_dir(std::path::Path::new(directory_path))? {
+    fn get_coverart_dir_and_filename(&self, directory: &str) -> Result<(String, String)> {
+        for entry in read_dir(std::path::Path::new(directory))? {
             let entry = entry?;
 
             let file_type = entry.file_type();
@@ -597,14 +597,12 @@ impl CommitManager {
             println!("file name: {file_name:?}");
 
             if let En::ImageFile = self.find_file_extension(&file_name) {
-                let directory_part = directory_path.clone();
                 let fname = utilities::string::o_to_string(&file_name);
-                let fullpath = format!("{}/{}", directory_part, &fname.unwrap());
-                return Ok(fullpath);
+                return Ok((directory.to_string(), fname.unwrap()));
             }
         }
 
-        Ok(String::new())
+        Ok((String::new(), String::new()))
     }
 
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
