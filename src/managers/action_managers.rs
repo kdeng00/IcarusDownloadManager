@@ -48,7 +48,7 @@ impl ActionManager {
             String::from("-ca"),
             String::from("-smca"),
             String::from("-t"),
-            String::from("-v")
+            String::from("-v"),
         ]
     }
 
