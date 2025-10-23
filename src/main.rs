@@ -18,8 +18,6 @@ async fn main() {
         utilities::checks::exit_program(-1);
     }
 
-    println!("Argument count: {args_len}");
-
     let mut act_mgr = managers::action_managers::ActionManager::default();
     act_mgr.set_params(&args);
     act_mgr.initialize();
