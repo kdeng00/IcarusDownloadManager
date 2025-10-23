@@ -4,6 +4,7 @@ mod models;
 mod parsers;
 mod syncers;
 mod utilities;
+mod version;
 
 use std::env;
 
@@ -24,6 +25,12 @@ async fn main() {
     act_mgr.initialize();
 
     let chosen_act = act_mgr.retrieve_icarus_action();
+    for act in &chosen_act.flags {
+        if act.flag == "-v" {
+            version::print_version();
+            utilities::checks::exit_program(-1);
+        }
+    }
     chosen_act.print_action_and_flags();
 
     let mut cmt_mgr = managers::commit_manager::CommitManager {
