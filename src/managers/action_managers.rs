@@ -48,6 +48,7 @@ impl ActionManager {
             String::from("-ca"),
             String::from("-smca"),
             String::from("-t"),
+            String::from("-v"),
         ]
     }
 
@@ -63,31 +64,24 @@ impl ActionManager {
     }
 
     fn validate_flags(&mut self) {
-        println!("Validating flags");
-
         let flag_vals = self.parsed_flags();
 
         let mut i = 0;
-        println!("Flag count: {}", flag_vals.len());
 
         while i < flag_vals.len() {
             let flag = &flag_vals[i];
-            println!("Index: {i} | Value: {flag}");
 
             let mut flg = models::flags::Flags::default();
 
             // TODO: Refactor this
             if self.is_valid_flag(flag) && self.does_flag_have_value(flag) {
-                println!("Flag has value");
                 flg.flag = String::from(flag);
                 flg.value = String::from(&flag_vals[i + 1]);
 
                 i += 1;
             } else if self.is_valid_flag(flag) {
-                println!("Flag does not have a value");
                 flg.flag = String::from(flag);
             } else {
-                println!("Flag {flag} is not valid");
                 utilities::checks::exit_program(-1);
             }
 
@@ -155,9 +149,16 @@ impl ActionManager {
     fn parsed_flags(&self) -> Vec<String> {
         let mut parsed: Vec<String> = Vec::new();
 
-        for i in 2..self.params.len() {
-            let flag = String::from(&self.params[i]);
-            parsed.push(flag);
+        if self.param_count <= 2 {
+            let flag = String::from(&self.params[1]);
+            if flag == "-v" {
+                parsed.push(flag);
+            }
+        } else {
+            for i in 2..self.params.len() {
+                let flag = String::from(&self.params[i]);
+                parsed.push(flag);
+            }
         }
 
         parsed

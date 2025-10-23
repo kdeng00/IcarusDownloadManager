@@ -30,7 +30,10 @@ pub fn print_help() {
             -rt retrieve type (songs is only accepted)
 
         Required for deleting a song
-            -D song id"#,
+            -D song id
+
+        Print version
+            -v"#,
     );
 
     println!("{msg}");

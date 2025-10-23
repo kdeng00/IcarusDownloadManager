@@ -451,7 +451,7 @@ dependencies = [
 
 [[package]]
 name = "icarus-dm"
-version = "0.8.3"
+version = "0.8.4"
 dependencies = [
  "futures",
  "http",
