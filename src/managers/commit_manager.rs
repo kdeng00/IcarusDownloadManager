@@ -201,17 +201,20 @@ impl CommitManager {
             Ok(o) => {
                 println!("Success");
 
-               song.data = o.as_bytes().to_vec();
-               song.directory = String::from(".");
-               song.filename = icarus_models::song::generate_filename(icarus_models::types::MusicTypes::FlacExtension, true);
-               match song.save_to_filesystem() {
-                   Ok(_) => {
-                       println!("Song saved");
-                   }
-                   Err(err) => {
-                       eprintln!("Error saving song: {err:?}");
-                   }
-               }
+                song.data = o.as_bytes().to_vec();
+                song.directory = String::from(".");
+                song.filename = icarus_models::song::generate_filename(
+                    icarus_models::types::MusicTypes::FlacExtension,
+                    true,
+                );
+                match song.save_to_filesystem() {
+                    Ok(_) => {
+                        println!("Song saved");
+                    }
+                    Err(err) => {
+                        eprintln!("Error saving song: {err:?}");
+                    }
+                }
             }
             Err(er) => {
                 println!("Error {er:?}");
