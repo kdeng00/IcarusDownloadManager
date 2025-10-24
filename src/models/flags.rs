@@ -1,8 +1,7 @@
 use std::default::Default;
 
-use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default)]
 pub struct Flags {
     pub flag: String,
     pub value: String,

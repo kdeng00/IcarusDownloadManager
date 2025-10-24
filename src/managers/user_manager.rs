@@ -1,10 +1,8 @@
 use std::default::Default;
 
-use serde::{Deserialize, Serialize};
-
 use crate::models::{self};
 
-#[derive(Debug, Default, Deserialize, Serialize)]
+#[derive(Debug, Default)]
 pub struct UserManager {
     pub user: icarus_models::user::User,
     pub ica_action: models::icarus_action::IcarusAction,

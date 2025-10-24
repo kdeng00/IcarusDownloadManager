@@ -4,15 +4,13 @@ use std::fs::read_dir;
 use std::io::{Result, Write};
 use std::str::FromStr;
 
-use serde::{Deserialize, Serialize};
-
 use crate::managers;
 use crate::models::{self};
 use crate::parsers;
 use crate::syncers;
 use crate::utilities;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug)]
 pub struct CommitManager {
     pub ica_action: models::icarus_action::IcarusAction,
 }

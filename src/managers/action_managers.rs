@@ -1,8 +1,6 @@
-use serde::{Deserialize, Serialize};
-
 use crate::{models, utilities};
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug)]
 pub struct ActionManager {
     pub action: String,
     pub flags: Vec<models::flags::Flags>,
