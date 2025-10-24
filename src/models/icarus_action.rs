@@ -2,7 +2,6 @@ use std::default::Default;
 
 use crate::models;
 
-
 #[derive(Clone, Debug, Default)]
 pub struct IcarusAction {
     pub action: String,
