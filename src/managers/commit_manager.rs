@@ -200,8 +200,7 @@ impl CommitManager {
         match dwn_loader.download_song(&token, &song).await {
             Ok(o) => {
                 println!("Success");
-                // let filename = String::from("audio")
-                    // + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
+
                song.data = o.as_bytes().to_vec();
                song.directory = String::from(".");
                song.filename = icarus_models::song::generate_filename(icarus_models::types::MusicTypes::FlacExtension, true);
@@ -210,14 +209,9 @@ impl CommitManager {
                        println!("Song saved");
                    }
                    Err(err) => {
-                       eprintln!("Error: {err:?}");
+                       eprintln!("Error saving song: {err:?}");
                    }
                }
-                /*
-                let mut file = std::fs::File::create(filename).expect("Failed to save");
-                file.write_all(data)
-                    .expect("Failed to save downloaded song");
-                */
             }
             Err(er) => {
                 println!("Error {er:?}");
