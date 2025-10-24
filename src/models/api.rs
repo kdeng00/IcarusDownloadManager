@@ -1,8 +1,6 @@
 use std::default::Default;
 
-use serde::{Deserialize, Serialize};
-
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default)]
 pub struct Api {
     pub url: String,
     pub endpoint: String,

@@ -1,10 +1,8 @@
 use std::default::Default;
 
-use serde::{Deserialize, Serialize};
-
 use crate::models;
 
-#[derive(Clone, Debug, Default, Deserialize, Serialize)]
+#[derive(Clone, Debug, Default)]
 pub struct IcarusAction {
     pub action: String,
     pub flags: Vec<models::flags::Flags>,
