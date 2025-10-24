@@ -192,7 +192,7 @@ impl CommitManager {
         let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
 
         let mut dwn_loader = syncers::download::Download { api: api.clone() };
-        let song = icarus_models::song::Song {
+        let mut song = icarus_models::song::Song {
             id: song_id,
             ..Default::default()
         };
@@ -200,12 +200,21 @@ impl CommitManager {
         match dwn_loader.download_song(&token, &song).await {
             Ok(o) => {
                 println!("Success");
-                let filename = String::from("audio")
-                    + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION;
-                let data = o.as_bytes();
-                let mut file = std::fs::File::create(filename).expect("Failed to save");
-                file.write_all(data)
-                    .expect("Failed to save downloaded song");
+
+                song.data = o.as_bytes().to_vec();
+                song.directory = String::from(".");
+                song.filename = icarus_models::song::generate_filename(
+                    icarus_models::types::MusicTypes::FlacExtension,
+                    true,
+                );
+                match song.save_to_filesystem() {
+                    Ok(_) => {
+                        println!("Song saved");
+                    }
+                    Err(err) => {
+                        eprintln!("Error saving song: {err:?}");
+                    }
+                }
             }
             Err(er) => {
                 println!("Error {er:?}");
