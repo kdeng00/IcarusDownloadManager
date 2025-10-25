@@ -66,7 +66,8 @@ impl ActionManager {
 
         let mut i = 0;
 
-        for flag in &flag_vals {
+        while i < flag_vals.len() {
+            let flag = &flag_vals[i];
             let mut flg = models::flags::Flags::default();
 
             if self.is_valid_flag(flag) {
