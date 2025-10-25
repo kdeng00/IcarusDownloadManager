@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 use std::default::Default;
 use std::fs::read_dir;
-use std::io::{Result, Write};
+use std::io::Result;
 use std::str::FromStr;
 
 use crate::managers;
