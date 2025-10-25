@@ -66,19 +66,18 @@ impl ActionManager {
 
         let mut i = 0;
 
-        while i < flag_vals.len() {
-            let flag = &flag_vals[i];
-
+        for flag in &flag_vals {
             let mut flg = models::flags::Flags::default();
 
-            // TODO: Refactor this
             if self.is_valid_flag(flag) && self.does_flag_have_value(flag) {
-                flg.flag = String::from(flag);
-                flg.value = String::from(&flag_vals[i + 1]);
+                if self.does_flag_have_value(flag) {
+                    flg.flag = String::from(flag);
+                    flg.value = String::from(&flag_vals[i + 1]);
 
-                i += 1;
-            } else if self.is_valid_flag(flag) {
-                flg.flag = String::from(flag);
+                    i += 1;
+                } else {
+                    flg.flag = String::from(flag);
+                }
             } else {
                 utilities::checks::exit_program(-1);
             }
