@@ -92,7 +92,6 @@ impl CommitManager {
         println!("Committing {action} action");
 
         let mapped_actions = &self.map_actions();
-        // TODO: Move code to get token here and then pass it to the respective functions
         let token = self.parse_token(&self.auth_api).await;
 
         match self.find_mapped_action(mapped_actions, action) {
