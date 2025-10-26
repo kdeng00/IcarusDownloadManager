@@ -88,13 +88,9 @@ impl CommitManager {
         println!("Committing {action} action");
 
         let mapped_actions = &self.map_actions();
-        let mapped_action = self.find_mapped_action(mapped_actions, action);
-
-        println!("{mapped_action:?}");
-
         // TODO: Move code to get token here and then pass it to the respective functions
 
-        match mapped_action {
+        match self.find_mapped_action(mapped_actions, action) {
             ActionValues::DeleteAct => self.delete_song().await,
             ActionValues::DownloadAct => self.download_song().await,
             ActionValues::RetrieveAct => self.retrieve_object().await,
