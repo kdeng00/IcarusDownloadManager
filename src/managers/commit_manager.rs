@@ -112,10 +112,8 @@ impl CommitManager {
         };
         prsr.parse_api(parsers::api_parser::APIType::Main);
         prsr.parse_api(parsers::api_parser::APIType::Auth);
-        let auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
-        let api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
-        self.api = api;
-        self.auth_api = auth_api;
+        self.api = prsr.retrieve_api(parsers::api_parser::APIType::Main);
+        self.auth_api = prsr.retrieve_api(parsers::api_parser::APIType::Auth);
     }
 
     fn find_mapped_action(
