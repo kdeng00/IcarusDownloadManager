@@ -33,6 +33,7 @@ async fn main() {
 
     let mut cmt_mgr = managers::commit_manager::CommitManager {
         ica_action: chosen_act,
+        ..Default::default()
     };
 
     cmt_mgr.commit_action().await;
