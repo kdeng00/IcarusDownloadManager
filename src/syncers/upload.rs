@@ -61,7 +61,7 @@ impl Upload {
         println!("Url: {url:?}");
 
         let mut headers = reqwest::header::HeaderMap::new();
-        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        let (auth, auth_val) = syncers::common::auth_header(token).await.unwrap();
         headers.insert(auth, auth_val);
         headers.insert("Accept", HeaderValue::from_str("*/*").unwrap());
         headers.insert("Connection", HeaderValue::from_str("keep-alive").unwrap());
@@ -99,7 +99,7 @@ impl Upload {
         let url = format!("{}/{endpoint}", self.api.url);
 
         let mut headers = reqwest::header::HeaderMap::new();
-        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        let (auth, auth_val) = syncers::common::auth_header(token).await.unwrap();
         headers.insert(auth, auth_val);
 
         let payload = serde_json::json!({
@@ -132,7 +132,7 @@ impl Upload {
         let url = format!("{}/{endpoint}", self.api.url);
 
         let mut headers = reqwest::header::HeaderMap::new();
-        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        let (auth, auth_val) = syncers::common::auth_header(token).await.unwrap();
         headers.insert(auth, auth_val);
 
         let payload = serde_json::json!({
@@ -200,7 +200,7 @@ impl Upload {
         println!("Url: {url:?}");
 
         let mut headers = reqwest::header::HeaderMap::new();
-        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        let (auth, auth_val) = syncers::common::auth_header(token).await.unwrap();
         headers.insert(auth, auth_val);
         headers.insert("Accept", HeaderValue::from_str("*/*").unwrap());
         headers.insert("Connection", HeaderValue::from_str("keep-alive").unwrap());
@@ -239,7 +239,7 @@ impl Upload {
         let url = format!("{}/{endpoint}", self.api.url);
 
         let mut headers = reqwest::header::HeaderMap::new();
-        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        let (auth, auth_val) = syncers::common::auth_header(token).await.unwrap();
         headers.insert(auth, auth_val);
 
         let payload = serde_json::json!({
@@ -271,7 +271,7 @@ impl Upload {
         let url = format!("{}/{endpoint}", self.api.url);
 
         let mut headers = reqwest::header::HeaderMap::new();
-        let (auth, auth_val) = syncers::common::auth_header(token).await;
+        let (auth, auth_val) = syncers::common::auth_header(token).await.unwrap();
         headers.insert(auth, auth_val);
 
         let payload = serde_json::json!({

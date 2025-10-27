@@ -9,22 +9,22 @@ pub fn retrieve_url(api: &models::api::Api, with_id: bool, id: &uuid::Uuid) -> S
 }
 
 fn retrieve_url_reg(api: &models::api::Api) -> String {
-    let url = format!("{}api/{}/{}/", api.url, api.version, api.endpoint);
-
-    url
+    format!("{}api/{}/{}/", api.url, api.version, api.endpoint)
 }
 
 fn retrieve_url_with_id(api: &models::api::Api, id: &uuid::Uuid) -> String {
-    let url = format!("{}api/{}/{}/{}", api.url, api.version, api.endpoint, id);
-
-    url
+    format!("{}api/{}/{}/{}", api.url, api.version, api.endpoint, id)
 }
 
 pub async fn auth_header(
     token: &icarus_models::token::AccessToken,
-) -> (http::HeaderName, http::HeaderValue) {
-    let auth = reqwest::header::AUTHORIZATION;
-    let auth_value = http::HeaderValue::from_str(&token.bearer_token()).unwrap();
-
-    (auth, auth_value)
+) -> Result<(http::HeaderName, http::HeaderValue), http::header::InvalidHeaderValue> {
+    match http::HeaderValue::from_str(&token.bearer_token()) {
+        Ok(auth_value) => {
+            Ok((reqwest::header::AUTHORIZATION, auth_value))
+        }
+        Err(err) => {
+            Err(err)
+        }
+    }
 }
