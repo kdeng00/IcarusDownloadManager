@@ -189,10 +189,17 @@ impl CommitManager {
 
                 song.data = o.as_bytes().to_vec();
                 song.directory = String::from(".");
-                song.filename = icarus_models::song::generate_filename(
-                    icarus_models::types::MusicTypes::FlacExtension,
+                song.filename = match icarus_models::song::generate_filename(
+                    icarus_models::types::MusicType::FlacExtension,
                     true,
-                );
+                ) {
+                    Ok(filename) => filename,
+                    Err(err) => {
+                        eprintln!("Error generating song filename: {err:?}");
+                        utilities::checks::exit_program(-3);
+                        return
+                    }
+                };
                 match song.save_to_filesystem() {
                     Ok(_) => {
                         println!("Song saved");
