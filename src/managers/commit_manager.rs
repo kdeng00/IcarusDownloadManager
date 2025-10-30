@@ -195,7 +195,7 @@ impl CommitManager {
                     Err(err) => {
                         eprintln!("Error generating song filename: {err:?}");
                         utilities::checks::exit_program(-3);
-                        return
+                        return;
                     }
                 };
                 match song.save_to_filesystem() {
@@ -436,17 +436,11 @@ impl CommitManager {
                         println!("Queued status updated");
                         Ok(())
                     }
-                    Err(err) => {
-                        Err(std::io::Error::other(err.to_string()))
-                    }
+                    Err(err) => Err(std::io::Error::other(err.to_string())),
                 },
-                Err(err) => {
-                    Err(std::io::Error::other(err.to_string()))
-                }
+                Err(err) => Err(std::io::Error::other(err.to_string())),
             },
-            Err(err) => {
-                Err(std::io::Error::other(err.to_string()))
-            }
+            Err(err) => Err(std::io::Error::other(err.to_string())),
         }
     }
 
@@ -490,7 +484,7 @@ impl CommitManager {
                 }
                 Ok(songs)
             }
-            Err(_) => Err(std::io::Error::other("Songs not retrieved"))
+            Err(_) => Err(std::io::Error::other("Songs not retrieved")),
         }
     }
 
@@ -571,7 +565,9 @@ impl CommitManager {
             }
         }
 
-        Err(std::io::Error::other("CoverArt directory and filename not found"))
+        Err(std::io::Error::other(
+            "CoverArt directory and filename not found",
+        ))
     }
 
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
