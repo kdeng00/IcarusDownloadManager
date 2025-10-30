@@ -131,7 +131,7 @@ impl CommitManager {
     }
 
     fn map_actions(&self) -> HashMap<String, ActionValues> {
-        let actions: HashMap<String, ActionValues> = HashMap::from([
+        HashMap::from([
             ("download".to_string(), ActionValues::DownloadAct),
             ("download".to_string(), ActionValues::DownloadAct),
             (
@@ -140,9 +140,7 @@ impl CommitManager {
             ),
             ("retrieve".to_string(), ActionValues::RetrieveAct),
             ("delete".to_string(), ActionValues::DeleteAct),
-        ]);
-
-        actions
+        ])
     }
 
     async fn delete_song(&self, token: &icarus_models::token::AccessToken) {
@@ -307,7 +305,7 @@ impl CommitManager {
         } else if multitarget {
             let _ = self.multi_target_upload(&uni, token).await;
         } else {
-            println!("Single or Multi target has not been chosen");
+            eprintln!("Single or Multi target has not been chosen");
         }
     }
 
@@ -436,21 +434,20 @@ impl CommitManager {
                         println!("Queued coverart Id: {id:?}");
                         println!("Linked queued song to queued coverart");
                         println!("Queued status updated");
+                        Ok(())
                     }
                     Err(err) => {
-                        return Err(std::io::Error::other(err.to_string()));
+                        Err(std::io::Error::other(err.to_string()))
                     }
                 },
                 Err(err) => {
-                    return Err(std::io::Error::other(err.to_string()));
+                    Err(std::io::Error::other(err.to_string()))
                 }
             },
             Err(err) => {
-                return Err(std::io::Error::other(err.to_string()));
+                Err(std::io::Error::other(err.to_string()))
             }
         }
-
-        Ok(())
     }
 
     fn get_songs(
@@ -493,7 +490,7 @@ impl CommitManager {
                 }
                 Ok(songs)
             }
-            Err(_) => Ok(Vec::new()),
+            Err(_) => Err(std::io::Error::other("Songs not retrieved"))
         }
     }
 
@@ -538,7 +535,7 @@ impl CommitManager {
                                 println!("Response: {o:?}");
                             }
                             Err(err) => {
-                                println!("Error: {err:?}");
+                                eprintln!("Error: {err:?}");
                                 return Err(err);
                             }
                         }
@@ -547,12 +544,12 @@ impl CommitManager {
                     Ok(())
                 }
                 Err(err) => {
-                    println!("Error: {err:?}");
+                    eprintln!("Error: {err:?}");
                     Err(std::io::Error::other(err.to_string()))
                 }
             },
             Err(error) => {
-                println!("Error: {error:?}");
+                eprintln!("Error: {error:?}");
                 Err(std::io::Error::other(error.to_string()))
             }
         }
@@ -574,7 +571,7 @@ impl CommitManager {
             }
         }
 
-        Ok((String::new(), String::new()))
+        Err(std::io::Error::other("CoverArt directory and filename not found"))
     }
 
     fn find_file_extension(&self, file_name: &std::ffi::OsString) -> En {
@@ -642,6 +639,6 @@ impl CommitManager {
             }
         }
 
-        Ok(String::new())
+        Err(std::io::Error::other("Metadata path not found"))
     }
 }
