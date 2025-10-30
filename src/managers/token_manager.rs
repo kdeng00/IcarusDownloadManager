@@ -23,7 +23,6 @@ impl Default for TokenManager {
             user: icarus_models::user::User::default(),
             api: models::api::Api::default(),
         };
-
         token.init();
 
         token
@@ -35,7 +34,6 @@ impl TokenManager {
         println!("Sending request for a token");
 
         let url = self.retrieve_url();
-
         println!("URL: {url}");
 
         let mut token = icarus_models::token::AccessToken {
@@ -62,19 +60,18 @@ impl TokenManager {
                         token.token_type = login_result.token_type.clone();
                         token.expiration = login_result.expiration;
                         token.message = response.message;
+                        Ok(token)
                     }
-                    Err(_) => println!("Hm, the response didn't match the shape we expected."),
-                };
+                    Err(err) => Err(std::io::Error::other(err.to_string())),
+                }
             }
             reqwest::StatusCode::UNAUTHORIZED => {
-                println!("Need to grab a new token");
+                Err(std::io::Error::other("Need to grab a new token"))
             }
             other => {
                 panic!("Uh oh! Something unexpected happened: {other:?}");
             }
         }
-
-        Ok(token)
     }
 
     pub fn init(&mut self) {
@@ -84,10 +81,6 @@ impl TokenManager {
     }
 
     pub fn retrieve_url(&self) -> String {
-        let api = &self.api;
-        let mut url = String::from(&api.url);
-        url += &String::from(&api.endpoint);
-
-        url
+        format!("{}{}", self.api.url, self.api.endpoint)
     }
 }
