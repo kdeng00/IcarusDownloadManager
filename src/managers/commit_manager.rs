@@ -644,13 +644,4 @@ impl CommitManager {
 
         Ok(String::new())
     }
-
-    fn _check_for_no_confirm(&self) -> bool {
-        for flag in self.ica_action.flags.iter() {
-            if flag.flag == "-nc" {
-                return true;
-            }
-        }
-        false
-    }
 }
