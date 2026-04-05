@@ -17,7 +17,7 @@ jobs:
     steps:
     - uses: actions/checkout@v5
     - name: Install Rust version
-      run: rustup install 1.90.0 && rustup default 1.90.0
+      run: rustup install 1.94 && rustup default 1.94
 
     - name: Debug secret
       run: echo "${{ secrets.MYREPO_TOKEN }}" | head -c 10 ; echo "..."
