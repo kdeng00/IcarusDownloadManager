@@ -14,4 +14,4 @@ serde_json = "1.0.149"
 tokio = { version = "1.52", features = ["full"] }
 tokio-util = { version = "0.7.18", features = ["codec"] }
 uuid = { version = "1.23.1", features = ["v4", "serde"] }
-icarus_models = { git = "ssh://git@git.kundeng.us/phoenix/icarus_models.git", tag = "v0.10.0" }
+icarus_models = { git = "ssh://git@git.kundeng.us/phoenix/icarus_models.git", tag = "v0.11.1" }
