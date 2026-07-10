@@ -553,21 +553,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icarus-dm"
-version = "0.10.0"
-dependencies = [
- "futures",
- "http",
- "icarus_models",
- "reqwest",
- "serde",
- "serde_json",
- "tokio",
- "tokio-util",
- "uuid",
-]
-
-[[package]]
 name = "icarus_models"
 version = "0.11.1"
 source = "git+ssh://git@git.kundeng.us/phoenix/icarus_models.git?tag=v0.11.1#0a1949c706912598480c45e91df9bb1055cb348f"
@@ -668,6 +653,21 @@ name = "id-arena"
 version = "2.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3d3067d79b975e8844ca9eb072e16b31c3c1c36928edf9c6789548c524d0d954"
+
+[[package]]
+name = "idm"
+version = "0.10.0"
+dependencies = [
+ "futures",
+ "http",
+ "icarus_models",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tokio-util",
+ "uuid",
+]
 
 [[package]]
 name = "idna"

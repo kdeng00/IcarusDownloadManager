@@ -92,7 +92,7 @@ mod tests {
     #[test]
     fn test_minimum_action_and_args() {
         let args: Vec<String> = vec![
-            "icarus-dm".to_string(),
+            "idm".to_string(),
             "download".to_string(),
             "-u".to_string(),
             "jamborie".to_string(),

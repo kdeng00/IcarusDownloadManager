@@ -1,5 +1,5 @@
 [package]
-name = "icarus-dm"
+name = "idm"
 version = "0.10.0"
 rust-version = "1.95"
 edition = "2024"
