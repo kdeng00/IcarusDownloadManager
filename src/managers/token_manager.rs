@@ -7,20 +7,20 @@ mod response {
         #[derive(Debug, serde::Deserialize, serde::Serialize)]
         pub struct Response {
             pub message: String,
-            pub data: Vec<icarus_models::login_result::LoginResult>,
+            pub data: Vec<simodels::login_result::LoginResult>,
         }
     }
 }
 
 pub struct TokenManager {
-    pub user: icarus_models::user::User,
+    pub user: simodels::user::User,
     pub api: models::api::Api,
 }
 
 impl Default for TokenManager {
     fn default() -> Self {
         let mut token = TokenManager {
-            user: icarus_models::user::User::default(),
+            user: simodels::user::User::default(),
             api: models::api::Api::default(),
         };
         token.init();
@@ -30,13 +30,13 @@ impl Default for TokenManager {
 }
 
 impl TokenManager {
-    pub async fn request_token(&self) -> Result<icarus_models::token::AccessToken, std::io::Error> {
+    pub async fn request_token(&self) -> Result<simodels::token::AccessToken, std::io::Error> {
         println!("Sending request for a token");
 
         let url = self.retrieve_url();
         println!("URL: {url}");
 
-        let mut token = icarus_models::token::AccessToken {
+        let mut token = simodels::token::AccessToken {
             user_id: uuid::Uuid::nil(),
             username: String::new(),
             token: String::new(),

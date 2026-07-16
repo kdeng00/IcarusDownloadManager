@@ -51,7 +51,7 @@ mod tests {
             assert!(false, "File does not exists: {meta_path:?}");
         }
 
-        match icarus_models::album::collection::parse_album(&meta_path) {
+        match simodels::album::collection::parse_album(&meta_path) {
             Ok(album) => {
                 for track in 1..3 {
                     let directory_path = std::path::Path::new(&meta_path);
@@ -59,17 +59,17 @@ mod tests {
                     let filename: String = if track < 10 {
                         String::from("track0")
                             + &track.to_string()
-                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
+                            + simodels::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     } else {
                         String::from("track")
                             + &track.to_string()
-                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
+                            + simodels::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     };
                     let disc = 1;
                     match managers::commit_manager::retrieve_song(
                         &album, track, disc, &directory, &filename,
                     ) {
-                        Ok(song) => match icarus_models::song::io::to_data(&song) {
+                        Ok(song) => match simodels::song::io::to_data(&song) {
                             Ok(_) => {
                                 print!("Success");
                             }

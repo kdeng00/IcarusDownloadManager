@@ -13,7 +13,7 @@ mod response {
         #[derive(Debug, serde::Deserialize)]
         pub struct Response {
             pub message: String,
-            pub data: Vec<icarus_models::song::Song>,
+            pub data: Vec<simodels::song::Song>,
         }
     }
 }
@@ -21,8 +21,8 @@ mod response {
 impl RetrieveRecords {
     pub async fn get_all_songs(
         &mut self,
-        token: &icarus_models::token::AccessToken,
-    ) -> Result<Vec<icarus_models::song::Song>, Error> {
+        token: &simodels::token::AccessToken,
+    ) -> Result<Vec<simodels::song::Song>, Error> {
         self.api.endpoint = String::from("api/v2/song/all");
         let url = format!("{}{}", self.api.url, self.api.endpoint);
         let access_token = token.bearer_token();

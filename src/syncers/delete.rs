@@ -13,8 +13,8 @@ mod response {
     pub mod delete_song {
         #[derive(Debug, serde::Deserialize)]
         pub struct SongAndCoverArt {
-            pub song: icarus_models::song::Song,
-            pub coverart: icarus_models::coverart::CoverArt,
+            pub song: simodels::song::Song,
+            pub coverart: simodels::coverart::CoverArt,
         }
 
         #[derive(Debug, serde::Deserialize)]
@@ -28,10 +28,9 @@ mod response {
 impl Delete {
     pub async fn delete_song(
         &mut self,
-        token: &icarus_models::token::AccessToken,
-        song: &icarus_models::song::Song,
-    ) -> Result<(icarus_models::song::Song, icarus_models::coverart::CoverArt), std::io::Error>
-    {
+        token: &simodels::token::AccessToken,
+        song: &simodels::song::Song,
+    ) -> Result<(simodels::song::Song, simodels::coverart::CoverArt), std::io::Error> {
         self.api.endpoint = "api/v2/song".to_owned();
         let url = format!("{}{}/{}", self.api.url, self.api.endpoint, song.id);
         println!("Url: {url:?}");

@@ -1,6 +1,6 @@
-# idm
+# sidm
 
-idm (IcarusDownloadManager) is a CLI software client application that has the feature of uploading and downloading songs from the [icarus](https://git.kundeng.us/phoenix/icarus) Music Server. 
+sidm (SoarIcarusDownloadManager) is a CLI software client application that has the feature of uploading and downloading songs from the [soaricarus_api](https://git.kundeng.us/phoenix/soaricarus_api) Music Server. 
 
 
 
@@ -9,14 +9,14 @@ idm (IcarusDownloadManager) is a CLI software client application that has the fe
 Clone the repo
 
 ```BASH
-git clone git@git.kundeng.us:phoenix/idm.git
+git clone git@git.kundeng.us:phoenix/sidm.git
 ```
 
 
 Build the project:
 
 ```BASH
-cd idm
+cd sidm
 cargo build
 ```
 
@@ -24,31 +24,31 @@ cargo build
 ### Downloading Song
 
 ```BASH
-idm download -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -b e8407fc6-edd2-44c1-993f-08dd7324d91a
+sidm download -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -b e8407fc6-edd2-44c1-993f-08dd7324d91a
 ```
 
 ### Uploading Song with metadata
 
 ```BASH
-idm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -s /path/of/song.flac -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
+sidm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -s /path/of/song.flac -t 1 -m /path/to/metadata/config/collection.json -ca /path/to/cover/art/image.png
 ```
 
 ### Uploading Song with metadata from directory
 
 ```BASH
-idm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -smca /path/where/songs/and/metadata/exists/
+sidm upload-meta -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -smca /path/where/songs/and/metadata/exists/
 ```
 
 ### Retrieving Song in json
 
 ```Bash
-idm retrieve -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -rt songs
+sidm retrieve -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -rt songs
 ```
 
 ### Deleting Song
 
 ```BASH
-idm delete -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -D e8407fc6-edd2-44c1-993f-08dd7324d91a
+sidm delete -u spacecadet -p stellar40 -h https://icarus.com -ha https://auth.icarus.com -D e8407fc6-edd2-44c1-993f-08dd7324d91a
 ```
 
 

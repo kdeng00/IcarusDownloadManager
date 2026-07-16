@@ -17,8 +17,8 @@ pub enum MyError {
 impl Download {
     pub async fn download_song(
         &mut self,
-        token: &icarus_models::token::AccessToken,
-        song: &icarus_models::song::Song,
+        token: &simodels::token::AccessToken,
+        song: &simodels::song::Song,
     ) -> Result<String, MyError> {
         self.api.endpoint = String::from("song/download");
         let url = syncers::common::retrieve_url(&self.api, true, &song.id);

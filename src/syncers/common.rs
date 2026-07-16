@@ -17,7 +17,7 @@ fn retrieve_url_with_id(api: &models::api::Api, id: &uuid::Uuid) -> String {
 }
 
 pub async fn auth_header(
-    token: &icarus_models::token::AccessToken,
+    token: &simodels::token::AccessToken,
 ) -> Result<(http::HeaderName, http::HeaderValue), http::header::InvalidHeaderValue> {
     match http::HeaderValue::from_str(&token.bearer_token()) {
         Ok(auth_value) => Ok((reqwest::header::AUTHORIZATION, auth_value)),

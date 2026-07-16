@@ -36,21 +36,21 @@ enum En {
 
 #[derive(Debug)]
 struct UploadSongMembers {
-    pub song: icarus_models::song::Song,
-    pub coverart: icarus_models::coverart::CoverArt,
-    pub token: icarus_models::token::AccessToken,
-    pub album: icarus_models::album::collection::Album,
+    pub song: simodels::song::Song,
+    pub coverart: simodels::coverart::CoverArt,
+    pub token: simodels::token::AccessToken,
+    pub album: simodels::album::collection::Album,
 }
 
 pub fn retrieve_song(
-    album: &icarus_models::album::collection::Album,
+    album: &simodels::album::collection::Album,
     track: i32,
     disc: i32,
     directory: &str,
     filename: &str,
-) -> Result<icarus_models::song::Song> {
+) -> Result<simodels::song::Song> {
     let mut found = false;
-    let mut song = icarus_models::song::Song::default();
+    let mut song = simodels::song::Song::default();
 
     for song_i in &album.tracks {
         if song_i.track == track && song_i.disc == disc {
@@ -58,9 +58,8 @@ pub fn retrieve_song(
             song.album = album.title.clone();
             song.album_artist = album.artist.clone();
             song.artist = track.artist.clone();
-            song.audio_type = String::from(
-                icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION,
-            );
+            song.audio_type =
+                String::from(simodels::constants::file_extensions::audio::DEFAULTMUSICEXTENSION);
             song.disc = track.disc;
             song.disc_count = album.disc_count;
             song.duration = track.duration as i32;
@@ -143,13 +142,13 @@ impl CommitManager {
         ])
     }
 
-    async fn delete_song(&self, token: &icarus_models::token::AccessToken) {
+    async fn delete_song(&self, token: &simodels::token::AccessToken) {
         println!("Deleting song");
 
         let mut del = syncers::delete::Delete {
             api: self.api.clone(),
         };
-        let mut song = icarus_models::song::Song::default();
+        let mut song = simodels::song::Song::default();
 
         for arg in &self.ica_action.flags {
             let flag = &arg.flag;
@@ -170,13 +169,13 @@ impl CommitManager {
         }
     }
 
-    async fn download_song(&self, token: &icarus_models::token::AccessToken) {
+    async fn download_song(&self, token: &simodels::token::AccessToken) {
         println!("Downloading song");
         let dwn = self.ica_action.retrieve_flag_value(&String::from("-b"));
         let mut dwn_loader = syncers::download::Download {
             api: self.api.clone(),
         };
-        let mut song = icarus_models::song::Song {
+        let mut song = simodels::song::Song {
             id: uuid::Uuid::from_str(dwn.as_str()).unwrap(),
             ..Default::default()
         };
@@ -187,8 +186,8 @@ impl CommitManager {
 
                 song.data = o.as_bytes().to_vec();
                 song.directory = String::from(".");
-                song.filename = match icarus_models::song::generate_filename(
-                    icarus_models::types::MusicType::FlacExtension,
+                song.filename = match simodels::song::generate_filename(
+                    simodels::types::MusicType::FlacExtension,
                     true,
                 ) {
                     Ok(filename) => filename,
@@ -221,7 +220,7 @@ impl CommitManager {
         }
     }
 
-    async fn retrieve_object(&self, token: &icarus_models::token::AccessToken) {
+    async fn retrieve_object(&self, token: &simodels::token::AccessToken) {
         println!("Retrieving song");
         let rt = self.ica_action.retrieve_flag_value(&String::from("-rt"));
 
@@ -250,12 +249,12 @@ impl CommitManager {
         }
     }
 
-    async fn parse_token(&self, api: &models::api::Api) -> icarus_models::token::AccessToken {
+    async fn parse_token(&self, api: &models::api::Api) -> simodels::token::AccessToken {
         println!("Fetching token");
 
         let mut usr_mgr: managers::user_manager::UserManager =
             managers::user_manager::UserManager {
-                user: icarus_models::user::User::default(),
+                user: simodels::user::User::default(),
                 ica_action: self.ica_action.clone(),
             };
         usr_mgr.parse_user_from_actions();
@@ -272,7 +271,7 @@ impl CommitManager {
         token.unwrap()
     }
 
-    async fn upload_song_with_metadata(&mut self, token: &icarus_models::token::AccessToken) {
+    async fn upload_song_with_metadata(&mut self, token: &simodels::token::AccessToken) {
         println!("Uplodaring song with metadara");
 
         let songpath = self.ica_action.retrieve_flag_value(&String::from("-s"));
@@ -316,7 +315,7 @@ impl CommitManager {
         track_id: &str,
         meta_path: &String,
         cover_path: &str,
-        token: &icarus_models::token::AccessToken,
+        token: &simodels::token::AccessToken,
     ) -> Result<()> {
         let song_file = std::path::Path::new(&songpath);
 
@@ -327,7 +326,7 @@ impl CommitManager {
 
         let pa = std::path::Path::new(&cover_path);
 
-        let mut cover_art = icarus_models::coverart::CoverArt {
+        let mut cover_art = simodels::coverart::CoverArt {
             directory: String::from(pa.parent().unwrap().to_str().unwrap()),
             filename: String::from(pa.file_name().unwrap().to_str().unwrap()),
             ..Default::default()
@@ -339,7 +338,7 @@ impl CommitManager {
                 Ok(s) => {
                     println!("file name: {file_name:?}");
 
-                    match icarus_models::album::collection::parse_album(meta_path) {
+                    match simodels::album::collection::parse_album(meta_path) {
                         Ok(album) => {
                             let filename = s.clone();
                             let directory = song_file.parent().unwrap().display().to_string();
@@ -349,9 +348,8 @@ impl CommitManager {
                             println!("Directory: {:?}", s.directory);
                             println!("Filename: {:?}", s.filename);
                             println!("Path: {:?}", s.song_path());
-                            s.data = icarus_models::song::io::to_data(&s).unwrap();
-                            cover_art.data =
-                                icarus_models::coverart::io::to_data(&cover_art).unwrap();
+                            s.data = simodels::song::io::to_data(&s).unwrap();
+                            cover_art.data = simodels::coverart::io::to_data(&cover_art).unwrap();
 
                             let members = UploadSongMembers {
                                 song: s,
@@ -448,23 +446,23 @@ impl CommitManager {
         &self,
         metadata_path: &String,
         source_directory: &str,
-    ) -> Result<Vec<icarus_models::song::Song>> {
-        match icarus_models::album::collection::parse_album(metadata_path) {
+    ) -> Result<Vec<simodels::song::Song>> {
+        match simodels::album::collection::parse_album(metadata_path) {
             Ok(albums) => {
-                let mut songs: Vec<icarus_models::song::Song> = Vec::new();
+                let mut songs: Vec<simodels::song::Song> = Vec::new();
 
                 for track in &albums.tracks {
                     let song_filename = if track.track < 10 {
                         "track0".to_owned()
                             + &track.track.to_string()
-                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
+                            + simodels::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     } else {
                         "track".to_owned()
                             + &track.track.to_string()
-                            + icarus_models::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
+                            + simodels::constants::file_extensions::audio::DEFAULTMUSICEXTENSION
                     };
 
-                    songs.push(icarus_models::song::Song {
+                    songs.push(simodels::song::Song {
                         title: track.title.clone(),
                         artist: track.artist.clone(),
                         disc: track.disc,
@@ -491,7 +489,7 @@ impl CommitManager {
     async fn multi_target_upload(
         &mut self,
         sourcepath: &String,
-        token: &icarus_models::token::AccessToken,
+        token: &simodels::token::AccessToken,
     ) -> std::io::Result<()> {
         let directory_path = std::path::Path::new(&sourcepath);
 
@@ -501,7 +499,7 @@ impl CommitManager {
 
         let (coverart_directory, coverart_filename) =
             self.get_coverart_dir_and_filename(sourcepath).unwrap();
-        let mut cover_art = icarus_models::coverart::init::init_coverart_dir_and_filename(
+        let mut cover_art = simodels::coverart::init::init_coverart_dir_and_filename(
             &coverart_directory,
             &coverart_filename,
         );
@@ -511,10 +509,10 @@ impl CommitManager {
         let host = self.ica_action.retrieve_flag_value(&String::from("-h"));
         up.set_api(&host);
 
-        cover_art.data = icarus_models::coverart::io::to_data(&cover_art).unwrap();
+        cover_art.data = simodels::coverart::io::to_data(&cover_art).unwrap();
 
         match self.get_songs(&metadatapath, sourcepath) {
-            Ok(sngs) => match icarus_models::album::collection::parse_album(&metadatapath) {
+            Ok(sngs) => match simodels::album::collection::parse_album(&metadatapath) {
                 Ok(album) => {
                     for song in sngs {
                         let members = UploadSongMembers {
@@ -595,15 +593,14 @@ impl CommitManager {
                     index += 1;
                 }
 
-                if extension == icarus_models::constants::file_extensions::audio::WAVEXTENSION[1..]
-                    || extension
-                        == icarus_models::constants::file_extensions::audio::FLACEXTENSION[1..]
+                if extension == simodels::constants::file_extensions::audio::WAVEXTENSION[1..]
+                    || extension == simodels::constants::file_extensions::audio::FLACEXTENSION[1..]
                 {
                     return En::SongFile;
                 } else if extension == "json" {
                     return En::MetadataFile;
                 } else if extension
-                    == icarus_models::constants::file_extensions::image::JPGEXTENSION[1..]
+                    == simodels::constants::file_extensions::image::JPGEXTENSION[1..]
                     || extension == "jpeg"
                     || extension == "png"
                 {

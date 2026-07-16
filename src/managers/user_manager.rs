@@ -4,12 +4,12 @@ use crate::models::{self};
 
 #[derive(Debug, Default)]
 pub struct UserManager {
-    pub user: icarus_models::user::User,
+    pub user: simodels::user::User,
     pub ica_action: models::icarus_action::IcarusAction,
 }
 
 impl UserManager {
-    pub fn retrieve_user(&self) -> icarus_models::user::User {
+    pub fn retrieve_user(&self) -> simodels::user::User {
         self.user.clone()
     }
 

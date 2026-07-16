@@ -40,8 +40,8 @@ mod response {
 impl Upload {
     pub async fn queue_song(
         &self,
-        token: &icarus_models::token::AccessToken,
-        song: &icarus_models::song::Song,
+        token: &simodels::token::AccessToken,
+        song: &simodels::song::Song,
     ) -> Result<uuid::Uuid, reqwest::Error> {
         let songpath = song.song_path().unwrap();
         let file = tokio::fs::File::open(&songpath).await.unwrap();
@@ -92,7 +92,7 @@ impl Upload {
 
     pub async fn link_user_to_queued_song(
         &self,
-        token: &icarus_models::token::AccessToken,
+        token: &simodels::token::AccessToken,
         queued_song_id: &uuid::Uuid,
     ) -> Result<(), reqwest::Error> {
         let endpoint = String::from("api/v2/song/queue/link");
@@ -123,9 +123,9 @@ impl Upload {
 
     pub async fn queue_metadata(
         &self,
-        token: &icarus_models::token::AccessToken,
-        album: &icarus_models::album::collection::Album,
-        song: &icarus_models::song::Song,
+        token: &simodels::token::AccessToken,
+        album: &simodels::album::collection::Album,
+        song: &simodels::song::Song,
         queued_song_id: &uuid::Uuid,
     ) -> Result<uuid::Uuid, reqwest::Error> {
         let endpoint = String::from("api/v2/song/metadata/queue");
@@ -173,8 +173,8 @@ impl Upload {
 
     pub async fn queue_coverart(
         &self,
-        token: &icarus_models::token::AccessToken,
-        coverart: &icarus_models::coverart::CoverArt,
+        token: &simodels::token::AccessToken,
+        coverart: &simodels::coverart::CoverArt,
     ) -> Result<uuid::Uuid, reqwest::Error> {
         let coverartpath = coverart.get_path().unwrap();
         let file = tokio::fs::File::open(&coverartpath).await.unwrap();
@@ -231,7 +231,7 @@ impl Upload {
 
     pub async fn link_queued_song_to_queued_coverart(
         &self,
-        token: &icarus_models::token::AccessToken,
+        token: &simodels::token::AccessToken,
         queued_song_id: &uuid::Uuid,
         queued_coverart_id: &uuid::Uuid,
     ) -> Result<(), reqwest::Error> {
@@ -263,7 +263,7 @@ impl Upload {
 
     pub async fn update_queued_song_status(
         &self,
-        token: &icarus_models::token::AccessToken,
+        token: &simodels::token::AccessToken,
         queued_song_id: &uuid::Uuid,
         status: &str,
     ) -> Result<(), reqwest::Error> {

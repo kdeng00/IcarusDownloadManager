@@ -1,8 +1,10 @@
 [package]
-name = "idm"
+name = "sidm"
 version = "0.10.1"
 rust-version = "1.95"
 edition = "2024"
+license = "MIT"
+description = "CLI tool to download and upload music from soaricarus"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [dependencies]
@@ -10,7 +12,7 @@ http = { version = "1.4.2" }
 reqwest = { version = "0.13.4", features = ["json", "blocking", "multipart", "stream"] }
 serde = { version = "1.0.228", features = ["derive"] }
 serde_json = "1.0.150"
-tokio = { version = "1.52.3", features = ["full"] }
+tokio = { version = "1.52.4", features = ["full"] }
 tokio-util = { version = "0.7.18", features = ["codec"] }
 uuid = { version = "1.23.4", features = ["v4", "serde"] }
-icarus_models = { git = "ssh://git@git.kundeng.us/phoenix/icarus_models.git", tag = "v0.11.3" }
+simodels = { git = "ssh://git@git.kundeng.us/phoenix/simodels.git", tag = "v0.11.3-main-fe9d101bd0-111" }
